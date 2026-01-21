@@ -26,16 +26,14 @@
         }
 
         .form-section-white { background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .full-input { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 16px; outline: none; box-sizing: border-box; margin-bottom: 10px; }
+        .label-sm { font-size: 12px; color: #64748b; margin-bottom: 5px; display: block; font-weight: 600; }
+        .full-input { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 16px; outline: none; box-sizing: border-box; margin-bottom: 15px; }
         .btn-green-flat { width: 100%; background: #10b981; color: white; border: none; padding: 16px; border-radius: 12px; cursor: pointer; font-weight: 800; font-size: 16px; }
         .loan-card { background: #fff; border-radius: 20px; padding: 20px; width: 100%; max-width: 340px; border: 1px solid #f1f5f9; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 15px; position: relative; }
-        .progress-bar { width: 100%; height: 8px; background: #f1f5f9; border-radius: 10px; margin: 10px 0; overflow: hidden; }
-        .progress-fill { height: 100%; background: #10b981; transition: 0.5s; }
-        .btn-delete { position: absolute; top: 15px; right: 15px; color: #ef4444; cursor: pointer; }
-
-        #voucher-template { position: absolute; left: -9999px; width: 350px; background: white; padding: 30px; font-family: 'Courier New', monospace; border: 1px solid #000; color: #000; }
-        .v-row { display: flex; justify-content: space-between; margin: 5px 0; font-size: 14px; }
-        .v-box { border: 1px solid #000; padding: 10px; margin-top: 15px; background: #f9f9f9; }
+        
+        #voucher-template { position: absolute; left: -9999px; width: 450px; background: white; padding: 40px; font-family: 'Courier New', monospace; border: 1px solid #000; color: #000; }
+        .v-row { display: flex; justify-content: space-between; margin: 8px 0; font-size: 16px; }
+        .v-box { border: 2px solid #000; padding: 15px; margin-top: 25px; }
 
         .modal { display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; justify-content:center; align-items:center; }
         .modal-content { background:white; padding:25px; border-radius:20px; width:90%; max-width:400px; max-height:80vh; overflow-y:auto; }
@@ -48,6 +46,7 @@
         <h2>J&N</h2>
         <button onclick="showPage('dash')" id="btn-dash" class="active">🏠 Inicio</button>
         <button onclick="showPage('clientes')" id="btn-clientes">👥 Registro</button>
+        <button onclick="showPage('lista-contactos')" id="btn-contactos">📋 Mis Clientes</button>
         <button onclick="showPage('prestamos')" id="btn-prestamos">📈 Cartera</button>
         <button onclick="showPage('nuevo-pago')" id="btn-pago">💰 Cobros</button>
     </div>
@@ -57,7 +56,7 @@
             <h1>Panel J&N 👋</h1>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div style="background:white; padding:15px; border-radius:15px; border:1px solid #e2e8f0;">
-                    <small>Capital Prestado</small><br><b id="total-cartera" style="color:#ef4444; font-size:22px;">$0</b>
+                    <small>Capital en Calle</small><br><b id="total-cartera" style="color:#ef4444; font-size:22px;">$0</b>
                 </div>
                 <div style="background:white; padding:15px; border-radius:15px; border:1px solid #e2e8f0;">
                     <small>Interés Cobrado</small><br><b id="total-intereses" style="color:#10b981; font-size:22px;">$0</b>
@@ -68,17 +67,30 @@
         <div id="clientes" class="view" style="display:none">
             <div class="form-section-white">
                 <h3>Nuevo Préstamo</h3>
-                <input type="text" id="c-nombre" class="full-input" placeholder="Nombre completo">
-                <input type="text" id="c-cedula" class="full-input" placeholder="Cédula / ID">
-                <input type="text" id="c-tel" class="full-input" placeholder="Teléfono">
-                <input type="text" id="c-dir" class="full-input" placeholder="Dirección">
-                <input type="number" id="c-monto" class="full-input" placeholder="Monto ($)">
-                <button class="btn-green-flat" onclick="guardarCliente()">Registrar y Voucher</button>
+                <label class="label-sm">SELECCIONAR CLIENTE EXISTENTE</label>
+                <select id="reg-cliente-existe" class="full-input" onchange="toggleNuevoCliente()">
+                    <option value="NUEVO">+ REGISTRAR NUEVO CLIENTE</option>
+                </select>
+
+                <div id="div-nuevo-cliente">
+                    <input type="text" id="c-nombre" class="full-input" placeholder="Nombre completo">
+                    <input type="text" id="c-cedula" class="full-input" placeholder="Cédula / ID">
+                </div>
+
+                <input type="number" id="c-monto" class="full-input" placeholder="Monto a Prestar ($)">
+                <label class="label-sm">FECHA DE PRÓXIMO PAGO</label>
+                <input type="date" id="c-next-date" class="full-input">
+                <button class="btn-green-flat" onclick="guardarPrestamo()">Registrar y Voucher</button>
             </div>
         </div>
 
+        <div id="lista-contactos" class="view" style="display:none">
+            <h2>Base de Clientes</h2>
+            <div id="grid-contactos"></div>
+        </div>
+
         <div id="prestamos" class="view" style="display:none">
-            <h2>Préstamos Activos</h2>
+            <h2>Cartera Activa</h2>
             <div id="grid-prestamos"></div>
         </div>
 
@@ -88,6 +100,8 @@
                 <select id="select-pago" class="full-input" onchange="autoCalcularInteres()"></select>
                 <input type="number" id="p-int" class="full-input" placeholder="Interés ($)">
                 <input type="number" id="p-cap" class="full-input" placeholder="Abono Capital ($)">
+                <label class="label-sm">FECHA DE PRÓXIMO PAGO</label>
+                <input type="date" id="p-next-date" class="full-input">
                 <button class="btn-green-flat" onclick="procesarPago()">Generar Recibo</button>
             </div>
         </div>
@@ -95,13 +109,16 @@
 </div>
 
 <div id="voucher-template">
-    <div style="text-align:center; border-bottom:2px dashed #000; padding-bottom:10px;">
-        <h2 style="margin:0">J&N SOLUCIONES</h2>
-        <p style="font-size:12px;">Comprobante de Transacción</p>
+    <div style="text-align:center; border-bottom:2px dashed #000; padding-bottom:15px; margin-bottom:20px;">
+        <h1 style="margin:0; font-size: 28px;">J&N SOLUCIONES</h1>
+        <p style="font-size:16px; margin-top:10px;">Comprobante de Transacción</p>
     </div>
-    <div id="v-body" style="padding:15px 0;"></div>
-    <div id="v-next-payment" class="v-box"></div>
-    <p id="v-fecha" style="text-align:center; font-size:10px; margin-top:15px;"></p>
+    <div id="v-body"></div>
+    <div class="v-box">
+        <div style="text-align:center; font-weight:800; font-size:16px; margin-bottom:12px;">PRÓXIMO PAGO PENDIENTE</div>
+        <div id="v-next-content"></div>
+    </div>
+    <p id="v-fecha" style="text-align:center; font-size:12px; margin-top:25px;"></p>
 </div>
 
 <div id="modal-historial" class="modal">
@@ -113,107 +130,166 @@
 </div>
 
 <script>
-let bd = JSON.parse(localStorage.getItem('jn_soluciones_vFinal_Full')) || { clientes: [], pagos: [] };
+// Base de datos mejorada
+let bd = JSON.parse(localStorage.getItem('jn_vFinal_PRO')) || { 
+    contactos: [], // Lista fija de personas
+    prestamos: [], // Préstamos activos
+    pagos: [] 
+};
 
-function guardarCliente() {
-    const n = document.getElementById('c-nombre').value;
+function toggleNuevoCliente() {
+    const val = document.getElementById('reg-cliente-existe').value;
+    document.getElementById('div-nuevo-cliente').style.display = (val === "NUEVO") ? "block" : "none";
+}
+
+function guardarPrestamo() {
     const m = parseFloat(document.getElementById('c-monto').value);
-    if(!n || !m) return alert("Nombre y Monto requeridos");
-    const nuevo = { id: Date.now(), nombre: n, cedula: document.getElementById('c-cedula').value, tel: document.getElementById('c-tel').value, dir: document.getElementById('c-dir').value, deuda: m, inicial: m, fecha: new Date().toLocaleDateString() };
-    bd.clientes.push(nuevo);
+    const nextDate = document.getElementById('c-next-date').value;
+    const select = document.getElementById('reg-cliente-existe').value;
+    
+    let clienteFinal;
+
+    if(select === "NUEVO") {
+        const n = document.getElementById('c-nombre').value;
+        const c = document.getElementById('c-cedula').value;
+        if(!n || !m || !nextDate) return alert("Completa todos los datos");
+        
+        clienteFinal = { id: Date.now(), nombre: n, cedula: c };
+        bd.contactos.push(clienteFinal);
+    } else {
+        clienteFinal = bd.contactos.find(x => x.id == select);
+        if(!m || !nextDate) return alert("Indica monto y fecha");
+    }
+
+    const nuevoPrestamo = {
+        id: Date.now(),
+        clienteId: clienteFinal.id,
+        nombre: clienteFinal.nombre,
+        deuda: m,
+        inicial: m,
+        proximoPago: nextDate
+    };
+
+    bd.prestamos.push(nuevoPrestamo);
     actualizarTodo();
-    generarVoucher("APERTURA DE CRÉDITO", n, m, 0, m);
+    generarVoucher("APERTURA DE CRÉDITO", clienteFinal.nombre, m, 0, m, nextDate);
     limpiar();
 }
 
 function procesarPago() {
-    const id = document.getElementById('select-pago').value;
+    const pId = document.getElementById('select-pago').value;
     const i = parseFloat(document.getElementById('p-int').value) || 0;
     const a = parseFloat(document.getElementById('p-cap').value) || 0;
-    if(!id) return alert("Selecciona un cliente");
-    const c = bd.clientes.find(x => x.id == id);
-    c.deuda -= a;
-    bd.pagos.push({ clienteId: c.id, nombre: c.nombre, fecha: new Date().toLocaleString(), interes: i, abono: a, saldoQueda: c.deuda });
+    const nextDate = document.getElementById('p-next-date').value;
+    
+    if(!pId || !nextDate) return alert("Selecciona préstamo y fecha");
+    const p = bd.prestamos.find(x => x.id == pId);
+    
+    p.deuda -= a;
+    p.proximoPago = nextDate;
+
+    bd.pagos.push({ prestamoId: p.id, nombre: p.nombre, fecha: new Date().toLocaleString(), interes: i, abono: a, saldoQueda: p.deuda });
+    
+    if(p.deuda <= 0) {
+        alert("¡Préstamo Finalizado! El cliente queda guardado en 'Mis Clientes'.");
+        bd.prestamos = bd.prestamos.filter(x => x.id != pId);
+    }
+
     actualizarTodo();
-    generarVoucher("RECIBO DE PAGO", c.nombre, a, i, c.deuda);
+    generarVoucher("RECIBO DE PAGO", p.nombre, a, i, Math.max(0, p.deuda), nextDate);
     limpiar();
 }
 
 function reenganche(id) {
-    const c = bd.clientes.find(x => x.id == id);
-    const monto = parseFloat(prompt("¿Monto a sumar para reenganche?"));
+    const p = bd.prestamos.find(x => x.id == id);
+    const monto = parseFloat(prompt("¿Monto a sumar?"));
     if (isNaN(monto) || monto <= 0) return;
-    c.inicial += monto; c.deuda += monto;
+    const nextDate = prompt("Nueva fecha de cobro (AAAA-MM-DD):", p.proximoPago);
+    
+    p.inicial += monto; p.deuda += monto; p.proximoPago = nextDate;
     actualizarTodo();
-    generarVoucher("REENGANCHE DE CRÉDITO", c.nombre, monto, 0, c.deuda);
+    generarVoucher("REENGANCHE DE CRÉDITO", p.nombre, monto, 0, p.deuda, nextDate);
 }
 
-function generarVoucher(tipo, cliente, monto, interes, saldo) {
-    const nextDate = new Date();
-    nextDate.setMonth(nextDate.getMonth() + 1);
-    const reditoPendiente = Math.round(saldo * 0.10);
+function generarVoucher(tipo, cliente, monto, interes, saldo, proximaFecha) {
+    const redito = Math.round(saldo * 0.10);
+    const fFmt = proximaFecha.split('-').reverse().join('/');
 
     document.getElementById('v-body').innerHTML = `
-        <h4 style="text-align:center;">${tipo}</h4>
+        <h2 style="text-align:center;">${tipo}</h2>
         <div class="v-row"><span>CLIENTE:</span> <b>${cliente}</b></div>
-        <div class="v-row"><span>MONTO OPERACIÓN:</span> <b>$${monto.toLocaleString()}</b></div>
-        <div class="v-row"><span>INTERÉS PAGADO:</span> <b>$${interes.toLocaleString()}</b></div>
-        <div class="v-row" style="margin-top:10px; font-size:16px;"><span>SALDO ACTUAL:</span> <b>$${saldo.toLocaleString()}</b></div>
+        <div class="v-row"><span>OPERACIÓN:</span> <b>$${monto.toLocaleString()}</b></div>
+        <div class="v-row"><span>INT. PAGADO:</span> <b>$${interes.toLocaleString()}</b></div>
+        <div class="v-row" style="margin-top:15px; font-size:18px;"><span>SALDO ACTUAL:</span> <b>$${saldo.toLocaleString()}</b></div>
     `;
-
-    document.getElementById('v-next-payment').innerHTML = `
-        <div style="text-align:center; font-weight:800; font-size:12px; margin-bottom:5px;">PRÓXIMO PAGO PENDIENTE</div>
-        <div class="v-row"><span>FECHA:</span> <b>${nextDate.toLocaleDateString()}</b></div>
-        <div class="v-row"><span>RÉDITO (10%):</span> <b>$${reditoPendiente.toLocaleString()}</b></div>
-        <p style="font-size:10px; text-align:center; margin-top:5px;">Evite recargos pagando a tiempo.</p>
+    document.getElementById('v-next-content').innerHTML = `
+        <div class="v-row"><span>FECHA:</span> <b>${fFmt}</b></div>
+        <div class="v-row"><span>RÉDITO (10%):</span> <b>$${redito.toLocaleString()}</b></div>
     `;
-
-    document.getElementById('v-fecha').innerText = "Realizado el: " + new Date().toLocaleString();
+    document.getElementById('v-fecha').innerText = "Fecha: " + new Date().toLocaleString();
     
     setTimeout(() => {
-        html2canvas(document.querySelector("#voucher-template")).then(canvas => {
+        html2canvas(document.querySelector("#voucher-template"), { scale: 2 }).then(canvas => {
             const link = document.createElement('a');
             link.download = `JN_${cliente}.png`;
-            link.href = canvas.toDataURL();
+            link.href = canvas.toDataURL("image/png");
             link.click();
         });
     }, 500);
 }
 
-function eliminar(id) {
-    if(confirm("¿Eliminar préstamo?")) {
-        bd.clientes = bd.clientes.filter(x => x.id != id);
-        actualizarTodo();
-    }
+function actualizarTodo() {
+    localStorage.setItem('jn_vFinal_PRO', JSON.stringify(bd));
+    
+    // Dash
+    document.getElementById('total-cartera').innerText = "$" + bd.prestamos.reduce((s,p) => s+p.deuda, 0).toLocaleString();
+    document.getElementById('total-intereses').innerText = "$" + bd.pagos.reduce((s,p) => s+p.interes, 0).toLocaleString();
+
+    // Selects
+    const optContactos = bd.contactos.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+    document.getElementById('reg-cliente-existe').innerHTML = '<option value="NUEVO">+ REGISTRAR NUEVO CLIENTE</option>' + optContactos;
+    document.getElementById('select-pago').innerHTML = '<option value="">Seleccionar Préstamo...</option>' + bd.prestamos.map(p => `<option value="${p.id}">${p.nombre} ($${p.deuda})</option>`).join('');
+
+    // Grid Contactos
+    document.getElementById('grid-contactos').innerHTML = bd.contactos.map(c => `
+        <div class="loan-card" style="border-left: 5px solid #10b981;">
+            <b>${c.nombre}</b><br><small>ID: ${c.cedula || '---'}</small>
+            <button onclick="eliminarContacto(${c.id})" style="width:100%; margin-top:10px; background:#fee2e2; color:#ef4444; border:none; padding:5px; border-radius:5px;">Eliminar de Agenda</button>
+        </div>
+    `).join('') || '<p>No hay clientes guardados.</p>';
+
+    // Grid Cartera
+    document.getElementById('grid-prestamos').innerHTML = bd.prestamos.map(p => {
+        const porc = Math.min(100, (((p.inicial - p.deuda) / p.inicial) * 100)).toFixed(0);
+        return `<div class="loan-card">
+            <b>${p.nombre}</b><br><small>Próximo: ${p.proximoPago.split('-').reverse().join('/')}</small>
+            <div style="height:8px; background:#eee; border-radius:10px; margin:10px 0;"><div style="width:${porc}%; height:100%; background:#10b981; border-radius:10px;"></div></div>
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:10px;">
+                <span>Saldo: $${p.deuda.toLocaleString()}</span><span>${porc}%</span>
+            </div>
+            <div style="display:flex; gap:5px;">
+                <button onclick="verHistorial(${p.id})" style="flex:1; padding:7px; border-radius:8px; border:1px solid #ddd; background:white; font-size:11px;">Historial</button>
+                <button onclick="reenganche(${p.id})" style="flex:1; padding:7px; border-radius:8px; background:#f0fdf4; color:#10b981; border:1px solid #10b981; font-size:11px;">Reenganche</button>
+            </div>
+        </div>`;
+    }).join('');
 }
 
-function verHistorial(id) {
-    const c = bd.clientes.find(x => x.id == id);
-    const pagos = bd.pagos.filter(p => p.clienteId == id);
-    document.getElementById('hist-nombre').innerText = c.nombre;
-    document.getElementById('hist-lista').innerHTML = pagos.map(p => `<div style="border-bottom:1px solid #eee; padding:10px 0; font-size:13px;"><b>${p.fecha.split(',')[0]}</b> | Abono: $${p.abono} | Int: $${p.interes}<br><small>Saldo: $${p.saldoQueda}</small></div>`).join('') || 'Sin pagos.';
+function verHistorial(pId) {
+    const pagos = bd.pagos.filter(p => p.prestamoId == pId);
+    document.getElementById('hist-lista').innerHTML = pagos.map(p => `<div style="border-bottom:1px solid #eee; padding:8px 0;"><b>${p.fecha}</b><br>Abono: $${p.abono} | Int: $${p.interes}</div>`).join('') || 'Sin pagos.';
     document.getElementById('modal-historial').style.display = 'flex';
 }
 
-function actualizarTodo() {
-    localStorage.setItem('jn_soluciones_vFinal_Full', JSON.stringify(bd));
-    document.getElementById('total-cartera').innerText = "$" + bd.clientes.reduce((s,c) => s+c.deuda, 0).toLocaleString();
-    document.getElementById('total-intereses').innerText = "$" + bd.pagos.reduce((s,p) => s+p.interes, 0).toLocaleString();
-    document.getElementById('grid-prestamos').innerHTML = bd.clientes.map(c => {
-        const porc = Math.min(100, (((c.inicial - c.deuda) / c.inicial) * 100)).toFixed(0);
-        return `<div class="loan-card"><span class="btn-delete" onclick="eliminar(${c.id})">🗑️</span><b>${c.nombre}</b><div class="progress-bar"><div class="progress-fill" style="width:${porc}%"></div></div><div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:10px;"><span>Saldo: $${c.deuda.toLocaleString()}</span><span>${porc}%</span></div><div style="display:flex; gap:5px;"><button onclick="verHistorial(${c.id})" style="flex:1; padding:7px; border-radius:8px; border:1px solid #ddd; background:white; font-size:11px;">Historial</button><button onclick="reenganche(${c.id})" style="flex:1; padding:7px; border-radius:8px; background:#f0fdf4; color:#10b981; border:1px solid #10b981; font-size:11px;">+ Reenganche</button></div></div>`;
-    }).join('');
-    document.getElementById('select-pago').innerHTML = '<option value="">Seleccionar...</option>' + bd.clientes.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
-}
-
+function eliminarContacto(id) { if(confirm("¿Borrar cliente de la agenda?")) { bd.contactos = bd.contactos.filter(x => x.id != id); actualizarTodo(); } }
 function autoCalcularInteres() {
     const id = document.getElementById('select-pago').value;
     if(id) {
-        const c = bd.clientes.find(x => x.id == id);
-        document.getElementById('p-int').value = Math.round(c.deuda * 0.10);
+        const p = bd.prestamos.find(x => x.id == id);
+        document.getElementById('p-int').value = Math.round(p.deuda * 0.10);
+        document.getElementById('p-next-date').value = p.proximoPago;
     }
 }
-
 function showPage(id) {
     document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
     document.querySelectorAll('.presta-menu button').forEach(b => b.classList.remove('active'));
@@ -221,7 +297,7 @@ function showPage(id) {
     document.getElementById('btn-' + id).classList.add('active');
 }
 function cerrarModal() { document.getElementById('modal-historial').style.display = 'none'; }
-function limpiar() { document.querySelectorAll('.full-input').forEach(i => i.value = ""); }
+function limpiar() { document.querySelectorAll('.full-input').forEach(i => i.value = ""); toggleNuevoCliente(); }
 actualizarTodo();
 </script>
 </body>
