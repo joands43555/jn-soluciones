@@ -28,7 +28,8 @@
         .form-section-white { background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .label-sm { font-size: 12px; color: #64748b; margin-bottom: 5px; display: block; font-weight: 600; }
         .full-input { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 16px; outline: none; box-sizing: border-box; margin-bottom: 15px; }
-        .btn-green-flat { width: 100%; background: #10b981; color: white; border: none; padding: 16px; border-radius: 12px; cursor: pointer; font-weight: 800; font-size: 16px; }
+        .btn-green-flat { width: 100%; background: #10b981; color: white; border: none; padding: 16px; border-radius: 12px; cursor: pointer; font-weight: 800; font-size: 16px; transition: 0.2s; }
+        .btn-green-flat:active { transform: scale(0.98); }
         .loan-card { background: #fff; border-radius: 20px; padding: 20px; width: 100%; max-width: 340px; border: 1px solid #f1f5f9; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 15px; position: relative; }
         .progress-bar { width: 100%; height: 8px; background: #f1f5f9; border-radius: 10px; margin: 10px 0; overflow: hidden; }
         .progress-fill { height: 100%; background: #10b981; transition: 0.5s; }
@@ -109,7 +110,15 @@
         </div>
 
         <div id="config" class="view" style="display:none">
-            <button class="btn-green-flat" onclick="exportarDatos()">Descargar Respaldo</button>
+            <div class="form-section-white">
+                <h3>Sincronización y Respaldo</h3>
+                <p class="label-sm">COPIA DE SEGURIDAD:</p>
+                <button class="btn-green-flat" onclick="exportarDatos()" style="background:#3b82f6; margin-bottom:20px;">⬇️ Descargar Archivo JSON</button>
+                <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+                <p class="label-sm">RESTAURAR DATOS:</p>
+                <input type="file" id="importFile" class="full-input" accept=".json" onchange="importarDatos()">
+                <small style="color:#64748b;">Selecciona el archivo .json que descargaste anteriormente para recuperar tu información.</small>
+            </div>
         </div>
     </div>
 </div>
@@ -263,6 +272,29 @@ function verHistorial(pId) {
     document.getElementById('hist-lista').innerHTML = hist.map(h => `<div style="border-bottom:1px solid #eee; padding:5px 0;">${h.fecha}<br>Abono: $${h.abono} | Int: $${h.interes}</div>`).join('') || "No hay pagos aún";
     document.getElementById('modal-historial').style.display = 'flex';
 }
+
+// FUNCIONES DE RESPALDO
+function exportarDatos() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bd));
+    const a = document.createElement('a'); a.href = dataStr; a.download = "JN_RESPALDO.json"; a.click();
+}
+function importarDatos() {
+    const file = document.getElementById('importFile').files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if(data.contactos && data.prestamos) {
+                bd = data;
+                actualizarTodo();
+                alert("¡Datos restaurados con éxito!");
+            } else { alert("El archivo no es un respaldo válido."); }
+        } catch(err) { alert("Error al leer el archivo."); }
+    };
+    reader.readAsText(file);
+}
+
 function autoCalcularInteres() {
     const id = document.getElementById('select-pago').value;
     if(id) {
@@ -271,10 +303,6 @@ function autoCalcularInteres() {
         document.getElementById('p-next-date').value = p.proximoPago;
     }
 }
-function exportarDatos() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bd));
-    const a = document.createElement('a'); a.href = dataStr; a.download = "JN_RESPALDO.json"; a.click();
-}
 function showPage(id) {
     document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
     document.querySelectorAll('.presta-menu button').forEach(b => b.classList.remove('active'));
@@ -282,8 +310,8 @@ function showPage(id) {
     document.getElementById('btn-' + id).classList.add('active');
 }
 function cerrarModal() { document.getElementById('modal-historial').style.display = 'none'; }
-function eliminarP(id) { if(confirm("¿Eliminar?")) { bd.prestamos = bd.prestamos.filter(x => x.id != id); actualizarTodo(); } }
-function eliminarC(id) { if(confirm("¿Borrar contacto?")) { bd.contactos = bd.contactos.filter(x => x.id != id); actualizarTodo(); } }
+function eliminarP(id) { if(confirm("¿Eliminar préstamo?")) { bd.prestamos = bd.prestamos.filter(x => x.id != id); actualizarTodo(); } }
+function eliminarC(id) { if(confirm("¿Borrar de la agenda?")) { bd.contactos = bd.contactos.filter(x => x.id != id); actualizarTodo(); } }
 function limpiar() { document.querySelectorAll('.full-input').forEach(i => i.value = ""); toggleNuevoCliente(); }
 actualizarTodo();
 </script>
