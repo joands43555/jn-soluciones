@@ -3,52 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>J&N SOLUCIONES - Premium</title>
+    <title>J&N SOLUCIONES</title>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* --- BASE Y NAVEGACIÓN (TU MODELO) --- */
+        /* --- RESET Y BASE --- */
         #header-wrapper, .header-outer, #footer-wrapper, .footer-outer, .sidebar-wrapper, aside { display: none !important; }
-        body { margin: 0; padding: 0; background: #f8fafc; font-family: 'Inter', sans-serif; color: #1e293b; }
-        .presta-app { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; background: #f8fafc; display: flex; }
-        .presta-menu { width: 260px; background: #fff; border-right: 1px solid #e2e8f0; padding: 25px; }
-        .presta-menu h2 { color: #10b981; text-align: center; margin-bottom: 30px; font-weight: 800; }
-        .presta-menu button { width: 100%; padding: 14px; margin-bottom: 8px; border: none; border-radius: 12px; cursor: pointer; text-align: left; background: transparent; font-weight: 600; color: #64748b; transition: 0.3s; }
+        body { margin: 0; padding: 0; background: #f8fafc; font-family: 'Inter', sans-serif; color: #1e293b; overflow-x: hidden; }
+        
+        /* --- ESTRUCTURA PRINCIPAL --- */
+        .presta-app { display: flex; flex-direction: row; height: 100vh; width: 100vw; }
+        .presta-menu { width: 260px; background: #fff; border-right: 1px solid #e2e8f0; padding: 25px; display: flex; flex-direction: column; z-index: 100; }
+        .presta-main { flex: 1; padding: 40px; overflow-y: auto; background: #f8fafc; }
+
+        /* --- MENÚ LATERAL (PC) --- */
+        .presta-menu h2 { color: #10b981; text-align: center; margin-bottom: 30px; font-weight: 800; font-size: 24px; }
+        .presta-menu button { width: 100%; padding: 14px; margin-bottom: 8px; border: none; border-radius: 12px; cursor: pointer; text-align: left; background: transparent; font-weight: 600; color: #64748b; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
         .presta-menu button.active { background: #10b981; color: #fff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
 
-        .presta-main { flex: 1; padding: 40px; overflow-y: auto; }
+        /* --- DISEÑO RESPONSIVO (IPHONE / CELULAR) --- */
+        @media (max-width: 768px) {
+            .presta-app { flex-direction: column; }
+            .presta-menu { 
+                width: 100%; height: 75px; border-right: none; border-top: 1px solid #e2e8f0; 
+                padding: 10px 0; position: fixed; bottom: 0; left: 0; flex-direction: row; 
+                justify-content: space-around; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+            }
+            .presta-menu h2 { display: none; }
+            .presta-menu button { 
+                width: auto; margin-bottom: 0; padding: 10px; font-size: 11px; 
+                flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+                color: #94a3b8;
+            }
+            .presta-menu button.active { background: transparent; color: #10b981; box-shadow: none; }
+            .presta-main { padding: 20px; padding-bottom: 100px; }
+            .row-inputs { flex-direction: column; gap: 10px; }
+            .client-card-premium, .loan-card { width: 100% !important; max-width: none !important; }
+        }
 
-        /* --- FORMULARIOS --- */
-        .form-section-white { background: white; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 30px; }
+        /* --- COMPONENTES UI --- */
+        .form-section-white { background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 30px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
         .row-inputs { display: flex; gap: 15px; margin-bottom: 15px; }
-        .full-input { width: 100%; padding: 12px; border: 1px solid #94a3b8; border-radius: 4px; font-size: 15px; outline: none; box-sizing: border-box; }
-        .btn-green-flat { width: 100%; background: #10b981; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        .full-input { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 16px; outline: none; transition: 0.2s; box-sizing: border-box; }
+        .full-input:focus { border-color: #10b981; ring: 2px #10b981; }
+        .btn-green-flat { width: 100%; background: #10b981; color: white; border: none; padding: 16px; border-radius: 12px; cursor: pointer; font-weight: 800; font-size: 16px; transition: 0.3s; }
+        .btn-green-flat:active { transform: scale(0.98); }
 
-        /* --- TARJETAS CLIENTE --- */
-        .client-card-premium { background: white; border-radius: 16px; padding: 20px; width: 320px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; position: relative; }
+        /* --- CARDS --- */
+        .client-card-premium { background: white; border-radius: 20px; padding: 20px; width: 320px; box-shadow: 0 2px 15px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; position: relative; margin-bottom: 20px; }
         .client-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-        .client-avatar { width: 55px; height: 55px; background: #10b981; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; }
-        .client-info h4 { margin: 0; font-size: 16px; color: #1e293b; }
+        .client-avatar { width: 50px; height: 50px; background: #10b981; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; }
+        .client-info h4 { margin: 0; font-size: 17px; color: #1e293b; }
         .client-info span { font-size: 12px; color: #94a3b8; }
-        .client-details { font-size: 14px; color: #64748b; margin-bottom: 15px; }
-        .btn-view-loans { width: 100%; background: white; border: 1px solid #10b981; color: #10b981; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .client-actions { position: absolute; top: 15px; right: 15px; display: flex; gap: 12px; font-size: 18px; }
-        .btn-delete { color: #ef4444; cursor: pointer; opacity: 0.7; transition: 0.2s; }
+        .btn-delete { position: absolute; top: 20px; right: 20px; color: #ef4444; cursor: pointer; font-size: 20px; opacity: 0.6; }
 
-        /* --- TARJETAS PRÉSTAMO --- */
-        .loan-card { background: #fff; border-radius: 20px; padding: 25px; width: 330px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
-        .progress-bar { width: 100%; height: 8px; background: #f1f5f9; border-radius: 10px; margin: 15px 0; overflow: hidden; }
-        .progress-fill { height: 100%; background: #1e293b; transition: 0.5s; }
-        .btn-loan-action { width: 100%; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 12px; margin-top: 8px; border: 1px solid #e2e8f0; }
+        .loan-card { background: #fff; border-radius: 24px; padding: 25px; width: 340px; border: 1px solid #f1f5f9; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
+        .progress-bar { width: 100%; height: 10px; background: #f1f5f9; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: #10b981; border-radius: 10px; transition: 0.8s ease-in-out; }
 
-        /* --- MODALES --- */
-        .modal-full { display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:20000; justify-content:center; align-items:center; backdrop-filter: blur(4px); }
-        .modal-content { background: white; width: 90%; max-width: 750px; border-radius: 24px; padding: 35px; max-height: 85vh; overflow-y: auto; }
+        /* --- VOUCHER OCULTO --- */
+        #voucher-template { position: absolute; left: -9999px; width: 350px; background: white; padding: 30px; font-family: 'Courier New', monospace; color: #000; }
+        .v-header { border-bottom: 2px dashed #000; padding-bottom: 15px; margin-bottom: 15px; text-align: center; }
+        .v-row { display: flex; justify-content: space-between; margin: 8px 0; font-size: 14px; }
 
-        /* --- PLANTILLA VOUCHER (OCULTO) --- */
-        #voucher-template { position: absolute; left: -9999px; top: 0; width: 350px; background: white; padding: 25px; border: 1px solid #eee; text-align: center; font-family: 'Courier New', monospace; }
-        .v-header { border-bottom: 2px dashed #000; padding-bottom: 10px; margin-bottom: 15px; }
-        .v-row { display: flex; justify-content: space-between; margin: 5px 0; font-size: 14px; }
+        /* --- MODAL --- */
+        .modal-full { display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:20000; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
+        .modal-content { background: white; width: 90%; max-width: 500px; border-radius: 24px; padding: 30px; max-height: 80vh; overflow-y: auto; }
     </style>
 </head>
 <body>
@@ -56,61 +76,59 @@
 <div class="presta-app">
     <div class="presta-menu">
         <h2>J&N</h2>
-        <button onclick="showPage('dash')" id="btn-dash" class="active">🏠 Inicio</button>
-        <button onclick="showPage('clientes')" id="btn-clientes">👥 Clientes</button>
-        <button onclick="showPage('prestamos')" id="btn-prestamos">📈 Préstamos</button>
-        <button onclick="showPage('nuevo-pago')" id="btn-pago">💰 Registrar Cobro</button>
+        <button onclick="showPage('dash')" id="btn-dash" class="active"><span>🏠</span> Inicio</button>
+        <button onclick="showPage('clientes')" id="btn-clientes"><span>👥</span> Clientes</button>
+        <button onclick="showPage('prestamos')" id="btn-prestamos"><span>📈</span> Préstamos</button>
+        <button onclick="showPage('nuevo-pago')" id="btn-pago"><span>💰</span> Cobro</button>
     </div>
 
     <div class="presta-main">
         <div id="dash" class="view">
-            <h1>Resumen General</h1>
-            <div style="display:flex; gap:20px;">
-                <div style="background:white; padding:25px; border-radius:20px; flex:1; border:1px solid #e2e8f0;">
-                    <small style="color:#64748b; font-weight:bold;">CAPITAL PENDIENTE</small><br>
-                    <b id="total-cartera" style="font-size:32px; color:#ef4444;">$0</b>
+            <h1 style="font-weight:800; font-size:28px;">Hola, J&N 👋</h1>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px;">
+                <div style="background:white; padding:20px; border-radius:20px; border:1px solid #e2e8f0;">
+                    <small style="color:#64748b; font-weight:bold; text-transform:uppercase;">Cartera Total</small><br>
+                    <b id="total-cartera" style="font-size:28px; color:#ef4444;">$0</b>
                 </div>
-                <div style="background:white; padding:25px; border-radius:20px; flex:1; border:1px solid #e2e8f0;">
-                    <small style="color:#64748b; font-weight:bold;">INTERESES COBRADOS</small><br>
-                    <b id="total-intereses" style="font-size:32px; color:#10b981;">$0</b>
+                <div style="background:white; padding:20px; border-radius:20px; border:1px solid #e2e8f0;">
+                    <small style="color:#64748b; font-weight:bold; text-transform:uppercase;">Intereses</small><br>
+                    <b id="total-intereses" style="font-size:28px; color:#10b981;">$0</b>
                 </div>
             </div>
         </div>
 
         <div id="clientes" class="view" style="display:none">
             <div class="form-section-white">
-                <h1 style="color:#cbd5e1; font-size:24px; margin-bottom:20px;">Registro</h1>
+                <h3 style="margin-top:0">Nuevo Cliente</h3>
                 <div class="row-inputs">
-                    <input type="text" id="c-nombre" class="full-input" placeholder="Nombre Completo">
+                    <input type="text" id="c-nombre" class="full-input" placeholder="Nombre completo">
+                    <input type="number" id="c-monto" class="full-input" placeholder="Monto inicial ($)">
+                </div>
+                <div class="row-inputs">
+                    <input type="text" id="c-cedula" class="full-input" placeholder="Cédula / ID">
                     <input type="text" id="c-tel" class="full-input" placeholder="Teléfono">
                 </div>
-                <div class="row-inputs">
-                    <input type="text" id="c-cedula" class="full-input" placeholder="Cédula">
-                    <input type="number" id="c-monto" class="full-input" placeholder="Monto Préstamo">
-                </div>
-                <div class="row-inputs">
-                    <input type="email" id="c-email" class="full-input" placeholder="Correo">
-                    <input type="text" id="c-dir" class="full-input" placeholder="Dirección">
-                </div>
-                <button class="btn-green-flat" onclick="guardarCliente()">Guardar Cliente</button>
+                <button class="btn-green-flat" onclick="guardarCliente()">Registrar Cliente</button>
             </div>
-            <div id="grid-clientes" style="display:flex; gap:20px; flex-wrap:wrap;"></div>
+            <div id="grid-clientes" style="display:flex; gap:15px; flex-wrap:wrap;"></div>
         </div>
 
         <div id="prestamos" class="view" style="display:none">
-            <h1>Préstamos Activos</h1>
+            <h2 style="font-weight:800;">Préstamos Activos</h2>
             <div id="grid-prestamos" style="display:flex; gap:20px; flex-wrap:wrap;"></div>
         </div>
 
         <div id="nuevo-pago" class="view" style="display:none">
-            <div class="form-section-white" style="max-width:800px; margin:0 auto;">
-                <h1 style="color:#cbd5e1;">Registrar Cobro</h1>
+            <div class="form-section-white">
+                <h2 style="margin-top:0">Registrar Cobro</h2>
                 <select id="select-pago" class="full-input" style="margin-bottom:15px" onchange="autoCalcularInteres()">
                     <option value="">Seleccionar Cliente...</option>
                 </select>
-                <input type="number" id="p-int" class="full-input" style="margin-bottom:15px" placeholder="Interés ($)">
-                <input type="number" id="p-cap" class="full-input" style="margin-bottom:15px" placeholder="Abono Capital ($)">
-                <button class="btn-green-flat" onclick="procesarPago()">Procesar y Generar Voucher</button>
+                <div class="row-inputs">
+                    <input type="number" id="p-int" class="full-input" placeholder="Interés ($)">
+                    <input type="number" id="p-cap" class="full-input" placeholder="Abono Capital ($)">
+                </div>
+                <button class="btn-green-flat" onclick="procesarPago()">Generar Recibo de Pago</button>
             </div>
         </div>
     </div>
@@ -119,62 +137,167 @@
 <div id="voucher-template">
     <div class="v-header">
         <h2 style="margin:0; color:#10b981">J&N SOLUCIONES</h2>
-        <p style="font-size:12px">Comprobante de Operación</p>
+        <p style="font-size:12px">Especialistas en Finanzas</p>
     </div>
     <div id="v-body"></div>
-    <div style="border-top:2px dashed #000; margin-top:15px; padding-top:10px; font-size:12px;">
+    <div style="border-top:2px dashed #000; margin-top:15px; padding-top:10px; font-size:11px; text-align:center;">
         <p id="v-fecha"></p>
-        <p>*** Gracias por su pago ***</p>
+        <p>CONSERVE ESTE RECIBO</p>
     </div>
 </div>
 
 <div id="modal-detalles" class="modal-full">
     <div class="modal-content">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h2 id="det-titulo" style="margin:0"></h2>
-            <button onclick="cerrarModal()" style="border:none; background:none; font-size:32px; cursor:pointer;">&times;</button>
+            <h3 id="det-titulo" style="margin:0"></h3>
+            <button onclick="cerrarModal()" style="border:none; background:none; font-size:28px;">&times;</button>
         </div>
-        <div id="det-resumen" style="margin-top:10px; color:#64748b;"></div>
-        <table style="width:100%; border-collapse: collapse; margin-top:20px;">
-            <tbody id="body-historial"></tbody>
-        </table>
+        <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
+        <div id="det-resumen"></div>
+        <div id="body-historial" style="margin-top:15px;"></div>
     </div>
 </div>
 
 <script>
-let bd = JSON.parse(localStorage.getItem('presta_v_final')) || { clientes: [], pagos: [] };
+let bd = JSON.parse(localStorage.getItem('jn_soluciones_v2')) || { clientes: [], pagos: [] };
 
 function guardarCliente() {
     const n = document.getElementById('c-nombre').value;
     const m = parseFloat(document.getElementById('c-monto').value);
-    if(!n || !m) return alert("Nombre y Monto requeridos");
-    bd.clientes.push({
-        id: Date.now(), nombre: n, tel: document.getElementById('c-tel').value,
-        cedula: document.getElementById('c-cedula').value, email: document.getElementById('c-email').value,
-        deuda: m, inicial: m, dir: document.getElementById('c-dir').value, fecha: new Date().toLocaleDateString('es-DO')
-    });
+    if(!n || !m) return alert("Completa Nombre y Monto");
+    
+    const nuevo = {
+        id: Date.now(), nombre: n, 
+        cedula: document.getElementById('c-cedula').value,
+        tel: document.getElementById('c-tel').value,
+        deuda: m, inicial: m, fecha: new Date().toLocaleDateString()
+    };
+    
+    bd.clientes.push(nuevo);
     actualizarTodo();
-    generarVoucher("NUEVO PRÉSTAMO", n, m, 0, m);
-    limpiarCampos();
+    generarVoucher("APERTURA DE CRÉDITO", n, m, 0, m);
+    limpiar();
 }
 
-function eliminarCliente(id) {
-    if(confirm("¿Eliminar este cliente y todo su historial?")) {
-        bd.clientes = bd.clientes.filter(x => x.id != id);
-        bd.pagos = bd.pagos.filter(p => p.clienteId != id);
-        actualizarTodo();
-    }
-}
-
-function aumentarCapital(id) {
+function procesarPago() {
+    const id = document.getElementById('select-pago').value;
+    const i = parseFloat(document.getElementById('p-int').value) || 0;
+    const a = parseFloat(document.getElementById('p-cap').value) || 0;
+    if(!id) return alert("Seleccione cliente");
+    
     const c = bd.clientes.find(x => x.id == id);
-    const monto = parseFloat(prompt("Monto adicional para reenganche de " + c.nombre + ":"));
+    c.deuda -= a;
+    
+    bd.pagos.push({ 
+        clienteId: c.id, 
+        nombre: c.nombre, 
+        fecha: new Date().toLocaleString(),
+        interes: i, abono: a, saldoQueda: c.deuda 
+    });
+    
+    actualizarTodo();
+    generarVoucher("RECIBO DE PAGO", c.nombre, a, i, c.deuda);
+    limpiar();
+}
+
+function reenganche(id) {
+    const c = bd.clientes.find(x => x.id == id);
+    const monto = parseFloat(prompt("¿Monto a sumar para el reenganche de " + c.nombre + "?"));
     if(monto > 0) {
         c.inicial += monto;
         c.deuda += monto;
         actualizarTodo();
         generarVoucher("REENGANCHE", c.nombre, monto, 0, c.deuda);
     }
+}
+
+function generarVoucher(tipo, cliente, monto, interes, saldo) {
+    const body = document.getElementById('v-body');
+    body.innerHTML = `
+        <h3 style="text-align:center; margin:10px 0">${tipo}</h3>
+        <div class="v-row"><span>CLIENTE:</span> <b>${cliente}</b></div>
+        <div class="v-row"><span>MONTO OPERACIÓN:</span> <b>$${monto.toLocaleString()}</b></div>
+        <div class="v-row"><span>INTERÉS PAGADO:</span> <b>$${interes.toLocaleString()}</b></div>
+        <div class="v-row" style="border-top:1px solid #eee; padding-top:10px; margin-top:10px">
+            <span>BALANCE PENDIENTE:</span> <b style="color:#ef4444; font-size:18px;">$${saldo.toLocaleString()}</b>
+        </div>
+    `;
+    document.getElementById('v-fecha').innerText = new Date().toLocaleString();
+    
+    setTimeout(() => {
+        html2canvas(document.querySelector("#voucher-template")).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `JN_${cliente}_${Date.now()}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    }, 500);
+}
+
+function eliminar(id) {
+    if(confirm("¿Eliminar cliente permanentemente?")) {
+        bd.clientes = bd.clientes.filter(x => x.id != id);
+        bd.pagos = bd.pagos.filter(p => p.clienteId != id);
+        actualizarTodo();
+    }
+}
+
+function actualizarTodo() {
+    localStorage.setItem('jn_soluciones_v2', JSON.stringify(bd));
+    
+    // Dash
+    document.getElementById('total-cartera').innerText = "$" + bd.clientes.reduce((s,c) => s+c.deuda, 0).toLocaleString();
+    document.getElementById('total-intereses').innerText = "$" + bd.pagos.reduce((s,p) => s+p.interes, 0).toLocaleString();
+
+    // Grid Clientes
+    document.getElementById('grid-clientes').innerHTML = bd.clientes.map(c => `
+        <div class="client-card-premium">
+            <span class="btn-delete" onclick="eliminar(${c.id})">🗑️</span>
+            <div class="client-header">
+                <div class="client-avatar">${c.nombre[0]}</div>
+                <div class="client-info"><h4>${c.nombre}</h4><span>ID: ${c.cedula || '---'}</span></div>
+            </div>
+            <div style="font-size:13px; color:#64748b;">📞 ${c.tel || 'S/N'}</div>
+        </div>
+    `).join('');
+
+    // Grid Préstamos
+    document.getElementById('grid-prestamos').innerHTML = bd.clientes.map(c => {
+        const porc = Math.min(100, (((c.inicial - c.deuda) / c.inicial) * 100)).toFixed(0);
+        return `
+        <div class="loan-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <b style="font-size:18px">${c.nombre}</b>
+                <span style="background:#dcfce7; color:#166534; padding:4px 10px; border-radius:20px; font-size:10px; font-weight:800;">ACTIVO</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top:20px; font-size:13px;">
+                <span style="color:#64748b">Inicial: <b>$${c.inicial.toLocaleString()}</b></span>
+                <span style="text-align:right; color:#10b981">Saldo: <b>$${c.deuda.toLocaleString()}</b></span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${porc}%"></div></div>
+            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:15px;">
+                <span>Progreso de pago</span><span>${porc}%</span>
+            </div>
+            <button class="btn-green-flat" style="padding:10px; font-size:13px; margin-bottom:8px;" onclick="verHistorial(${c.id})">👁️ Historial</button>
+            <button class="btn-green-flat" style="padding:10px; font-size:13px; background:#f1f5f9; color:#475569;" onclick="reenganche(${c.id})">➕ Reenganche</button>
+        </div>
+    `}).join('');
+
+    document.getElementById('select-pago').innerHTML = '<option value="">Seleccionar Cliente...</option>' + bd.clientes.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+}
+
+function verHistorial(id) {
+    const c = bd.clientes.find(x => x.id == id);
+    const pagos = bd.pagos.filter(p => p.clienteId == id);
+    document.getElementById('det-titulo').innerText = c.nombre;
+    document.getElementById('det-resumen').innerHTML = `<div style="background:#f8fafc; padding:15px; border-radius:12px; margin-bottom:15px;">Saldo Pendiente: <b style="color:#ef4444">$${c.deuda.toLocaleString()}</b></div>`;
+    document.getElementById('body-historial').innerHTML = pagos.length ? pagos.map(p => `
+        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #f1f5f9; font-size:14px;">
+            <span>${p.fecha.split(',')[0]}</span>
+            <span>Abono: <b>$${p.abono}</b></span>
+        </div>
+    `).join('') : '<p style="text-align:center; color:#94a3b8;">No hay pagos registrados</p>';
+    document.getElementById('modal-detalles').style.display = 'flex';
 }
 
 function autoCalcularInteres() {
@@ -185,86 +308,6 @@ function autoCalcularInteres() {
     }
 }
 
-function procesarPago() {
-    const id = document.getElementById('select-pago').value;
-    const i = parseFloat(document.getElementById('p-int').value) || 0;
-    const a = parseFloat(document.getElementById('p-cap').value) || 0;
-    if(!id) return alert("Seleccione un cliente");
-    const c = bd.clientes.find(x => x.id == id);
-    c.deuda -= a;
-    const ref = "REC-" + Math.random().toString(36).substr(2,5).toUpperCase();
-    bd.pagos.push({ clienteId: c.id, nombre: c.nombre, fecha: new Date().toLocaleDateString('es-DO'), ref: ref, interes: i, abono: a, total: i+a });
-    actualizarTodo();
-    generarVoucher("RECIBO DE PAGO", c.nombre, a, i, c.deuda);
-}
-
-function generarVoucher(tipo, cliente, monto, interes, saldo) {
-    const body = document.getElementById('v-body');
-    body.innerHTML = `
-        <h4 style="margin:10px 0">${tipo}</h4>
-        <div class="v-row"><span>Cliente:</span> <b>${cliente}</b></div>
-        <div class="v-row"><span>Monto:</span> <b>$${monto.toLocaleString()}</b></div>
-        <div class="v-row"><span>Interés:</span> <b>$${interes.toLocaleString()}</b></div>
-        <div class="v-row" style="border-top:1px solid #eee; padding-top:5px">
-            <span>SALDO RESTANTE:</span> <b style="color:#ef4444">$${saldo.toLocaleString()}</b>
-        </div>
-    `;
-    document.getElementById('v-fecha').innerText = new Date().toLocaleString();
-    
-    setTimeout(() => {
-        html2canvas(document.querySelector("#voucher-template")).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `Voucher_${cliente}_${Date.now()}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
-        });
-    }, 500);
-}
-
-function actualizarTodo() {
-    localStorage.setItem('presta_v_final', JSON.stringify(bd));
-    document.getElementById('total-cartera').innerText = "$" + bd.clientes.reduce((s,c) => s+c.deuda, 0).toLocaleString();
-    document.getElementById('total-intereses').innerText = "$" + bd.pagos.reduce((s,p) => s+p.interes, 0).toLocaleString();
-
-    document.getElementById('grid-clientes').innerHTML = bd.clientes.map(c => `
-        <div class="client-card-premium">
-            <div class="client-actions"><span class="btn-delete" onclick="eliminarCliente(${c.id})">🗑️</span></div>
-            <div class="client-header">
-                <div class="client-avatar">${c.nombre.charAt(0)}</div>
-                <div class="client-info"><h4>${c.nombre}</h4><span>ID: ${c.cedula || '---'}</span></div>
-            </div>
-            <div class="client-details"><div>📞 ${c.tel || '---'}</div><div>✉️ ${c.email || '---'}</div></div>
-            <button class="btn-view-loans" onclick="showPage('prestamos')">Ver Préstamos</button>
-        </div>`).join('');
-
-    document.getElementById('grid-prestamos').innerHTML = bd.clientes.map(c => {
-        const perc = (((c.inicial - c.deuda) / c.inicial) * 100).toFixed(0);
-        return `
-        <div class="loan-card">
-            <div style="display:flex; justify-content:space-between;"><b>${c.nombre}</b><span style="font-size:10px; background:#fef3c7; color:#92400e; padding:4px 10px; border-radius:20px; font-weight:bold;">ACTIVO</span></div>
-            <div style="display:flex; justify-content:space-between; margin-top:15px; font-size:12px; color:#64748b;">
-                <span>Original<br><b style="color:#1e293b">$${c.inicial.toLocaleString()}</b></span>
-                <span style="text-align:right">Saldo<br><b style="color:#10b981">$${c.deuda.toLocaleString()}</b></span>
-            </div>
-            <div class="progress-bar"><div class="progress-fill" style="width:${perc}%"></div></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><small>Progreso: ${perc}%</small></div>
-            <button class="btn-loan-action" style="background:#10b981; color:white; border:none;" onclick="verDetalles(${c.id})">👁️ Ver Historial</button>
-            <button class="btn-loan-action" style="background:#f8fafc; color:#475569;" onclick="aumentarCapital(${c.id})">➕ Reenganche</button>
-        </div>`;
-    }).join('');
-
-    document.getElementById('select-pago').innerHTML = '<option value="">Seleccionar Cliente...</option>' + bd.clientes.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
-}
-
-function verDetalles(id) {
-    const c = bd.clientes.find(x => x.id == id);
-    const pagos = bd.pagos.filter(p => p.clienteId == id);
-    document.getElementById('det-titulo').innerText = "Historial de " + c.nombre;
-    document.getElementById('det-resumen').innerHTML = `Saldo Actual: <b>$${c.deuda.toLocaleString()}</b>`;
-    document.getElementById('body-historial').innerHTML = pagos.map(p => `<tr><td style="padding:10px; border-bottom:1px solid #eee;">${p.fecha}</td><td style="padding:10px; border-bottom:1px solid #eee; text-align:right;"><b>$${p.total.toLocaleString()}</b></td></tr>`).join('') || '<tr><td>No hay pagos</td></tr>';
-    document.getElementById('modal-detalles').style.display = 'flex';
-}
-
 function showPage(id) {
     document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
     document.querySelectorAll('.presta-menu button').forEach(b => b.classList.remove('active'));
@@ -272,7 +315,7 @@ function showPage(id) {
     document.getElementById('btn-' + id).classList.add('active');
 }
 function cerrarModal() { document.getElementById('modal-detalles').style.display = 'none'; }
-function limpiarCampos() { document.querySelectorAll('.full-input').forEach(i => i.value = ""); }
+function limpiar() { document.querySelectorAll('.full-input').forEach(i => i.value = ""); }
 actualizarTodo();
 </script>
 </body>
