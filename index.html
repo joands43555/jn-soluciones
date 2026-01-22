@@ -5,49 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>J&N SOLUCIONES - CORPORATIVO 2026</title>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #002d5e; --accent: #00a8e8; --dark-bg: #0b0f19; --card-bg: #1a2233; --success: #10b981; }
+        :root { --primary: #002d5e; --accent: #00a8e8; --dark-bg: #0b0f19; --card-bg: #1a2233; --success: #10b981; --danger: #ef4444; }
         body { margin: 0; padding: 0; background: var(--dark-bg); font-family: 'Inter', sans-serif; color: white; overflow-x: hidden; }
-        
         .presta-app { display: flex; height: 100vh; width: 100vw; }
         .presta-menu { width: 260px; background: var(--card-bg); border-right: 1px solid #334155; padding: 25px; display: flex; flex-direction: column; }
         .presta-menu h2 { color: var(--accent); text-align: center; margin-bottom: 30px; font-weight: 800; }
         .presta-menu button { width: 100%; padding: 14px; margin-bottom: 8px; border: none; border-radius: 12px; cursor: pointer; text-align: left; background: transparent; font-weight: 600; color: #94a3b8; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
         .presta-menu button.active { background: var(--accent); color: #fff; }
         .presta-main { flex: 1; padding: 40px; overflow-y: auto; }
-
         @media (max-width: 768px) {
             .presta-app { flex-direction: column; }
             .presta-menu { width: 100%; height: 75px; position: fixed; bottom: 0; flex-direction: row; justify-content: space-around; padding: 10px 0; background: var(--card-bg); z-index: 1000; }
             .presta-menu h2 { display: none; }
             .presta-main { padding: 20px; padding-bottom: 100px; }
         }
-
         .form-section { background: var(--card-bg); padding: 25px; border-radius: 16px; border-top: 5px solid var(--accent); margin-bottom: 30px; }
         .full-input { width: 100%; padding: 12px; border: 1px solid #334155; border-radius: 8px; background: #0f172a; color: white; box-sizing: border-box; margin-bottom: 15px; }
         .btn-primary { width: 100%; padding: 15px; background: linear-gradient(45deg, var(--primary), var(--accent)); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-
-        .loan-card { background: #1e293b; border-radius: 12px; padding: 15px 25px; border-left: 4px solid var(--accent); margin-bottom: 12px; }
+        .loan-card { background: #1e293b; border-radius: 12px; padding: 15px 25px; border-left: 4px solid var(--accent); margin-bottom: 12px; position: relative; }
+        
+        /* BOTONES DE ACCIÓN SUPERIOR */
+        .btn-black-list { position: absolute; top: 10px; right: 40px; background: #450a0a; color: #f87171; border: 1px solid #991b1b; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; }
+        .btn-delete-x { position: absolute; top: 10px; right: 10px; background: #2d0a0a; color: #ef4444; border: 1px solid #ef4444; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: bold; }
+        
         .loan-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px; }
         .btn-act { background: #334155; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; }
-
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 2000; }
         .modal-content { background: var(--card-bg); padding: 30px; border-radius: 16px; width: 90%; max-width: 500px; }
 
-        #voucher-template { 
-            position: absolute; left: -9999px; width: 500px; 
-            background: #ffffff; padding: 40px; 
-            font-family: 'Courier Prime', monospace; color: #000;
-        }
-        .t-header { text-align: center; margin-bottom: 20px; }
-        .t-logo { width: 160px; margin-bottom: 10px; }
-        .t-biz-name { font-size: 26px; font-weight: 700; color: #002d5e; }
-        .t-divider { border-top: 2px dashed #000; margin: 15px 0; }
-        .t-title { font-size: 22px; font-weight: 700; text-align: center; text-transform: uppercase; margin: 20px 0; }
-        .t-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 18px; }
-        .t-total { font-size: 22px; font-weight: 700; border-top: 1px solid #000; padding-top: 10px; margin-top: 10px; }
-        .t-footer { text-align: center; margin-top: 30px; font-size: 14px; }
+        /* VOUCHER FORMATO MODERNO */
+        #voucher-container { position: absolute; left: -9999px; width: 600px; background: #f4f7fa; padding: 50px; }
+        .v-card { background: #ffffff; border-radius: 35px; padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); font-family: 'Inter', sans-serif; color: #1e293b; }
+        .v-header { text-align: center; border-bottom: 1px solid #edf2f7; padding-bottom: 25px; margin-bottom: 25px; }
+        .v-biz { color: #002d5e; font-size: 24px; font-weight: 800; }
+        .v-tag { display: inline-block; background: #002d5e; color: white; padding: 6px 20px; border-radius: 50px; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-top: 15px; }
+        .v-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed #e2e8f0; }
+        .v-label { color: #64748b; font-weight: 500; }
+        .v-value { font-weight: 700; color: #0f172a; }
+        .v-balance-row { display: flex; justify-content: space-between; align-items: center; margin-top: 25px; padding: 15px 0; }
+        .v-balance-val { font-size: 32px; font-weight: 800; color: #002d5e; }
+        .v-next-box { background: #f8fafc; border-radius: 20px; padding: 20px; margin-top: 25px; border: 1px solid #edf2f7; }
+        .v-success-msg { text-align: center; color: #10b981; margin-top: 30px; }
+        .v-footer { text-align: center; margin-top: 35px; color: #94a3b8; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -58,6 +59,7 @@
         <button onclick="showPage('dash')" id="btn-dash" class="active">🏠 Inicio</button>
         <button onclick="showPage('clientes-reg')" id="btn-clientes-reg">👤 Registro</button>
         <button onclick="showPage('prestamos')" id="btn-prestamos">📈 Clientes</button>
+        <button onclick="showPage('lista-negra')" id="btn-lista-negra" style="color:var(--danger)">🚫 Lista Negra</button>
         <button onclick="showPage('nuevo-pago')" id="btn-pago">💰 Cobros</button>
         <button onclick="showPage('config')" id="btn-config">⚙️ Backup</button>
     </div>
@@ -66,17 +68,18 @@
         <div id="dash" class="view">
             <h1>Resumen General</h1>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
-                <div class="form-section"><small>Capital en Calle</small><br><b id="total-cartera" style="color:#ef4444; font-size:24px;">$0</b></div>
-                <div class="form-section"><small>Interés Ganado</small><br><b id="total-intereses" style="color:var(--accent); font-size:24px;">$0</b></div>
+                <div class="form-section"><small>Capital en Calle</small><br><b id="total-cartera" style="color:var(--danger); font-size:24px;">$0</b></div>
+                <div class="form-section"><small>Interés Ganado</small><br><b id="total-intereses" style="color:var(--success); font-size:24px;">$0</b></div>
+            </div>
+            <div class="form-section" style="border-top: 5px solid var(--danger); margin-top:15px; background: #2d0a0a;">
+                <small>Pérdida en Lista Negra</small><br><b id="total-perdido" style="color:var(--danger); font-size:24px;">$0</b>
             </div>
         </div>
 
         <div id="clientes-reg" class="view" style="display:none">
             <div class="form-section">
                 <h3>Nuevo Préstamo</h3>
-                <select id="reg-cliente-existe" class="full-input" onchange="toggleNuevoCliente()">
-                    <option value="NUEVO">+ REGISTRAR NUEVO CLIENTE</option>
-                </select>
+                <select id="reg-cliente-existe" class="full-input" onchange="toggleNuevoCliente()"><option value="NUEVO">+ REGISTRAR NUEVO CLIENTE</option></select>
                 <div id="div-nuevo-cliente">
                     <input type="text" id="c-nombre" class="full-input" placeholder="Nombre completo">
                     <input type="text" id="c-cedula" class="full-input" placeholder="Cédula / ID">
@@ -88,10 +91,8 @@
             </div>
         </div>
 
-        <div id="prestamos" class="view" style="display:none">
-            <h2>Clientes Activos</h2>
-            <div id="grid-prestamos"></div>
-        </div>
+        <div id="prestamos" class="view" style="display:none"><h2>Clientes Activos</h2><div id="grid-prestamos"></div></div>
+        <div id="lista-negra" class="view" style="display:none"><h2 style="color:var(--danger)">🚫 Lista Negra</h2><div id="grid-blacklist"></div></div>
 
         <div id="nuevo-pago" class="view" style="display:none">
             <div class="form-section">
@@ -106,58 +107,37 @@
 
         <div id="config" class="view" style="display:none">
             <div class="form-section">
-                <button class="btn-primary" onclick="exportarDatos()" style="background:#3b82f6; margin-bottom:20px;">⬇️ Backup Manual</button>
-                <input type="file" id="importFile" class="full-input" accept=".json" onchange="importarDatos()">
+                <button class="btn-primary" onclick="exportarDatos(true)">⬇️ Descargar Backup Manual</button>
+                <input type="file" id="importFile" class="full-input" style="margin-top:20px;" onchange="importarDatos()">
             </div>
         </div>
     </div>
 </div>
 
 <div id="modal-historial" class="modal">
-    <div class="modal-content">
-        <h3 id="hist-nombre"></h3>
-        <div id="hist-lista" style="max-height:300px; overflow-y:auto; margin-bottom:20px; color: #fff;"></div>
-        <button class="btn-primary" onclick="cerrarModal()">CERRAR</button>
-    </div>
+    <div class="modal-content"><h3 id="hist-nombre"></h3><div id="hist-lista" style="max-height:300px; overflow-y:auto; margin-bottom:20px;"></div><button class="btn-primary" onclick="cerrarModal()">CERRAR</button></div>
 </div>
 
-<div id="voucher-template">
-    <div class="t-header">
-        <img src="https://i.ibb.co/3ykS6Qz/grok-image-6ac151ef-583b-477b-a898-77fb65924038-removebg-preview.png" class="t-logo">
-        <div class="t-biz-name">J&N SOLUCIONES</div>
-        <div>Especialistas en Finanzas</div>
-    </div>
-    <div class="t-divider"></div>
-    <div class="t-title" id="v-title">RECIBO</div>
-    <div class="t-divider"></div>
-    
-    <div class="t-row"><span>CÓDIGO:</span><span id="v-id-val"></span></div>
-    <div class="t-row"><span>CLIENTE:</span><span id="v-cli" style="font-weight: bold;"></span></div>
-    
-    <div id="v-row-monto" class="t-row"><span>ABONO CAPITAL:</span><span id="v-mon"></span></div>
-    <div id="v-row-interes" class="t-row"><span>INTERÉS (10%):</span><span id="v-in"></span></div>
-    
-    <div class="t-row t-total"><span>BALANCE PENDIENTE:</span><span id="v-sal" style="color: #d32f2f;"></span></div>
-    
-    <div id="v-next-section">
-        <div class="t-divider"></div>
-        <div class="t-row"><span>PRÓXIMO PAGO:</span><span id="v-next-date"></span></div>
-        <div class="t-row" style="color: #d32f2f;"><span>MONTO A PAGAR:</span><span id="v-next-amt"></span></div>
-    </div>
-    
-    <div id="v-saldado-msg" style="display:none; text-align:center; font-weight:700; font-size:22px; margin:20px 0; color:#10b981;">
-        ¡FELICIDADES!<br>PRÉSTAMO SALDADO
-    </div>
-    
-    <div class="t-divider"></div>
-    <div class="t-footer">
-        <div id="v-fecha-emision"></div>
-        <div style="margin-top:10px;">CONSERVE ESTE RECIBO</div>
+<div id="voucher-container">
+    <div class="v-card">
+        <div class="v-header"><div class="v-biz">J&N SOLUCIONES</div><div style="font-size:12px; color:#64748b;">Especialistas en Finanzas</div><div id="v-tag" class="v-tag">RECIBO</div></div>
+        <div class="v-body">
+            <div class="v-row"><span class="v-label">Cliente</span><span class="v-value" id="v-cli">---</span></div>
+            <div class="v-row"><span class="v-label" id="v-monto-label">Operación</span><span class="v-value" id="v-mon">$0</span></div>
+            <div class="v-row" id="v-row-int"><span class="v-label">Interés (10%)</span><span class="v-value" id="v-in">$0</span></div>
+            <div class="v-balance-row"><span style="font-weight:800; color:#64748b;">BALANCE ACTUAL:</span><span class="v-balance-val" id="v-sal">$0</span></div>
+            <div id="v-next-area" class="v-next-box">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span style="font-size:12px; color:#64748b;">PRÓXIMO COBRO:</span><span id="v-next-date" style="font-weight:700;">---</span></div>
+                <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:12px; color:#ef4444; font-weight:700;">MONTO A PAGAR (10%):</span><span id="v-next-amt" style="font-size:24px; color:#ef4444; font-weight:800;">$0</span></div>
+            </div>
+            <div id="v-success-area" class="v-success-msg" style="display:none;"><h2>¡FELICIDADES!</h2><div style="font-weight:700; font-size:18px;">PRÉSTAMO SALDADO</div></div>
+        </div>
+        <div class="v-footer"><div id="v-emision">---</div><div style="margin-top:10px; font-weight:700; color:#002d5e;">¡Gracias por su confianza!</div></div>
     </div>
 </div>
 
 <script>
-let bd = JSON.parse(localStorage.getItem('jn_v2026_final')) || { contactos: [], prestamos: [], pagos: [] };
+let bd = JSON.parse(localStorage.getItem('jn_v2026_final')) || { contactos: [], prestamos: [], pagos: [], blacklist: [] };
 
 function toggleNuevoCliente() { document.getElementById('div-nuevo-cliente').style.display = (document.getElementById('reg-cliente-existe').value === "NUEVO") ? "block" : "none"; }
 
@@ -165,114 +145,95 @@ function guardarPrestamo() {
     const m = parseFloat(document.getElementById('c-monto').value);
     const d = document.getElementById('c-next-date').value;
     const sel = document.getElementById('reg-cliente-existe').value;
+    if(!m || !d) return alert("Faltan datos");
     let cl;
     if(sel === "NUEVO") {
-        const n = document.getElementById('c-nombre').value.toUpperCase();
-        const ced = document.getElementById('c-cedula').value;
-        const tel = document.getElementById('c-telefono').value;
-        if(!n || !m || !d) return alert("Faltan datos");
-        cl = { id: Date.now(), nombre: n, cedula: ced, telefono: tel };
+        cl = { id: Date.now(), nombre: document.getElementById('c-nombre').value.toUpperCase(), cedula: document.getElementById('c-cedula').value, telefono: document.getElementById('c-telefono').value };
         bd.contactos.push(cl);
     } else { cl = bd.contactos.find(x => x.id == sel); }
-    bd.prestamos.push({ id: Date.now(), clienteId: cl.id, nombre: cl.nombre, cedula: cl.cedula, deuda: m, proximoPago: d });
-    finalizar("APERTURA DE CRÉDITO", cl.nombre, m, 0, m, d);
+    bd.prestamos.push({ id: Date.now(), clienteId: cl.id, nombre: cl.nombre, deuda: m, proximoPago: d });
+    generarVoucher("APERTURA DE CRÉDITO", cl.nombre, m, 0, m, d);
+    finalizar();
 }
 
 function procesarPago() {
     const pId = document.getElementById('select-pago').value;
+    if(!pId) return alert("Selecciona un cliente");
     const i = parseFloat(document.getElementById('p-int').value) || 0;
     const a = parseFloat(document.getElementById('p-cap').value) || 0;
     const nF = document.getElementById('p-next-date').value;
     const p = bd.prestamos.find(x => x.id == pId);
     p.deuda -= a;
-    const pagoId = Date.now();
-    bd.pagos.push({ id: pagoId, prestamoId: p.id, fecha: new Date().toLocaleString(), interes: i, abono: a, saldo: p.deuda });
-    finalizar(p.deuda <= 0 ? "LIQUIDACIÓN" : "RECIBO DE PAGO", p.nombre, a, i, p.deuda, nF);
+    bd.pagos.push({ id: Date.now(), prestamoId: p.id, fecha: new Date().toLocaleString(), interes: i, abono: a, saldo: p.deuda });
+    const t = p.deuda <= 0 ? "LIQUIDACIÓN" : "RECIBO DE PAGO";
+    generarVoucher(t, p.nombre, a, i, p.deuda, nF);
     if(p.deuda <= 0) bd.prestamos = bd.prestamos.filter(x => x.id != pId);
     else p.proximoPago = nF;
-}
-
-function finalizar(tipo, cliente, monto, interes, saldo, fecha) {
-    actualizarTodo();
-    generarVoucher(tipo, cliente, monto, interes, saldo, fecha);
-    setTimeout(() => exportarDatos(true), 2000);
-    limpiar();
+    finalizar();
 }
 
 function generarVoucher(tipo, cliente, monto, interes, saldo, fecha) {
-    const codigoHex = Math.random().toString(16).substr(2, 6).toUpperCase();
-    document.getElementById('v-id-val').innerText = "#" + codigoHex;
-    document.getElementById('v-title').innerText = tipo;
+    document.getElementById('v-tag').innerText = tipo;
     document.getElementById('v-cli').innerText = cliente;
-    
-    const rowMonto = document.getElementById('v-row-monto');
-    const rowInteres = document.getElementById('v-row-interes');
+    document.getElementById('v-mon').innerText = "$" + monto.toLocaleString();
+    document.getElementById('v-in').innerText = "$" + interes.toLocaleString();
+    document.getElementById('v-sal').innerText = "$" + (saldo < 0 ? 0 : saldo).toLocaleString();
+    document.getElementById('v-emision').innerText = new Date().toLocaleString();
+    document.getElementById('v-monto-label').innerText = tipo.includes("APERTURA") || tipo.includes("AUMENTO") ? "Capital Entregado" : "Abono Capital";
+    document.getElementById('v-row-int').style.display = tipo.includes("APERTURA") ? "none" : "flex";
 
-    if (tipo === "APERTURA DE CRÉDITO" || tipo === "AUMENTO DE CAPITAL") {
-        const etiqueta = (tipo === "APERTURA DE CRÉDITO") ? "CAPITAL ENTREGADO:" : "CAPITAL ADICIONAL:";
-        rowMonto.innerHTML = `<span>${etiqueta}</span><span id="v-mon">$${monto.toLocaleString()}</span>`;
-        rowInteres.style.display = "none";
-    } else {
-        rowMonto.innerHTML = `<span>ABONO CAPITAL:</span><span id="v-mon">$${monto.toLocaleString()}</span>`;
-        rowInteres.style.display = "flex";
-        document.getElementById('v-in').innerText = "$" + (interes || 0).toLocaleString();
-    }
-
-    document.getElementById('v-sal').innerText = "$" + saldo.toLocaleString();
-    document.getElementById('v-fecha-emision').innerText = new Date().toLocaleString();
-    
     if(saldo <= 0) {
-        document.getElementById('v-next-section').style.display = "none";
-        document.getElementById('v-saldado-msg').style.display = "block";
+        document.getElementById('v-next-area').style.display = "none";
+        document.getElementById('v-success-area').style.display = "block";
     } else {
-        document.getElementById('v-next-section').style.display = "block";
-        document.getElementById('v-saldado-msg').style.display = "none";
+        document.getElementById('v-next-area').style.display = "block";
+        document.getElementById('v-success-area').style.display = "none";
         document.getElementById('v-next-date').innerText = fecha;
         document.getElementById('v-next-amt').innerText = "$" + Math.round(saldo * 0.1).toLocaleString();
     }
-    
+
     setTimeout(() => {
-        html2canvas(document.querySelector("#voucher-template"), { scale: 2, useCORS: true }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `RECIBO_${cliente}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
+        html2canvas(document.querySelector("#voucher-container"), { scale: 2 }).then(canvas => {
+            const link = document.createElement('a'); link.download = `VOUCHER_${cliente}.png`;
+            link.href = canvas.toDataURL(); link.click();
         });
-    }, 800);
+    }, 1000);
+}
+
+function finalizar() { 
+    actualizarTodo(); 
+    limpiar();
+    setTimeout(() => exportarDatos(), 2500); 
+}
+
+function eliminarPrestamo(id) {
+    if(confirm("¿Estás seguro de eliminar este cliente permanentemente? Esta acción no se puede deshacer.")) {
+        bd.prestamos = bd.prestamos.filter(x => x.id != id);
+        finalizar();
+    }
 }
 
 function actualizarTodo() {
     localStorage.setItem('jn_v2026_final', JSON.stringify(bd));
     document.getElementById('total-cartera').innerText = "$" + bd.prestamos.reduce((s,p) => s+p.deuda, 0).toLocaleString();
     document.getElementById('total-intereses').innerText = "$" + bd.pagos.reduce((s,p) => s+p.interes, 0).toLocaleString();
-    document.getElementById('reg-cliente-existe').innerHTML = '<option value="NUEVO">+ REGISTRAR NUEVO CLIENTE</option>' + bd.contactos.map(c => `<option value="${c.id}">${c.nombre} (${c.cedula})</option>`).join('');
-    document.getElementById('select-pago').innerHTML = '<option value="">Seleccionar cliente...</option>' + bd.prestamos.map(p => `<option value="${p.id}">${p.nombre} ($${p.deuda})</option>`).join('');
-    document.getElementById('grid-prestamos').innerHTML = bd.prestamos.map(p => `
-        <div class="loan-card">
-            <b>${p.nombre}</b><br><small>Tel: ${bd.contactos.find(cx=>cx.id==p.clienteId)?.telefono || '---'}</small>
-            <p>Saldo: <span style="color:#ef4444;">$${p.deuda.toLocaleString()}</span></p>
-            <div class="loan-actions">
-                <button class="btn-act" onclick="verHistorial(${p.id})">📜 Historial</button>
-                <button class="btn-act" onclick="reenganche(${p.id})">+ Capital</button>
-                <button class="btn-act" style="background:var(--accent)" onclick="showPage('nuevo-pago')">💰 Cobrar</button>
-            </div>
-        </div>`).join('');
+    document.getElementById('total-perdido').innerText = "$" + (bd.blacklist ? bd.blacklist.reduce((s,p) => s+p.deuda, 0) : 0).toLocaleString();
+    document.getElementById('reg-cliente-existe').innerHTML = '<option value="NUEVO">+ REGISTRAR NUEVO CLIENTE</option>' + bd.contactos.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+    document.getElementById('select-pago').innerHTML = '<option value="">Seleccionar...</option>' + bd.prestamos.map(p => `<option value="${p.id}">${p.nombre} ($${p.deuda})</option>`).join('');
+    document.getElementById('grid-prestamos').innerHTML = bd.prestamos.map(p => `<div class="loan-card"><button class="btn-black-list" onclick="moverAListaNegra(${p.id})">BLOQUEAR</button><button class="btn-delete-x" onclick="eliminarPrestamo(${p.id})">X</button><b>${p.nombre}</b><p>Saldo: $${p.deuda.toLocaleString()}</p><div class="loan-actions"><button class="btn-act" onclick="verHistorial(${p.id})">📜 Hist</button><button class="btn-act" onclick="reenganche(${p.id})">+ Cap</button><button class="btn-act" style="background:var(--accent)" onclick="showPage('nuevo-pago')">💰 Pago</button></div></div>`).join('');
+    document.getElementById('grid-blacklist').innerHTML = (bd.blacklist || []).map(p => `<div class="loan-card" style="border-left-color:var(--danger)"><b>${p.nombre}</b><p>Deuda: $${p.deuda.toLocaleString()}</p><button class="btn-act" onclick="sacarDeListaNegra(${p.id})">✅ Restaurar</button></div>`).join('');
 }
 
-function verHistorial(id) {
-    const p = bd.prestamos.find(x => x.id == id) || bd.contactos.find(x => x.id == id);
-    const h = bd.pagos.filter(x => x.prestamoId == id);
-    document.getElementById('hist-nombre').innerText = "Historial: " + p.nombre;
-    document.getElementById('hist-lista').innerHTML = h.map(x => `<div style="padding:10px; border-bottom:1px solid #334155;">${x.fecha}<br>Abono: $${x.abono} | Int: $${x.interes} | Saldo: $${x.saldo}</div>`).join('') || "Sin movimientos";
-    document.getElementById('modal-historial').style.display='flex';
-}
+function moverAListaNegra(id) { if(confirm("¿Bloquear cliente?")){ const idx = bd.prestamos.findIndex(x => x.id == id); const p = bd.prestamos.splice(idx, 1)[0]; if(!bd.blacklist) bd.blacklist = []; bd.blacklist.push(p); actualizarTodo(); } }
+function sacarDeListaNegra(id) { const idx = bd.blacklist.findIndex(x => x.id == id); const p = bd.blacklist.splice(idx, 1)[0]; bd.prestamos.push(p); actualizarTodo(); }
+function verHistorial(id) { const p = bd.prestamos.find(x => x.id == id) || bd.contactos.find(x => x.id == id); const h = bd.pagos.filter(x => x.prestamoId == id); document.getElementById('hist-nombre').innerText = p.nombre; document.getElementById('hist-lista').innerHTML = h.map(x => `<div style="padding:10px; border-bottom:1px solid #334155;">${x.fecha}<br>Abono: $${x.abono} | Int: $${x.interes}</div>`).join('') || "Sin pagos"; document.getElementById('modal-historial').style.display='flex'; }
 function cerrarModal() { document.getElementById('modal-historial').style.display='none'; }
-function reenganche(id) { const p = bd.prestamos.find(x => x.id == id); const ex = parseFloat(prompt("Monto a sumar:")); if(!ex) return; const nf = prompt("Fecha Cobro:", p.proximoPago); p.deuda += ex; p.proximoPago = nf; finalizar("AUMENTO DE CAPITAL", p.nombre, ex, 0, p.deuda, nf); }
-function exportarDatos(isAuto = false) { const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bd)); const a = document.createElement('a'); a.href = dataStr; a.download = `BACKUP_JN.json`; a.click(); }
-function importarDatos() { const file = document.getElementById('importFile').files[0]; const reader = new FileReader(); reader.onload = (e) => { bd = JSON.parse(e.target.result); actualizarTodo(); alert("Datos restaurados"); }; reader.readAsText(file); }
+function reenganche(id) { const p = bd.prestamos.find(x => x.id == id); const ex = parseFloat(prompt("Monto extra:")); if(ex) { p.deuda += ex; generarVoucher("AUMENTO DE CAPITAL", p.nombre, ex, 0, p.deuda, p.proximoPago); finalizar(); } }
+function exportarDatos(manual = false) { const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bd)); const a = document.createElement('a'); a.href = dataStr; a.download = manual ? `BACKUP_JN_MANUAL.json` : `AUTO_BACKUP_JN.json`; a.click(); }
+function importarDatos() { const reader = new FileReader(); reader.onload = (e) => { bd = JSON.parse(e.target.result); actualizarTodo(); alert("OK"); }; reader.readAsText(document.getElementById('importFile').files[0]); }
 function showPage(id) { document.querySelectorAll('.view').forEach(v => v.style.display = 'none'); document.querySelectorAll('.presta-menu button').forEach(b => b.classList.remove('active')); document.getElementById(id).style.display = 'block'; document.getElementById('btn-' + id).classList.add('active'); }
 function autoCalcularInteres() { const id = document.getElementById('select-pago').value; if(id) { const p = bd.prestamos.find(x => x.id == id); document.getElementById('p-int').value = Math.round(p.deuda * 0.1); document.getElementById('p-cap').value = 0; document.getElementById('p-next-date').value = p.proximoPago; } }
-function limpiar() { document.querySelectorAll('.full-input').forEach(i => i.value = ""); toggleNuevoCliente(); }
+function limpiar() { document.querySelectorAll('.full-input').forEach(i => i.value = ""); }
 actualizarTodo();
 </script>
 </body>
