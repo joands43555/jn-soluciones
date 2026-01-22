@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>J&N SOLUCIONES - CORPORATIVO</title>
+    <title>J&N SOLUCIONES - CORPORATIVO 2026</title>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #002d5e; --accent: #00a8e8; --dark-bg: #0b0f19; --card-bg: #1a2233; }
+        :root { --primary: #002d5e; --accent: #00a8e8; --dark-bg: #0b0f19; --card-bg: #1a2233; --success: #10b981; }
         body { margin: 0; padding: 0; background: var(--dark-bg); font-family: 'Inter', sans-serif; color: white; overflow-x: hidden; }
-        .presta-app { display: flex; flex-direction: row; height: 100vh; width: 100vw; }
+        
+        .presta-app { display: flex; height: 100vh; width: 100vw; }
         .presta-menu { width: 260px; background: var(--card-bg); border-right: 1px solid #334155; padding: 25px; display: flex; flex-direction: column; }
         .presta-menu h2 { color: var(--accent); text-align: center; margin-bottom: 30px; font-weight: 800; }
         .presta-menu button { width: 100%; padding: 14px; margin-bottom: 8px; border: none; border-radius: 12px; cursor: pointer; text-align: left; background: transparent; font-weight: 600; color: #94a3b8; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
@@ -18,37 +19,36 @@
 
         @media (max-width: 768px) {
             .presta-app { flex-direction: column; }
-            .presta-menu { width: 100%; height: 75px; position: fixed; bottom: 0; flex-direction: row; justify-content: space-around; padding: 10px 0; z-index: 100; }
+            .presta-menu { width: 100%; height: 75px; position: fixed; bottom: 0; flex-direction: row; justify-content: space-around; padding: 10px 0; background: var(--card-bg); z-index: 1000; }
             .presta-menu h2 { display: none; }
             .presta-main { padding: 20px; padding-bottom: 100px; }
         }
 
         .form-section { background: var(--card-bg); padding: 25px; border-radius: 16px; border-top: 5px solid var(--accent); margin-bottom: 30px; }
-        .full-input { width: 100%; padding: 12px; border: 1px solid #334155; border-radius: 8px; background: #0f172a; color: white; margin-bottom: 15px; box-sizing: border-box; }
+        .full-input { width: 100%; padding: 12px; border: 1px solid #334155; border-radius: 8px; background: #0f172a; color: white; box-sizing: border-box; margin-bottom: 15px; }
         .btn-primary { width: 100%; padding: 15px; background: linear-gradient(45deg, var(--primary), var(--accent)); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        
-        .loan-card { background: var(--card-bg); border-radius: 15px; padding: 20px; border-left: 5px solid var(--accent); margin-bottom: 15px; position: relative; }
 
-        /* --- VOUCHER CON LOGO DE FONDO --- */
-        #voucher-template { 
-            position: absolute; left: -9999px; 
-            width: 550px; background: white; color: #333; padding: 40px; 
-            border-radius: 5px; border: 1px solid #ddd; font-family: 'Segoe UI', sans-serif;
-            overflow: hidden;
-        }
-        .v-watermark {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%; opacity: 0.12; z-index: 0;
-        }
-        .v-content { position: relative; z-index: 1; }
-        .v-title { color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 26px; font-weight: 900; text-align: center; margin-top: 0; }
-        .v-detail { display: flex; justify-content: space-between; margin: 15px 0; border-bottom: 1px dashed #ccc; padding-bottom: 5px; font-size: 19px; }
-        .v-total { display: flex; justify-content: space-between; margin-top: 25px; font-size: 24px; font-weight: bold; color: var(--primary); }
-        .v-footer-msg { text-align: center; font-weight: 900; font-size: 28px; margin-top: 25px; color: #10b981; }
+        .loan-card { background: #1e293b; border-radius: 12px; padding: 15px 25px; border-left: 4px solid var(--accent); margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+        .loan-info b { color: var(--accent); font-size: 18px; text-transform: uppercase; }
+        .loan-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; width: 100%; }
+        .btn-act { background: #334155; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
+        .btn-green { background: var(--success); }
 
-        .modal { display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center; }
-        .modal-content { background: var(--card-bg); padding:25px; border-radius:20px; width:90%; max-width:400px; }
+        /* --- MODAL --- */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .modal-content { background: var(--card-bg); padding: 30px; border-radius: 16px; width: 90%; max-width: 500px; }
+
+        /* --- VOUCHER --- */
+        #voucher-template { position: absolute; left: -9999px; width: 600px; background: #ffffff; padding: 30px; font-family: 'Inter', sans-serif; color: #333; }
+        .v-header { text-align: center; border-bottom: 2px solid #f1f5f9; margin-bottom: 20px; padding-bottom: 10px; }
+        .v-logo { width: 180px; margin-bottom: 10px; }
+        .v-header h1 { color: var(--primary); font-size: 28px; font-weight: 900; margin: 0; text-transform: uppercase; }
+        .v-body { margin-bottom: 25px; }
+        .v-line { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed #e2e8f0; font-size: 18px; }
+        .v-line b { font-weight: 800; color: #1e293b; }
+        .v-saldo-row { display: flex; justify-content: space-between; padding: 20px 0; font-size: 24px; font-weight: 900; color: var(--primary); }
+        .v-saldado-msg { text-align: center; color: var(--success); font-size: 36px; font-weight: 900; margin-top: 20px; line-height: 1.2; text-transform: uppercase; }
+        .v-next-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -57,8 +57,7 @@
     <div class="presta-menu">
         <h2>J&N</h2>
         <button onclick="showPage('dash')" id="btn-dash" class="active">🏠 Inicio</button>
-        <button onclick="showPage('clientes')" id="btn-clientes">👥 Registro</button>
-        <button onclick="showPage('lista-contactos')" id="btn-contactos">📋 Clientes</button>
+        <button onclick="showPage('clientes')" id="btn-clientes">👤 Registro</button>
         <button onclick="showPage('prestamos')" id="btn-prestamos">📈 Cartera</button>
         <button onclick="showPage('nuevo-pago')" id="btn-pago">💰 Cobros</button>
         <button onclick="showPage('config')" id="btn-config">⚙️ Backup</button>
@@ -67,9 +66,9 @@
     <div class="presta-main">
         <div id="dash" class="view">
             <h1>Panel de Control</h1>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <div class="form-section"><small>Capital en Calle</small><br><b id="total-cartera" style="color:#ef4444; font-size:22px;">$0</b></div>
-                <div class="form-section"><small>Interés Cobrado</small><br><b id="total-intereses" style="color:var(--accent); font-size:22px;">$0</b></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                <div class="form-section"><small>Capital en Calle</small><br><b id="total-cartera" style="color:#ef4444; font-size:24px;">$0</b></div>
+                <div class="form-section"><small>Interés Cobrado</small><br><b id="total-intereses" style="color:var(--accent); font-size:24px;">$0</b></div>
             </div>
         </div>
 
@@ -81,16 +80,13 @@
                 </select>
                 <div id="div-nuevo-cliente">
                     <input type="text" id="c-nombre" class="full-input" placeholder="Nombre completo">
+                    <input type="text" id="c-cedula" class="full-input" placeholder="ID / Cédula">
+                    <input type="text" id="c-telefono" class="full-input" placeholder="Teléfono">
                 </div>
                 <input type="number" id="c-monto" class="full-input" placeholder="Monto ($)">
                 <input type="date" id="c-next-date" class="full-input">
-                <button class="btn-primary" onclick="guardarPrestamo()">GENERAR VOUCHER</button>
+                <button class="btn-primary" onclick="guardarPrestamo()">CREAR PRÉSTAMO</button>
             </div>
-        </div>
-
-        <div id="lista-contactos" class="view" style="display:none">
-            <h2>Agenda de Clientes</h2>
-            <div id="grid-contactos"></div>
         </div>
 
         <div id="prestamos" class="view" style="display:none">
@@ -102,8 +98,8 @@
             <div class="form-section">
                 <h3>Registrar Pago</h3>
                 <select id="select-pago" class="full-input" onchange="autoCalcularInteres()"></select>
-                <input type="number" id="p-int" class="full-input" placeholder="Interés ($)">
-                <input type="number" id="p-cap" class="full-input" placeholder="Abono Capital ($)">
+                <input type="number" id="p-int" class="full-input" placeholder="Interés">
+                <input type="number" id="p-cap" class="full-input" placeholder="Abono Capital">
                 <input type="date" id="p-next-date" class="full-input">
                 <button class="btn-primary" onclick="procesarPago()">PROCESAR COBRO</button>
             </div>
@@ -111,33 +107,40 @@
 
         <div id="config" class="view" style="display:none">
             <div class="form-section">
-                <button class="btn-primary" onclick="exportarDatos()" style="background:#3b82f6; margin-bottom:20px;">⬇️ Backup</button>
+                <button class="btn-primary" onclick="exportarDatos()" style="background:#3b82f6; margin-bottom:20px;">⬇️ Backup Manual</button>
                 <input type="file" id="importFile" class="full-input" accept=".json" onchange="importarDatos()">
             </div>
         </div>
     </div>
 </div>
 
-<div id="voucher-template">
-    <img src="https://i.ibb.co/VpByWvG/JN-LOGO.png" class="v-watermark">
-    <div class="v-content">
-        <h3 id="v-title" class="v-title">RECIBO DE PAGO</h3>
-        <p style="text-align:center; font-size:14px; color:#666;" id="v-fecha-emision"></p>
-        <div class="v-detail"><span>Cliente:</span><b id="v-cli"></b></div>
-        <div class="v-detail"><span>Operación:</span><b id="v-mon"></b></div>
-        <div class="v-detail"><span>Interés (10%):</span><b id="v-in"></b></div>
-        <div class="v-total"><span>SALDO ACTUAL:</span><b id="v-sal"></b></div>
-        <div id="v-next-box" style="margin-top:20px; padding:15px; background:#f8fafc; border:1px solid #eee; border-radius:8px;">
-            <div class="v-detail" style="border:none; margin:0;"><span style="font-size:15px;">PRÓXIMO COBRO:</span><b id="v-next-date"></b></div>
-            <div class="v-detail" style="border:none; margin:0;"><span style="font-size:15px; color:red;">MONTO SUGERIDO:</span><b id="v-next-amt" style="color:red;"></b></div>
-        </div>
-        <div id="v-msg-saldado" class="v-footer-msg" style="display:none;">¡FELICIDADES!<br>PRÉSTAMO SALDADO</div>
-        <p style="text-align:center; font-size:12px; color:#aaa; margin-top:30px;">J&N SOLUCIONES - 2026</p>
+<div id="modal-historial" class="modal">
+    <div class="modal-content">
+        <h3 id="hist-nombre"></h3>
+        <div id="hist-lista" style="max-height:300px; overflow-y:auto; margin-bottom:20px;"></div>
+        <button class="btn-primary" onclick="cerrarModal()">CERRAR</button>
     </div>
 </div>
 
-<div id="modal-historial" class="modal">
-    <div class="modal-content"><h3 id="hist-nombre"></h3><div id="hist-lista"></div><button class="btn-primary" onclick="cerrarModal()">Cerrar</button></div>
+<div id="voucher-template">
+    <div class="v-header">
+        <img src="https://i.ibb.co/3ykS6Qz/grok-image-6ac151ef-583b-477b-a898-77fb65924038-removebg-preview.png" class="v-logo">
+        <h1 id="v-title">VOUCHER</h1>
+        <div style="font-size:12px; color:#64748b" id="v-fecha-emision"></div>
+    </div>
+    <div class="v-body">
+        <div class="v-line"><span>Cliente:</span><b id="v-cli"></b></div>
+        <div class="v-line"><span>ID / Cédula:</span><b id="v-id-val"></b></div>
+        <div class="v-line"><span>Operación:</span><b id="v-mon"></b></div>
+        <div class="v-line"><span>Interés (10%):</span><b id="v-in"></b></div>
+        <div class="v-saldo-row"><span>SALDO ACTUAL:</span><b id="v-sal"></b></div>
+        <div id="v-next-box" class="v-next-box">
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>PRÓXIMO COBRO:</span><b id="v-next-date"></b></div>
+            <div style="display:flex; justify-content:space-between; color:red;"><span>MONTO A PAGAR:</span><b id="v-next-amt"></b></div>
+        </div>
+        <div id="v-msg-saldado" class="v-saldado-msg" style="display:none;">¡FELICIDADES!<br>PRÉSTAMO SALDADO</div>
+    </div>
+    <div style="text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #f1f5f9; padding-top: 10px;">J&N SOLUCIONES - CORPORATIVO 2026</div>
 </div>
 
 <script>
@@ -152,131 +155,94 @@ function guardarPrestamo() {
     const d = document.getElementById('c-next-date').value;
     const sel = document.getElementById('reg-cliente-existe').value;
     let cl;
-
     if(sel === "NUEVO") {
         const n = document.getElementById('c-nombre').value.toUpperCase();
+        const ced = document.getElementById('c-cedula').value;
+        const tel = document.getElementById('c-telefono').value;
         if(!n || !m || !d) return alert("Faltan datos");
-        cl = { id: Date.now(), nombre: n };
+        cl = { id: Date.now(), nombre: n, cedula: ced, telefono: tel };
         bd.contactos.push(cl);
-    } else {
-        cl = bd.contactos.find(x => x.id == sel);
-        if(!m || !d) return alert("Faltan datos");
-    }
-
-    bd.prestamos.push({ id: Date.now(), clienteId: cl.id, nombre: cl.nombre, deuda: m, inicial: m, proximoPago: d });
-    actualizarTodo();
-    generarVoucher("APERTURA DE CRÉDITO", cl.nombre, m, m*0.1, m, d);
-    limpiar();
-}
-
-// --- FUNCIÓN PARA AUMENTAR CAPITAL (REENGANCHE) ---
-function reenganche(id) {
-    const p = bd.prestamos.find(x => x.id == id);
-    const montoExtra = parseFloat(prompt("¿Cuánto capital desea SUMAR al saldo actual?", "0"));
-    
-    if(!montoExtra || montoExtra <= 0) return;
-    
-    const nuevaFecha = prompt("Nueva fecha de pago (AAAA-MM-DD):", p.proximoPago);
-    if(!nuevaFecha) return;
-
-    p.deuda += montoExtra;
-    p.proximoPago = nuevaFecha;
-
-    actualizarTodo();
-    generarVoucher("AUMENTO DE CAPITAL", p.nombre, montoExtra, 0, p.deuda, nuevaFecha);
+    } else { cl = bd.contactos.find(x => x.id == sel); }
+    bd.prestamos.push({ id: Date.now(), clienteId: cl.id, nombre: cl.nombre, cedula: cl.cedula, deuda: m, proximoPago: d });
+    finalizar("APERTURA DE CRÉDITO", cl.nombre, cl.cedula, m, m*0.1, m, d);
 }
 
 function procesarPago() {
     const pId = document.getElementById('select-pago').value;
     const i = parseFloat(document.getElementById('p-int').value) || 0;
     const a = parseFloat(document.getElementById('p-cap').value) || 0;
-    let nextDate = document.getElementById('p-next-date').value;
-
-    if(!pId) return alert("Seleccione préstamo");
+    const nF = document.getElementById('p-next-date').value;
     const p = bd.prestamos.find(x => x.id == pId);
     p.deuda -= a;
-    let tipo = (p.deuda <= 0) ? "LIQUIDACIÓN" : "RECIBO DE PAGO";
-    
     bd.pagos.push({ prestamoId: p.id, fecha: new Date().toLocaleString(), interes: i, abono: a, saldo: p.deuda });
-    generarVoucher(tipo, p.nombre, a, i, p.deuda, (p.deuda <= 0 ? "PAGADO" : nextDate));
-
+    let t = p.deuda <= 0 ? "LIQUIDACIÓN" : "RECIBO DE PAGO";
+    finalizar(t, p.nombre, p.cedula, a, i, p.deuda, nF);
     if(p.deuda <= 0) bd.prestamos = bd.prestamos.filter(x => x.id != pId);
-    else p.proximoPago = nextDate;
-
-    actualizarTodo(); limpiar();
+    else p.proximoPago = nF;
 }
 
-function generarVoucher(tipo, cliente, monto, interes, saldo, fecha) {
+function finalizar(tipo, cliente, cedula, monto, interes, saldo, fecha) {
+    actualizarTodo();
+    generarVoucher(tipo, cliente, cedula, monto, interes, saldo, fecha);
+    setTimeout(() => exportarDatos(true), 2000);
+    limpiar();
+}
+
+function generarVoucher(tipo, cliente, cedula, monto, interes, saldo, fecha) {
     document.getElementById('v-title').innerText = tipo;
     document.getElementById('v-cli').innerText = cliente;
+    document.getElementById('v-id-val').innerText = cedula || "---";
     document.getElementById('v-mon').innerText = "$" + monto.toLocaleString();
     document.getElementById('v-in').innerText = "$" + interes.toLocaleString();
     document.getElementById('v-sal').innerText = "$" + saldo.toLocaleString();
-    document.getElementById('v-fecha-emision').innerText = "Emitido: " + new Date().toLocaleString();
-
-    if(saldo <= 0) {
-        document.getElementById('v-next-box').style.display = "none";
-        document.getElementById('v-msg-saldado').style.display = "block";
-    } else {
-        document.getElementById('v-next-box').style.display = "block";
-        document.getElementById('v-msg-saldado').style.display = "none";
-        document.getElementById('v-next-date').innerText = fecha.split('-').reverse().join('/');
-        document.getElementById('v-next-amt').innerText = "$" + Math.round(saldo * 0.1).toLocaleString();
-    }
-
+    document.getElementById('v-fecha-emision').innerText = "Fecha: " + new Date().toLocaleString();
+    const nextBox = document.getElementById('v-next-box');
+    const saldadoMsg = document.getElementById('v-msg-saldado');
+    if(saldo <= 0) { nextBox.style.display = "none"; saldadoMsg.style.display = "block"; }
+    else { nextBox.style.display = "block"; saldadoMsg.style.display = "none"; document.getElementById('v-next-date').innerText = fecha; document.getElementById('v-next-amt').innerText = "$" + Math.round(saldo * 0.1).toLocaleString(); }
     setTimeout(() => {
         html2canvas(document.querySelector("#voucher-template"), { scale: 2, useCORS: true }).then(canvas => {
             const link = document.createElement('a');
-            link.download = `Voucher_${cliente}.png`;
+            link.download = `VOUCHER_${cliente}.png`;
             link.href = canvas.toDataURL();
             link.click();
         });
-    }, 700);
+    }, 800);
 }
 
 function actualizarTodo() {
     localStorage.setItem('jn_v2026_final', JSON.stringify(bd));
     document.getElementById('total-cartera').innerText = "$" + bd.prestamos.reduce((s,p) => s+p.deuda, 0).toLocaleString();
     document.getElementById('total-intereses').innerText = "$" + bd.pagos.reduce((s,p) => s+p.interes, 0).toLocaleString();
-    document.getElementById('reg-cliente-existe').innerHTML = '<option value="NUEVO">+ REGISTRAR NUEVO CLIENTE</option>' + bd.contactos.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
-    document.getElementById('select-pago').innerHTML = '<option value="">Elegir préstamo...</option>' + bd.prestamos.map(p => `<option value="${p.id}">${p.nombre} ($${p.deuda})</option>`).join('');
-    
-    document.getElementById('grid-contactos').innerHTML = bd.contactos.map(c => `<div class="loan-card"><b>${c.nombre}</b><br><button onclick="eliminarC(${c.id})" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:12px; margin-top:5px;">ELIMINAR CLIENTE</button></div>`).join('');
-    
-    document.getElementById('grid-prestamos').innerHTML = bd.prestamos.map(p => `
+    document.getElementById('reg-cliente-existe').innerHTML = '<option value="NUEVO">+ REGISTRAR NUEVO CLIENTE</option>' + bd.contactos.map(c => `<option value="${c.id}">${c.nombre} (${c.cedula})</option>`).join('');
+    document.getElementById('select-pago').innerHTML = '<option value="">Seleccionar préstamo...</option>' + bd.prestamos.map(p => `<option value="${p.id}">${p.nombre} ($${p.deuda})</option>`).join('');
+    document.getElementById('grid-prestamos').innerHTML = bd.prestamos.map(p => {
+        const c = bd.contactos.find(cx => cx.id == p.clienteId);
+        return `
         <div class="loan-card">
-            <b style="color:var(--accent); font-size:18px;">${p.nombre}</b><br>
-            Saldo Deudor: <b style="color:#ef4444;">$${p.deuda.toLocaleString()}</b><br>
-            <small>Próximo cobro: ${p.proximoPago}</small>
-            <div style="display:flex; gap:5px; margin-top:10px;">
-                <button onclick="verHistorial(${p.id})" style="flex:1; background:#475569; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">Historial</button>
-                <button onclick="reenganche(${p.id})" style="flex:1; background:#10b981; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">+ Capital</button>
+            <div class="loan-info"><b>${p.nombre}</b><br><small>ID: ${p.cedula || '---'}</small><p>Saldo: <span style="color:#ef4444;">$${p.deuda.toLocaleString()}</span></p></div>
+            <div class="loan-actions">
+                <button class="btn-act" onclick="verHistorial(${p.id})">📜 Historial</button>
+                <button class="btn-act" onclick="alert('Tel: ' + (bd.contactos.find(c=>c.id==${p.clienteId})?.telefono || 'N/A'))">📞 Contacto</button>
+                <button class="btn-act btn-green" onclick="reenganche(${p.id})">+ Capital</button>
             </div>
-        </div>`).join('');
+        </div>`}).join('');
 }
 
-function verHistorial(pId) {
-    const p = bd.prestamos.find(x => x.id == pId);
-    const hist = bd.pagos.filter(x => x.prestamoId == pId);
-    document.getElementById('hist-nombre').innerText = p.nombre;
-    document.getElementById('hist-lista').innerHTML = hist.map(h => `<div style="border-bottom:1px solid #334155; padding:8px 0;">${h.fecha}<br>Abono: $${h.abono} | Int: $${h.interes}</div>`).join('') || "Sin pagos";
-    document.getElementById('modal-historial').style.display = 'flex';
+function verHistorial(id) {
+    const p = bd.prestamos.find(x => x.id == id) || bd.contactos.find(x => x.id == id);
+    const h = bd.pagos.filter(x => x.prestamoId == id);
+    document.getElementById('hist-nombre').innerText = "Historial: " + p.nombre;
+    document.getElementById('hist-lista').innerHTML = h.map(x => `<div style="padding:10px; border-bottom:1px solid #334155; font-size:13px;">${x.fecha}<br>Abono: $${x.abono} | Int: $${x.interes} | Saldo: $${x.saldo}</div>`).join('') || "Sin movimientos";
+    document.getElementById('modal-historial').style.display='flex';
 }
 
-function autoCalcularInteres() {
-    const id = document.getElementById('select-pago').value;
-    if(id) {
-        const p = bd.prestamos.find(x => x.id == id);
-        document.getElementById('p-int').value = Math.round(p.deuda * 0.10);
-        document.getElementById('p-cap').value = 0;
-        document.getElementById('p-next-date').value = p.proximoPago;
-    }
-}
-function exportarDatos() { const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bd)); const a = document.createElement('a'); a.href = dataStr; a.download = "BACKUP_JN.json"; a.click(); }
-function importarDatos() { const file = document.getElementById('importFile').files[0]; const reader = new FileReader(); reader.onload = function(e) { bd = JSON.parse(e.target.result); actualizarTodo(); alert("Restaurado"); }; reader.readAsText(file); }
+function cerrarModal() { document.getElementById('modal-historial').style.display='none'; }
+function reenganche(id) { const p = bd.prestamos.find(x => x.id == id); const ex = parseFloat(prompt("Capital a sumar:")); if(!ex) return; const nf = prompt("Fecha:", p.proximoPago); p.deuda += ex; p.proximoPago = nf; finalizar("AUMENTO DE CAPITAL", p.nombre, p.cedula, ex, 0, p.deuda, nf); }
+function exportarDatos(isAuto = false) { const ahora = new Date(); const fechaStr = `${ahora.getDate()}-${ahora.getMonth()+1}_${ahora.getHours()}-${ahora.getMinutes()}`; const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bd)); const a = document.createElement('a'); a.href = dataStr; a.download = (isAuto ? 'AUTO' : 'MANUAL') + `_BACKUP_${fechaStr}.json`; a.click(); }
+function importarDatos() { const file = document.getElementById('importFile').files[0]; const reader = new FileReader(); reader.onload = (e) => { bd = JSON.parse(e.target.result); actualizarTodo(); alert("Datos restaurados"); }; reader.readAsText(file); }
 function showPage(id) { document.querySelectorAll('.view').forEach(v => v.style.display = 'none'); document.querySelectorAll('.presta-menu button').forEach(b => b.classList.remove('active')); document.getElementById(id).style.display = 'block'; document.getElementById('btn-' + id).classList.add('active'); }
-function cerrarModal() { document.getElementById('modal-historial').style.display = 'none'; }
-function eliminarC(id) { if(confirm("¿Borrar cliente?")) { bd.contactos = bd.contactos.filter(x => x.id != id); actualizarTodo(); } }
+function autoCalcularInteres() { const id = document.getElementById('select-pago').value; if(id) { const p = bd.prestamos.find(x => x.id == id); document.getElementById('p-int').value = Math.round(p.deuda * 0.1); document.getElementById('p-cap').value = 0; document.getElementById('p-next-date').value = p.proximoPago; } }
 function limpiar() { document.querySelectorAll('.full-input').forEach(i => i.value = ""); toggleNuevoCliente(); }
 actualizarTodo();
 </script>
