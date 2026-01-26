@@ -4,56 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>J&N SOLUCIONES - CORPORATIVO 2026</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #002d5e; --accent: #00a8e8; --dark-bg: #0b0f19; --card-bg: #1a2233; --success: #10b981; --danger: #ef4444; }
         body { margin: 0; padding: 0; background: var(--dark-bg); font-family: 'Inter', sans-serif; color: white; overflow-x: hidden; }
-        .presta-app { display: flex; height: 100vh; width: 100vw; }
+        
+        /* PANTALLA DE ACCESO */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5000; }
+        .login-box { background: var(--card-bg); padding: 40px; border-radius: 20px; text-align: center; border-top: 5px solid var(--accent); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .pin-input { width: 150px; padding: 15px; font-size: 24px; text-align: center; border-radius: 10px; border: 1px solid var(--accent); background: #0f172a; color: white; letter-spacing: 5px; margin-bottom: 20px; }
+
+        /* APP LAYOUT */
+        .presta-app { display: none; height: 100vh; width: 100vw; }
         .presta-menu { width: 260px; background: var(--card-bg); border-right: 1px solid #334155; padding: 25px; display: flex; flex-direction: column; }
         .presta-menu h2 { color: var(--accent); text-align: center; margin-bottom: 30px; font-weight: 800; }
         .presta-menu button { width: 100%; padding: 14px; margin-bottom: 8px; border: none; border-radius: 12px; cursor: pointer; text-align: left; background: transparent; font-weight: 600; color: #94a3b8; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
         .presta-menu button.active { background: var(--accent); color: #fff; }
         .presta-main { flex: 1; padding: 40px; overflow-y: auto; }
+
         @media (max-width: 768px) {
             .presta-app { flex-direction: column; }
-            .presta-menu { width: 100%; height: 75px; position: fixed; bottom: 0; flex-direction: row; justify-content: space-around; padding: 10px 0; background: var(--card-bg); z-index: 1000; }
+            .presta-menu { width: 100%; height: 75px; position: fixed; bottom: 0; flex-direction: row; justify-content: space-around; padding: 10px 0; background: var(--card-bg); z-index: 1000; border-top: 1px solid #334155; }
             .presta-menu h2 { display: none; }
             .presta-main { padding: 20px; padding-bottom: 100px; }
         }
+
         .form-section { background: var(--card-bg); padding: 25px; border-radius: 16px; border-top: 5px solid var(--accent); margin-bottom: 30px; }
         .full-input { width: 100%; padding: 12px; border: 1px solid #334155; border-radius: 8px; background: #0f172a; color: white; box-sizing: border-box; margin-bottom: 15px; }
         .btn-primary { width: 100%; padding: 15px; background: linear-gradient(45deg, var(--primary), var(--accent)); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .loan-card { background: #1e293b; border-radius: 12px; padding: 15px 25px; border-left: 4px solid var(--accent); margin-bottom: 12px; position: relative; }
-        
-        /* BOTONES DE ACCIÓN SUPERIOR */
         .btn-black-list { position: absolute; top: 10px; right: 40px; background: #450a0a; color: #f87171; border: 1px solid #991b1b; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; }
         .btn-delete-x { position: absolute; top: 10px; right: 10px; background: #2d0a0a; color: #ef4444; border: 1px solid #ef4444; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: bold; }
-        
         .loan-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px; }
         .btn-act { background: #334155; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; }
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 2000; }
         .modal-content { background: var(--card-bg); padding: 30px; border-radius: 16px; width: 90%; max-width: 500px; }
 
-        /* VOUCHER FORMATO MODERNO */
-        #voucher-container { position: absolute; left: -9999px; width: 600px; background: #f4f7fa; padding: 50px; }
-        .v-card { background: #ffffff; border-radius: 35px; padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); font-family: 'Inter', sans-serif; color: #1e293b; }
-        .v-header { text-align: center; border-bottom: 1px solid #edf2f7; padding-bottom: 25px; margin-bottom: 25px; }
-        .v-biz { color: #002d5e; font-size: 24px; font-weight: 800; }
-        .v-tag { display: inline-block; background: #002d5e; color: white; padding: 6px 20px; border-radius: 50px; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-top: 15px; }
-        .v-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed #e2e8f0; }
-        .v-label { color: #64748b; font-weight: 500; }
-        .v-value { font-weight: 700; color: #0f172a; }
-        .v-balance-row { display: flex; justify-content: space-between; align-items: center; margin-top: 25px; padding: 15px 0; }
-        .v-balance-val { font-size: 32px; font-weight: 800; color: #002d5e; }
-        .v-next-box { background: #f8fafc; border-radius: 20px; padding: 20px; margin-top: 25px; border: 1px solid #edf2f7; }
+        /* VOUCHER DISEÑO PREMIUM J&N */
+        #voucher-container { position: absolute; left: -9999px; width: 500px; background: #ffffff; padding: 0; }
+        .v-card { background: #ffffff; padding: 40px; font-family: 'Inter', sans-serif; border: 1px solid #eee; }
+        .v-header { text-align: center; background: linear-gradient(135deg, #002d5e 0%, #001a38 100%); padding: 30px; margin: -40px -40px 30px -40px; }
+        .v-biz { color: #f1c40f; font-size: 28px; font-weight: 900; letter-spacing: 2px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .v-tag { display: inline-block; background: rgba(255,255,255,0.2); color: white; padding: 4px 15px; border-radius: 4px; font-size: 11px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.3); text-transform: uppercase; }
+        .v-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f0f0f0; }
+        .v-label { color: #7f8c8d; font-size: 13px; font-weight: 600; text-transform: uppercase; }
+        .v-value { color: #2c3e50; font-weight: 700; font-size: 15px; }
+        .v-balance-row { background: #f9f9f9; margin: 20px 0; padding: 20px; border-radius: 10px; text-align: center; }
+        .v-balance-val { font-size: 35px; color: #002d5e; font-weight: 800; display: block; }
+        .v-next-box { background: #fff5f5; padding: 15px; border-radius: 10px; border-left: 5px solid #ef4444; margin-top: 10px; }
         .v-success-msg { text-align: center; color: #10b981; margin-top: 30px; }
-        .v-footer { text-align: center; margin-top: 35px; color: #94a3b8; font-size: 12px; }
+        .v-footer { text-align: center; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; color: #95a5a6; font-size: 11px; }
     </style>
 </head>
 <body>
 
-<div class="presta-app">
+<div id="login-screen">
+    <div class="login-box">
+        <h2 style="color:var(--accent)">J&N SOLUCIONES</h2>
+        <p>Ingrese Código de Acceso</p>
+        <input type="password" id="pin" class="pin-input" maxlength="4" placeholder="****">
+        <button class="btn-primary" onclick="verificarAcceso()">ACCEDER</button>
+    </div>
+</div>
+
+<div class="presta-app" id="app-content">
     <div class="presta-menu">
         <h2>J&N</h2>
         <button onclick="showPage('dash')" id="btn-dash" class="active">🏠 Inicio</button>
@@ -62,6 +80,7 @@
         <button onclick="showPage('lista-negra')" id="btn-lista-negra" style="color:var(--danger)">🚫 Lista Negra</button>
         <button onclick="showPage('nuevo-pago')" id="btn-pago">💰 Cobros</button>
         <button onclick="showPage('config')" id="btn-config">⚙️ Backup</button>
+        <div id="cloud-status" style="font-size: 10px; color: var(--success); text-align: center; margin-top: auto;">Conectando Nube...</div>
     </div>
 
     <div class="presta-main">
@@ -98,8 +117,11 @@
             <div class="form-section">
                 <h3>Registrar Pago</h3>
                 <select id="select-pago" class="full-input" onchange="autoCalcularInteres()"></select>
-                <input type="number" id="p-int" class="full-input" placeholder="Interés">
-                <input type="number" id="p-cap" class="full-input" placeholder="Abono Capital">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <div><small>Interés (10%)</small><input type="number" id="p-int" class="full-input"></div>
+                    <div><small>Abono Capital</small><input type="number" id="p-cap" class="full-input"></div>
+                </div>
+                <small>Próxima Fecha de Pago</small>
                 <input type="date" id="p-next-date" class="full-input">
                 <button class="btn-primary" onclick="procesarPago()">PROCESAR COBRO</button>
             </div>
@@ -120,24 +142,75 @@
 
 <div id="voucher-container">
     <div class="v-card">
-        <div class="v-header"><div class="v-biz">J&N SOLUCIONES</div><div style="font-size:12px; color:#64748b;">Especialistas en Finanzas</div><div id="v-tag" class="v-tag">RECIBO</div></div>
+        <div class="v-header">
+            <div class="v-biz">J&N SOLUCIONES</div>
+            <div style="color: #00a8e8; font-size: 10px; font-weight: 700;">SERVICIOS FINANCIEROS CORPORATIVOS</div>
+            <div id="v-tag" class="v-tag">COMPROBANTE OFICIAL</div>
+        </div>
         <div class="v-body">
-            <div class="v-row"><span class="v-label">Cliente</span><span class="v-value" id="v-cli">---</span></div>
-            <div class="v-row"><span class="v-label" id="v-monto-label">Operación</span><span class="v-value" id="v-mon">$0</span></div>
-            <div class="v-row" id="v-row-int"><span class="v-label">Interés (10%)</span><span class="v-value" id="v-in">$0</span></div>
-            <div class="v-balance-row"><span style="font-weight:800; color:#64748b;">BALANCE ACTUAL:</span><span class="v-balance-val" id="v-sal">$0</span></div>
+            <div class="v-row"><span class="v-label">CLIENTE</span><span class="v-value" id="v-cli">---</span></div>
+            <div class="v-row"><span class="v-label" id="v-monto-label">MOVIMIENTO</span><span class="v-value" id="v-mon">$0</span></div>
+            <div class="v-row" id="v-row-int"><span class="v-label">INTERÉS PAGADO (10%)</span><span class="v-value" id="v-in">$0</span></div>
+            <div class="v-balance-row">
+                <span class="v-label">SALDO PENDIENTE</span>
+                <span class="v-balance-val" id="v-sal">$0</span>
+            </div>
             <div id="v-next-area" class="v-next-box">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span style="font-size:12px; color:#64748b;">PRÓXIMO COBRO:</span><span id="v-next-date" style="font-weight:700;">---</span></div>
-                <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:12px; color:#ef4444; font-weight:700;">MONTO A PAGAR (10%):</span><span id="v-next-amt" style="font-size:24px; color:#ef4444; font-weight:800;">$0</span></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <span style="font-size:11px; color:#c0392b; font-weight:700;">PRÓXIMO PAGO:</span>
+                    <span id="v-next-date" style="font-weight:700; color:#2c3e50;">---</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:11px; color:#c0392b; font-weight:700;">CUOTA ESTIMADA (10%):</span>
+                    <span id="v-next-amt" style="font-size:22px; color:#ef4444; font-weight:800;">$0</span>
+                </div>
             </div>
             <div id="v-success-area" class="v-success-msg" style="display:none;"><h2>¡FELICIDADES!</h2><div style="font-weight:700; font-size:18px;">PRÉSTAMO SALDADO</div></div>
         </div>
-        <div class="v-footer"><div id="v-emision">---</div><div style="margin-top:10px; font-weight:700; color:#002d5e;">¡Gracias por su confianza!</div></div>
+        <div class="v-footer">
+            <div id="v-emision">---</div>
+            <div style="margin-top:10px; font-size:12px; font-weight:700; color:#002d5e;">VALIDADO POR EL SISTEMA J&N</div>
+        </div>
     </div>
 </div>
 
 <script>
-let bd = JSON.parse(localStorage.getItem('jn_v2026_final')) || { contactos: [], prestamos: [], pagos: [], blacklist: [] };
+function verificarAcceso() {
+    const pin = document.getElementById('pin').value;
+    if(pin === "0417") {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-content').style.display = 'flex';
+    } else {
+        alert("Código incorrecto");
+        document.getElementById('pin').value = "";
+    }
+}
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBXHcdK3FtNjXXYwSWhyXt35-eBZ1Rtk8U",
+    authDomain: "jn-soluciones-2026.firebaseapp.com",
+    projectId: "jn-soluciones-2026",
+    databaseURL: "https://jn-soluciones-2026-default-rtdb.firebaseio.com"
+};
+
+firebase.initializeApp(firebaseConfig);
+const dbase = firebase.database();
+let bd = { contactos: [], prestamos: [], pagos: [], blacklist: [] };
+
+dbase.ref('jn_v2026_final').on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+        bd = data;
+        if(!bd.contactos) bd.contactos = [];
+        if(!bd.prestamos) bd.prestamos = [];
+        if(!bd.pagos) bd.pagos = [];
+        if(!bd.blacklist) bd.blacklist = [];
+        document.getElementById('cloud-status').innerText = "● Nube Sincronizada";
+    }
+    actualizarTodo(false);
+});
+
+function sincronizar() { dbase.ref('jn_v2026_final').set(bd); }
 
 function toggleNuevoCliente() { document.getElementById('div-nuevo-cliente').style.display = (document.getElementById('reg-cliente-existe').value === "NUEVO") ? "block" : "none"; }
 
@@ -200,41 +273,75 @@ function generarVoucher(tipo, cliente, monto, interes, saldo, fecha) {
     }, 1000);
 }
 
-function finalizar() { 
-    actualizarTodo(); 
-    limpiar();
-    setTimeout(() => exportarDatos(), 2500); 
-}
+function finalizar() { sincronizar(); limpiar(); setTimeout(() => exportarDatos(), 2500); }
 
-function eliminarPrestamo(id) {
-    if(confirm("¿Estás seguro de eliminar este cliente permanentemente? Esta acción no se puede deshacer.")) {
-        bd.prestamos = bd.prestamos.filter(x => x.id != id);
-        finalizar();
-    }
-}
+function eliminarPrestamo(id) { if(confirm("¿Eliminar permanentemente?")) { bd.prestamos = bd.prestamos.filter(x => x.id != id); sincronizar(); } }
 
-function actualizarTodo() {
-    localStorage.setItem('jn_v2026_final', JSON.stringify(bd));
-    document.getElementById('total-cartera').innerText = "$" + bd.prestamos.reduce((s,p) => s+p.deuda, 0).toLocaleString();
-    document.getElementById('total-intereses').innerText = "$" + bd.pagos.reduce((s,p) => s+p.interes, 0).toLocaleString();
+function actualizarTodo(subirANube = true) {
+    if(subirANube) sincronizar();
+    document.getElementById('total-cartera').innerText = "$" + (bd.prestamos ? bd.prestamos.reduce((s,p) => s+p.deuda, 0).toLocaleString() : 0);
+    document.getElementById('total-intereses').innerText = "$" + (bd.pagos ? bd.pagos.reduce((s,p) => s+p.interes, 0).toLocaleString() : 0);
     document.getElementById('total-perdido').innerText = "$" + (bd.blacklist ? bd.blacklist.reduce((s,p) => s+p.deuda, 0) : 0).toLocaleString();
-    document.getElementById('reg-cliente-existe').innerHTML = '<option value="NUEVO">+ REGISTRAR NUEVO CLIENTE</option>' + bd.contactos.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
-    document.getElementById('select-pago').innerHTML = '<option value="">Seleccionar...</option>' + bd.prestamos.map(p => `<option value="${p.id}">${p.nombre} ($${p.deuda})</option>`).join('');
-    document.getElementById('grid-prestamos').innerHTML = bd.prestamos.map(p => `<div class="loan-card"><button class="btn-black-list" onclick="moverAListaNegra(${p.id})">BLOQUEAR</button><button class="btn-delete-x" onclick="eliminarPrestamo(${p.id})">X</button><b>${p.nombre}</b><p>Saldo: $${p.deuda.toLocaleString()}</p><div class="loan-actions"><button class="btn-act" onclick="verHistorial(${p.id})">📜 Hist</button><button class="btn-act" onclick="reenganche(${p.id})">+ Cap</button><button class="btn-act" style="background:var(--accent)" onclick="showPage('nuevo-pago')">💰 Pago</button></div></div>`).join('');
+    document.getElementById('reg-cliente-existe').innerHTML = '<option value="NUEVO">+ REGISTRAR NUEVO CLIENTE</option>' + (bd.contactos || []).map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+    document.getElementById('select-pago').innerHTML = '<option value="">Seleccionar...</option>' + (bd.prestamos || []).map(p => `<option value="${p.id}">${p.nombre} ($${p.deuda})</option>`).join('');
+    document.getElementById('grid-prestamos').innerHTML = (bd.prestamos || []).map(p => `<div class="loan-card"><button class="btn-black-list" onclick="moverAListaNegra(${p.id})">BLOQUEAR</button><button class="btn-delete-x" onclick="eliminarPrestamo(${p.id})">X</button><b>${p.nombre}</b><p>Saldo: $${p.deuda.toLocaleString()}</p><div class="loan-actions"><button class="btn-act" onclick="verHistorial(${p.id})">📜 Hist</button><button class="btn-act" onclick="reenganche(${p.id})">+ Cap</button><button class="btn-act" style="background:var(--accent)" onclick="irAPagar(${p.id})">💰 Pago</button></div></div>`).join('');
     document.getElementById('grid-blacklist').innerHTML = (bd.blacklist || []).map(p => `<div class="loan-card" style="border-left-color:var(--danger)"><b>${p.nombre}</b><p>Deuda: $${p.deuda.toLocaleString()}</p><button class="btn-act" onclick="sacarDeListaNegra(${p.id})">✅ Restaurar</button></div>`).join('');
 }
 
-function moverAListaNegra(id) { if(confirm("¿Bloquear cliente?")){ const idx = bd.prestamos.findIndex(x => x.id == id); const p = bd.prestamos.splice(idx, 1)[0]; if(!bd.blacklist) bd.blacklist = []; bd.blacklist.push(p); actualizarTodo(); } }
-function sacarDeListaNegra(id) { const idx = bd.blacklist.findIndex(x => x.id == id); const p = bd.blacklist.splice(idx, 1)[0]; bd.prestamos.push(p); actualizarTodo(); }
-function verHistorial(id) { const p = bd.prestamos.find(x => x.id == id) || bd.contactos.find(x => x.id == id); const h = bd.pagos.filter(x => x.prestamoId == id); document.getElementById('hist-nombre').innerText = p.nombre; document.getElementById('hist-lista').innerHTML = h.map(x => `<div style="padding:10px; border-bottom:1px solid #334155;">${x.fecha}<br>Abono: $${x.abono} | Int: $${x.interes}</div>`).join('') || "Sin pagos"; document.getElementById('modal-historial').style.display='flex'; }
+function irAPagar(id) { showPage('nuevo-pago'); document.getElementById('select-pago').value = id; autoCalcularInteres(); }
+function moverAListaNegra(id) { if(confirm("¿Bloquear cliente?")){ const idx = bd.prestamos.findIndex(x => x.id == id); const p = bd.prestamos.splice(idx, 1)[0]; if(!bd.blacklist) bd.blacklist = []; bd.blacklist.push(p); sincronizar(); } }
+function sacarDeListaNegra(id) { const idx = bd.blacklist.findIndex(x => x.id == id); const p = bd.blacklist.splice(idx, 1)[0]; bd.prestamos.push(p); sincronizar(); }
+
+function verHistorial(id) { 
+    const p = bd.prestamos.find(x => x.id == id) || bd.contactos.find(x => x.id == id); 
+    const h = (bd.pagos || []).filter(x => x.prestamoId == id); 
+    document.getElementById('hist-nombre').innerText = p.nombre; 
+    document.getElementById('hist-lista').innerHTML = h.map(x => `<div style="padding:10px; border-bottom:1px solid #334155;">${x.fecha}<br>Abono: $${x.abono} | Int: $${x.interes}</div>`).join('') || "Sin pagos"; 
+    document.getElementById('modal-historial').style.display='flex'; 
+}
+
 function cerrarModal() { document.getElementById('modal-historial').style.display='none'; }
-function reenganche(id) { const p = bd.prestamos.find(x => x.id == id); const ex = parseFloat(prompt("Monto extra:")); if(ex) { p.deuda += ex; generarVoucher("AUMENTO DE CAPITAL", p.nombre, ex, 0, p.deuda, p.proximoPago); finalizar(); } }
+
+function reenganche(id) { 
+    const p = bd.prestamos.find(x => x.id == id); 
+    const ex = parseFloat(prompt("Monto extra a entregar:")); 
+    if(ex) { 
+        p.deuda += ex; 
+        generarVoucher("AUMENTO DE CAPITAL", p.nombre, ex, 0, p.deuda, p.proximoPago); 
+        finalizar(); 
+    } 
+}
+
 function exportarDatos(manual = false) { const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bd)); const a = document.createElement('a'); a.href = dataStr; a.download = manual ? `BACKUP_JN_MANUAL.json` : `AUTO_BACKUP_JN.json`; a.click(); }
-function importarDatos() { const reader = new FileReader(); reader.onload = (e) => { bd = JSON.parse(e.target.result); actualizarTodo(); alert("OK"); }; reader.readAsText(document.getElementById('importFile').files[0]); }
-function showPage(id) { document.querySelectorAll('.view').forEach(v => v.style.display = 'none'); document.querySelectorAll('.presta-menu button').forEach(b => b.classList.remove('active')); document.getElementById(id).style.display = 'block'; document.getElementById('btn-' + id).classList.add('active'); }
-function autoCalcularInteres() { const id = document.getElementById('select-pago').value; if(id) { const p = bd.prestamos.find(x => x.id == id); document.getElementById('p-int').value = Math.round(p.deuda * 0.1); document.getElementById('p-cap').value = 0; document.getElementById('p-next-date').value = p.proximoPago; } }
+
+function importarDatos() { 
+    const reader = new FileReader(); 
+    reader.onload = (e) => { 
+        bd = JSON.parse(e.target.result); 
+        sincronizar(); 
+        alert("Nube Actualizada desde Archivo"); 
+    }; 
+    reader.readAsText(document.getElementById('importFile').files[0]); 
+}
+
+function showPage(id) { 
+    document.querySelectorAll('.view').forEach(v => v.style.display = 'none'); 
+    document.querySelectorAll('.presta-menu button').forEach(b => b.classList.remove('active')); 
+    document.getElementById(id).style.display = 'block'; 
+    if(document.getElementById('btn-' + id)) document.getElementById('btn-' + id).classList.add('active'); 
+}
+
+function autoCalcularInteres() { 
+    const id = document.getElementById('select-pago').value; 
+    if(id) { 
+        const p = bd.prestamos.find(x => x.id == id); 
+        document.getElementById('p-int').value = Math.round(p.deuda * 0.1); 
+        document.getElementById('p-cap').value = 0; 
+        document.getElementById('p-next-date').value = p.proximoPago; 
+    } 
+}
+
 function limpiar() { document.querySelectorAll('.full-input').forEach(i => i.value = ""); }
-actualizarTodo();
 </script>
 </body>
 </html>
