@@ -13,12 +13,10 @@
         :root { --primary: #002d5e; --accent: #00a8e8; --dark-bg: #0b0f19; --card-bg: #1a2233; --success: #10b981; --danger: #ef4444; }
         body { margin: 0; padding: 0; background: var(--dark-bg); font-family: 'Inter', sans-serif; color: white; overflow-x: hidden; }
         
-        /* PANTALLA DE ACCESO */
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5000; }
         .login-box { background: var(--card-bg); padding: 40px; border-radius: 20px; text-align: center; border-top: 5px solid var(--accent); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
         .pin-input { width: 150px; padding: 15px; font-size: 24px; text-align: center; border-radius: 10px; border: 1px solid var(--accent); background: #0f172a; color: white; letter-spacing: 5px; margin-bottom: 20px; }
 
-        /* APP LAYOUT */
         .presta-app { display: none; height: 100vh; width: 100vw; }
         .presta-menu { width: 260px; background: var(--card-bg); border-right: 1px solid #334155; padding: 25px; display: flex; flex-direction: column; }
         .presta-menu h2 { color: var(--accent); text-align: center; margin-bottom: 30px; font-weight: 800; }
@@ -34,8 +32,14 @@
         }
 
         .form-section { background: var(--card-bg); padding: 25px; border-radius: 16px; border-top: 5px solid var(--accent); margin-bottom: 30px; position: relative; }
-        /* BOTON REINICIO */
-        .btn-reset-int { position: absolute; top: 10px; right: 10px; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; }
+        
+        /* BOTON REINICIO OPTIMIZADO PARA MÓVIL */
+        .btn-reset-int { 
+            position: absolute; top: 10px; right: 10px; 
+            background: rgba(239, 68, 68, 0.15); color: var(--danger); 
+            border: 1px solid var(--danger); padding: 6px 10px; border-radius: 6px; 
+            font-size: 9px; font-weight: 800; cursor: pointer; z-index: 10;
+        }
         
         .full-input { width: 100%; padding: 12px; border: 1px solid #334155; border-radius: 8px; background: #0f172a; color: white; box-sizing: border-box; margin-bottom: 15px; }
         .btn-primary { width: 100%; padding: 15px; background: linear-gradient(45deg, var(--primary), var(--accent)); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
@@ -47,10 +51,9 @@
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 2000; }
         .modal-content { background: var(--card-bg); padding: 30px; border-radius: 16px; width: 90%; max-width: 500px; }
 
-        /* VOUCHER DISEÑO */
+        /* VOUCHER CON MARCA DE AGUA Y ESTILOS DE ÉXITO */
         #voucher-container { position: absolute; left: -9999px; width: 500px; background: #ffffff; padding: 0; }
         .v-card { position: relative; background: #ffffff; padding: 40px; font-family: 'Inter', sans-serif; border: 1px solid #eee; overflow: hidden; }
-        /* MARCA DE AGUA */
         .v-card::after {
             content: "J&N SOLUCIONES";
             position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg);
@@ -62,7 +65,7 @@
         .v-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f0f0f0; }
         .v-label { color: #7f8c8d; font-size: 13px; font-weight: 600; text-transform: uppercase; }
         .v-value { color: #2c3e50; font-weight: 700; font-size: 15px; }
-        .v-balance-row { background: #f9f9f9; margin: 20px 0; padding: 20px; border-radius: 10px; text-align: center; }
+        .v-balance-row { background: #f9f9f9; margin: 20px 0; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #eee; }
         .v-balance-val { font-size: 35px; color: #002d5e; font-weight: 800; display: block; }
         .v-next-box { background: #fff5f5; padding: 15px; border-radius: 10px; border-left: 5px solid #ef4444; margin-top: 10px; }
         .v-success-msg { text-align: center; color: #10b981; margin-top: 30px; display: none; }
@@ -177,7 +180,10 @@
                     <span id="v-next-amt" style="font-size:22px; color:#ef4444; font-weight:800;">$0</span>
                 </div>
             </div>
-            <div id="v-success-area" class="v-success-msg"><h2>¡FELICIDADES!</h2><div style="font-weight:700; font-size:18px;">PRÉSTAMO SALDADO</div></div>
+            <div id="v-success-area" class="v-success-msg">
+                <h2>¡FELICIDADES!</h2>
+                <div style="font-weight:700; font-size:18px;">PRÉSTAMO SALDADO</div>
+            </div>
         </div>
         <div class="v-footer">
             <div id="v-emision">---</div>
