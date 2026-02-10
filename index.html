@@ -12,7 +12,7 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Firebase v9 Compat (más estable para CDN) -->
+    <!-- Firebase v9 Compat -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -20,7 +20,7 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     
-    <!-- html2canvas con fallback para móvil -->
+    <!-- html2canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <!-- jsPDF -->
@@ -119,6 +119,15 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
+        .slide-out {
+            animation: slideOut 0.3s ease-in forwards;
+        }
+        
+        @keyframes slideOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(20px); }
+        }
+        
         .fade-in {
             animation: fadeIn 0.3s ease-out;
         }
@@ -154,6 +163,13 @@
         .stat-card {
             background: linear-gradient(135deg, rgba(26, 34, 51, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
             border: 1px solid rgba(0, 168, 232, 0.2);
+            overflow: hidden;
+        }
+        
+        .stat-value {
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            word-break: break-all;
+            line-height: 1.2;
         }
         
         .menu-item {
@@ -189,7 +205,50 @@
         .status-overdue { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
         .status-blacklist { background: rgba(0, 0, 0, 0.4); color: #9ca3af; }
         
-        /* Mobile optimizations */
+        /* PIN Pad Styles */
+        .pin-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.2s;
+        }
+        .pin-dot.filled {
+            background: #00a8e8;
+            box-shadow: 0 0 10px rgba(0, 168, 232, 0.5);
+        }
+        .pin-dot.error {
+            background: #ef4444;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .pin-key {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.1s;
+            user-select: none;
+        }
+        .pin-key:active {
+            background: rgba(0, 168, 232, 0.3);
+            transform: scale(0.95);
+        }
+        
         @media (max-width: 768px) {
             .mobile-menu {
                 position: fixed;
@@ -212,6 +271,16 @@
             .content-area {
                 padding-bottom: calc(80px + env(safe-area-inset-bottom));
             }
+            
+            .pin-key {
+                width: 60px;
+                height: 60px;
+                font-size: 20px;
+            }
+            
+            .stat-value {
+                font-size: clamp(0.875rem, 3.5vw, 1.25rem);
+            }
         }
         
         .chart-container {
@@ -225,17 +294,43 @@
             }
         }
         
-        .voucher-preview {
+        /* Voucher with background image */
+        .voucher-container {
+            position: relative;
+            width: 350px;
             background: white;
-            color: #1f2937;
-            padding: 30px;
             border-radius: 12px;
+            overflow: hidden;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            max-width: 100%;
-            font-size: 14px;
         }
         
-        /* Touch feedback */
+        .voucher-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        
+        .voucher-content {
+            position: relative;
+            z-index: 1;
+            padding: 30px;
+            font-family: Arial, sans-serif;
+            color: #1f2937;
+        }
+        
+        .voucher-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin: 0 auto 10px;
+            display: block;
+        }
+        
         .touch-feedback {
             position: relative;
             overflow: hidden;
@@ -257,11 +352,9 @@
             height: 200%;
         }
         
-        /* Safe area for iPhone X+ */
         .safe-top { padding-top: env(safe-area-inset-top); }
         .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
         
-        /* Offline indicator */
         .offline-indicator {
             position: fixed;
             top: 0;
@@ -280,6 +373,55 @@
         .offline-indicator.show {
             transform: translateY(0);
         }
+        
+        /* Voucher gallery */
+        .voucher-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .voucher-thumb {
+            aspect-ratio: 1;
+            background: #1a2233;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .voucher-thumb:hover {
+            border-color: #00a8e8;
+        }
+        .voucher-thumb i {
+            font-size: 32px;
+            color: #00a8e8;
+            margin-bottom: 8px;
+        }
+        .voucher-thumb span {
+            font-size: 11px;
+            color: #9ca3af;
+            text-align: center;
+            padding: 0 8px;
+        }
+        
+        /* Modal improvements */
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+        }
+        
+        /* Number formatting */
+        .truncate-number {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 100%;
+        }
     </style>
 <base target="_blank">
 </head>
@@ -289,41 +431,52 @@
         <i class="fas fa-wifi-slash mr-2"></i> Sin conexión - Modo offline activo
     </div>
 
-    <!-- Login Screen -->
-    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-dark via-card to-dark p-4">
-        <div class="w-full max-w-md">
-            <div class="glass-effect rounded-3xl p-6 md:p-8 text-center">
-                <div class="mb-6 md:mb-8">
-                    <div class="w-16 h-16 md:w-20 md:h-20 mx-auto bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-accent/30">
-                        <i class="fas fa-chart-line text-2xl md:text-3xl text-white"></i>
-                    </div>
-                    <h1 class="text-2xl md:text-3xl font-black gradient-text mb-2">J&N SOLUCIONES</h1>
-                    <p class="text-gray-400 text-sm">Sistema de Gestión Financiera</p>
+    <!-- Login Screen with PIN -->
+    <div id="login-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-dark via-card to-dark p-4">
+        <div class="w-full max-w-sm">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 mx-auto bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-accent/30">
+                    <i class="fas fa-chart-line text-3xl text-white"></i>
                 </div>
-                
-                <div id="login-form">
-                    <div class="mb-4">
-                        <input type="email" id="login-email" placeholder="Correo electrónico" 
-                            class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white placeholder-gray-500 input-focus transition-all text-base">
-                    </div>
-                    <div class="mb-6">
-                        <input type="password" id="login-password" placeholder="Contraseña" 
-                            class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white placeholder-gray-500 input-focus transition-all text-base">
-                    </div>
-                    <button onclick="login()" class="w-full btn-gradient py-3 rounded-xl font-bold text-white mb-4 touch-feedback">
-                        <i class="fas fa-sign-in-alt mr-2"></i> INGRESAR
-                    </button>
-                    <button onclick="loginDemo()" class="w-full py-3 rounded-xl font-medium text-accent border border-accent/30 hover:bg-accent/10 transition-all text-sm">
-                        <i class="fas fa-user-shield mr-2"></i> Modo Demo (Sin conexión)
-                    </button>
-                    <p class="text-xs text-gray-500 mt-4">Versión PRO 2026 | Sincronización en tiempo real</p>
-                </div>
-                
-                <div id="login-loading" class="hidden py-8">
-                    <div class="loading-spinner mx-auto mb-4"></div>
-                    <p class="text-gray-400">Conectando...</p>
-                </div>
+                <h1 class="text-2xl font-black gradient-text mb-2">J&N SOLUCIONES</h1>
+                <p class="text-gray-400 text-sm">Ingrese su PIN de acceso</p>
             </div>
+            
+            <!-- PIN Display -->
+            <div class="flex justify-center gap-4 mb-8">
+                <div class="pin-dot" id="pin-1"></div>
+                <div class="pin-dot" id="pin-2"></div>
+                <div class="pin-dot" id="pin-3"></div>
+                <div class="pin-dot" id="pin-4"></div>
+            </div>
+            
+            <!-- PIN Pad -->
+            <div class="grid grid-cols-3 gap-4 max-w-[240px] mx-auto mb-6">
+                <button class="pin-key touch-feedback" onclick="enterPin(1)">1</button>
+                <button class="pin-key touch-feedback" onclick="enterPin(2)">2</button>
+                <button class="pin-key touch-feedback" onclick="enterPin(3)">3</button>
+                <button class="pin-key touch-feedback" onclick="enterPin(4)">4</button>
+                <button class="pin-key touch-feedback" onclick="enterPin(5)">5</button>
+                <button class="pin-key touch-feedback" onclick="enterPin(6)">6</button>
+                <button class="pin-key touch-feedback" onclick="enterPin(7)">7</button>
+                <button class="pin-key touch-feedback" onclick="enterPin(8)">8</button>
+                <button class="pin-key touch-feedback" onclick="enterPin(9)">9</button>
+                <button class="pin-key touch-feedback text-danger" onclick="clearPin()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <button class="pin-key touch-feedback" onclick="enterPin(0)">0</button>
+                <button class="pin-key touch-feedback text-accent" onclick="deletePin()">
+                    <i class="fas fa-backspace"></i>
+                </button>
+            </div>
+            
+            <p id="pin-error" class="text-danger text-center text-sm mb-4 opacity-0 transition-opacity">PIN incorrecto</p>
+            
+            <button onclick="loginDemo()" class="w-full py-3 text-gray-500 text-sm hover:text-accent transition-colors">
+                <i class="fas fa-user-shield mr-2"></i> Modo Demo (Sin conexión)
+            </button>
+            
+            <p class="text-xs text-gray-600 text-center mt-6">Versión PRO 2026</p>
         </div>
     </div>
 
@@ -355,6 +508,9 @@
                 </button>
                 <button onclick="showPage('payments')" id="nav-payments" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback">
                     <i class="fas fa-money-bill-wave w-5"></i> Cobros
+                </button>
+                <button onclick="showPage('vouchers')" id="nav-vouchers" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback">
+                    <i class="fas fa-receipt w-5"></i> Comprobantes
                 </button>
                 <button onclick="showPage('blacklist')" id="nav-blacklist" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback">
                     <i class="fas fa-ban w-5"></i> Lista Negra
@@ -408,48 +564,48 @@
                 <div id="page-dashboard" class="view space-y-4 md:space-y-6">
                     <!-- Stats Grid -->
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-                        <div class="stat-card rounded-2xl p-4 md:p-6 card-hover touch-feedback">
+                        <div class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback">
                             <div class="flex items-center justify-between mb-2 md:mb-4">
-                                <div class="w-10 h-10 md:w-12 md:h-12 bg-danger/20 rounded-xl flex items-center justify-center">
-                                    <i class="fas fa-wallet text-danger text-lg md:text-xl"></i>
+                                <div class="w-8 h-8 md:w-12 md:h-12 bg-danger/20 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-wallet text-danger text-sm md:text-xl"></i>
                                 </div>
-                                <span class="text-xs text-gray-500">Capital</span>
+                                <span class="text-[10px] md:text-xs text-gray-500">Capital</span>
                             </div>
-                            <p class="text-lg md:text-2xl font-black text-white" id="stat-capital">$0</p>
-                            <p class="text-xs text-gray-500 mt-1">En calle</p>
+                            <p class="stat-value font-black text-white truncate-number" id="stat-capital">$0</p>
+                            <p class="text-[10px] md:text-xs text-gray-500 mt-1">En calle</p>
                         </div>
                         
-                        <div class="stat-card rounded-2xl p-4 md:p-6 card-hover touch-feedback">
+                        <div class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback">
                             <div class="flex items-center justify-between mb-2 md:mb-4">
-                                <div class="w-10 h-10 md:w-12 md:h-12 bg-success/20 rounded-xl flex items-center justify-center">
-                                    <i class="fas fa-chart-line text-success text-lg md:text-xl"></i>
+                                <div class="w-8 h-8 md:w-12 md:h-12 bg-success/20 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-chart-line text-success text-sm md:text-xl"></i>
                                 </div>
-                                <span class="text-xs text-gray-500">Ganancias</span>
+                                <span class="text-[10px] md:text-xs text-gray-500">Ganancias</span>
                             </div>
-                            <p class="text-lg md:text-2xl font-black text-success" id="stat-profits">$0</p>
-                            <p class="text-xs text-gray-500 mt-1">Intereses</p>
+                            <p class="stat-value font-black text-success truncate-number" id="stat-profits">$0</p>
+                            <p class="text-[10px] md:text-xs text-gray-500 mt-1">Intereses</p>
                         </div>
                         
-                        <div class="stat-card rounded-2xl p-4 md:p-6 card-hover touch-feedback">
+                        <div class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback">
                             <div class="flex items-center justify-between mb-2 md:mb-4">
-                                <div class="w-10 h-10 md:w-12 md:h-12 bg-accent/20 rounded-xl flex items-center justify-center">
-                                    <i class="fas fa-users text-accent text-lg md:text-xl"></i>
+                                <div class="w-8 h-8 md:w-12 md:h-12 bg-accent/20 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-users text-accent text-sm md:text-xl"></i>
                                 </div>
-                                <span class="text-xs text-gray-500">Clientes</span>
+                                <span class="text-[10px] md:text-xs text-gray-500">Clientes</span>
                             </div>
                             <p class="text-lg md:text-2xl font-black text-white" id="stat-clients">0</p>
-                            <p class="text-xs text-gray-500 mt-1">Activos</p>
+                            <p class="text-[10px] md:text-xs text-gray-500 mt-1">Activos</p>
                         </div>
                         
-                        <div class="stat-card rounded-2xl p-4 md:p-6 card-hover touch-feedback">
+                        <div class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback">
                             <div class="flex items-center justify-between mb-2 md:mb-4">
-                                <div class="w-10 h-10 md:w-12 md:h-12 bg-warning/20 rounded-xl flex items-center justify-center">
-                                    <i class="fas fa-exclamation-triangle text-warning text-lg md:text-xl"></i>
+                                <div class="w-8 h-8 md:w-12 md:h-12 bg-warning/20 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-exclamation-triangle text-warning text-sm md:text-xl"></i>
                                 </div>
-                                <span class="text-xs text-gray-500">Vencidos</span>
+                                <span class="text-[10px] md:text-xs text-gray-500">Vencidos</span>
                             </div>
                             <p class="text-lg md:text-2xl font-black text-warning" id="stat-overdue">0</p>
-                            <p class="text-xs text-gray-500 mt-1">Préstamos</p>
+                            <p class="text-[10px] md:text-xs text-gray-500 mt-1">Préstamos</p>
                         </div>
                     </div>
 
@@ -583,6 +739,46 @@
                     </div>
                 </div>
 
+                <!-- Vouchers Page -->
+                <div id="page-vouchers" class="view hidden space-y-4 md:space-y-6">
+                    <div class="glass-effect rounded-2xl p-4 md:p-6">
+                        <div class="flex items-center justify-between mb-4 md:mb-6">
+                            <div>
+                                <h3 class="text-base md:text-lg font-bold flex items-center gap-2">
+                                    <i class="fas fa-receipt text-accent"></i> Comprobantes Generados
+                                </h3>
+                                <p class="text-xs md:text-sm text-gray-400 mt-1">Los vouchers se guardan localmente en tu dispositivo</p>
+                            </div>
+                            <button onclick="generateTestVoucher()" class="px-4 py-2 bg-accent/20 text-accent rounded-lg text-sm hover:bg-accent/30 touch-feedback">
+                                <i class="fas fa-plus mr-2"></i> Generar Test
+                            </button>
+                        </div>
+                        
+                        <div id="vouchers-list" class="voucher-gallery">
+                            <!-- Vouchers will be listed here -->
+                        </div>
+                        
+                        <div id="no-vouchers" class="text-center py-12">
+                            <div class="w-16 h-16 bg-surface rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-receipt text-2xl text-gray-600"></i>
+                            </div>
+                            <p class="text-gray-500">No hay comprobantes guardados</p>
+                            <p class="text-xs text-gray-600 mt-2">Los vouchers se generan automáticamente al crear préstamos o recibir pagos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-effect rounded-2xl p-4 md:p-6 border border-gray-700">
+                        <h4 class="font-bold mb-4 flex items-center gap-2">
+                            <i class="fas fa-info-circle text-accent"></i> Información Importante
+                        </h4>
+                        <div class="space-y-3 text-sm text-gray-400">
+                            <p><i class="fas fa-mobile-alt mr-2 text-accent"></i> <strong>En móvil:</strong> Los vouchers se descargan a tu carpeta de Descargas o se abren en una nueva pestaña para que los guardes manualmente.</p>
+                            <p><i class="fas fa-share-alt mr-2 text-accent"></i> <strong>Compartir:</strong> Puedes compartir directamente por WhatsApp desde el botón de compartir.</p>
+                            <p><i class="fas fa-desktop mr-2 text-accent"></i> <strong>En PC:</strong> Se descargan automáticamente a la carpeta de Descargas.</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Blacklist -->
                 <div id="page-blacklist" class="view hidden space-y-4 md:space-y-6">
                     <div class="glass-effect rounded-2xl p-4 md:p-6 border border-danger/30">
@@ -641,6 +837,29 @@
                 <div id="page-settings" class="view hidden space-y-4 md:space-y-6">
                     <div class="glass-effect rounded-2xl p-4 md:p-6">
                         <h3 class="text-base md:text-lg font-bold mb-4 md:mb-6 flex items-center gap-2">
+                            <i class="fas fa-lock text-accent"></i> Cambiar PIN de Acceso
+                        </h3>
+                        <div class="max-w-md space-y-4">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-2">PIN Actual</label>
+                                <input type="password" id="current-pin" maxlength="4" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base tracking-widest" placeholder="••••">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-2">Nuevo PIN (4 dígitos)</label>
+                                <input type="password" id="new-pin" maxlength="4" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base tracking-widest" placeholder="••••">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-2">Confirmar Nuevo PIN</label>
+                                <input type="password" id="confirm-pin" maxlength="4" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base tracking-widest" placeholder="••••">
+                            </div>
+                            <button onclick="changePin()" class="w-full btn-gradient py-3 rounded-xl font-bold text-white touch-feedback">
+                                <i class="fas fa-save mr-2"></i> Cambiar PIN
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-effect rounded-2xl p-4 md:p-6">
+                        <h3 class="text-base md:text-lg font-bold mb-4 md:mb-6 flex items-center gap-2">
                             <i class="fas fa-database text-accent"></i> Backup y Restauración
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
@@ -685,23 +904,23 @@
 
         <!-- Mobile Menu -->
         <nav class="mobile-menu lg:hidden flex justify-around p-2">
-            <button onclick="showPage('dashboard')" class="mobile-nav flex flex-col items-center gap-1 text-accent px-3" data-page="dashboard">
+            <button onclick="showPage('dashboard')" class="mobile-nav flex flex-col items-center gap-1 text-accent px-2" data-page="dashboard">
                 <i class="fas fa-home text-lg"></i>
                 <span class="text-[10px]">Inicio</span>
             </button>
-            <button onclick="showPage('clients')" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-3" data-page="clients">
+            <button onclick="showPage('clients')" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-2" data-page="clients">
                 <i class="fas fa-users text-lg"></i>
                 <span class="text-[10px]">Clientes</span>
             </button>
-            <button onclick="showPage('loans')" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-3" data-page="loans">
+            <button onclick="showPage('loans')" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-2" data-page="loans">
                 <i class="fas fa-hand-holding-usd text-lg"></i>
                 <span class="text-[10px]">Préstamos</span>
             </button>
-            <button onclick="showPage('payments')" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-3" data-page="payments">
-                <i class="fas fa-money-bill-wave text-lg"></i>
-                <span class="text-[10px]">Cobros</span>
+            <button onclick="showPage('vouchers')" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-2" data-page="vouchers">
+                <i class="fas fa-receipt text-lg"></i>
+                <span class="text-[10px]">Vouchers</span>
             </button>
-            <button onclick="showPage('more')" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-3" data-page="more">
+            <button onclick="toggleMoreMenu()" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-2" data-page="more" id="btn-more">
                 <i class="fas fa-ellipsis-h text-lg"></i>
                 <span class="text-[10px]">Más</span>
             </button>
@@ -709,30 +928,36 @@
     </div>
 
     <!-- Mobile More Menu Modal -->
-    <div id="modal-more" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target === this) closeModal('modal-more')">
-        <div class="glass-effect rounded-t-3xl p-6 w-full max-w-sm mx-auto slide-in safe-bottom">
+    <div id="modal-more" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300" onclick="handleMoreBackdropClick(event)">
+        <div class="glass-effect rounded-t-3xl p-6 w-full max-w-sm mx-auto slide-in safe-bottom transform transition-transform duration-300" id="more-menu-content">
             <div class="w-12 h-1 bg-gray-600 rounded-full mx-auto mb-6"></div>
             <div class="space-y-2">
-                <button onclick="showPage('blacklist'); closeModal('modal-more')" class="w-full flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-white/5 text-left touch-feedback">
+                <button onclick="showPage('payments'); toggleMoreMenu()" class="w-full flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-white/5 text-left touch-feedback">
+                    <div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-money-bill-wave text-accent"></i>
+                    </div>
+                    <span class="font-medium">Cobros</span>
+                </button>
+                <button onclick="showPage('blacklist'); toggleMoreMenu()" class="w-full flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-white/5 text-left touch-feedback">
                     <div class="w-10 h-10 bg-danger/20 rounded-lg flex items-center justify-center">
                         <i class="fas fa-ban text-danger"></i>
                     </div>
                     <span class="font-medium">Lista Negra</span>
                 </button>
-                <button onclick="showPage('reports'); closeModal('modal-more')" class="w-full flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-white/5 text-left touch-feedback">
+                <button onclick="showPage('reports'); toggleMoreMenu()" class="w-full flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-white/5 text-left touch-feedback">
                     <div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center">
                         <i class="fas fa-chart-pie text-accent"></i>
                     </div>
                     <span class="font-medium">Reportes</span>
                 </button>
-                <button onclick="showPage('settings'); closeModal('modal-more')" class="w-full flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-white/5 text-left touch-feedback">
+                <button onclick="showPage('settings'); toggleMoreMenu()" class="w-full flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-white/5 text-left touch-feedback">
                     <div class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center">
                         <i class="fas fa-cog text-gray-300"></i>
                     </div>
                     <span class="font-medium">Configuración</span>
                 </button>
             </div>
-            <button onclick="closeModal('modal-more')" class="w-full mt-4 py-3 bg-surface rounded-xl text-gray-400 font-medium touch-feedback">
+            <button onclick="toggleMoreMenu()" class="w-full mt-4 py-3 bg-surface rounded-xl text-gray-400 font-medium touch-feedback">
                 Cerrar
             </button>
         </div>
@@ -821,54 +1046,87 @@
         </div>
     </div>
 
+    <!-- Voucher Preview Modal -->
+    <div id="modal-voucher-preview" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 backdrop-blur-sm p-4" onclick="if(event.target === this) closeModal('modal-voucher-preview')">
+        <div class="bg-white rounded-2xl p-4 w-full max-w-md mx-auto slide-in">
+            <div class="flex justify-between items-center mb-4 border-b pb-4">
+                <h3 class="text-lg font-bold text-gray-800">Vista Previa</h3>
+                <button onclick="closeModal('modal-voucher-preview')" class="text-gray-500 hover:text-gray-800">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="voucher-preview-container" class="mb-4 flex justify-center">
+                <!-- Voucher image will be inserted here -->
+            </div>
+            <div class="flex gap-2">
+                <button onclick="downloadCurrentVoucher()" class="flex-1 btn-gradient py-3 rounded-xl font-bold text-white touch-feedback">
+                    <i class="fas fa-download mr-2"></i> Descargar
+                </button>
+                <button onclick="shareCurrentVoucher()" class="flex-1 bg-success py-3 rounded-xl font-bold text-white touch-feedback">
+                    <i class="fas fa-share-alt mr-2"></i> Compartir
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notifications -->
     <div id="toast-container" class="fixed top-4 right-4 left-4 md:left-auto z-[60] space-y-2 pointer-events-none"></div>
 
-    <!-- Voucher Template (Hidden) -->
-    <div id="voucher-template" class="hidden fixed top-0 left-0 z-[-1] opacity-0">
-        <div class="voucher-preview" style="width: 350px; font-family: Arial, sans-serif;">
-            <div class="text-center border-b-2 border-primary pb-4 mb-4">
-                <h2 style="color: #002d5e; font-size: 24px; font-weight: 900; margin: 0;">J&N SOLUCIONES</h2>
-                <p style="color: #666; font-size: 12px; margin: 5px 0 0 0;">Comprobante Oficial de Transacción</p>
-            </div>
-            <div style="line-height: 1.8;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="color: #666;">Tipo:</span>
-                    <span id="voucher-type" style="font-weight: bold; color: #002d5e;"></span>
+    <!-- Voucher Template with Background -->
+    <div id="voucher-template" class="hidden fixed top-0 left-0 z-[-1]">
+        <div class="voucher-container" id="voucher-element">
+            <!-- Background Image - Replace with your image URL -->
+            <img src="https://i.imgur.com/placeholder-bg.jpg" class="voucher-bg" id="voucher-bg-img" alt="background">
+            
+            <div class="voucher-content">
+                <!-- Logo - Replace with your logo URL -->
+                <img src="https://i.imgur.com/placeholder-logo.png" class="voucher-logo" id="voucher-logo-img" alt="J&N Soluciones">
+                
+                <div class="text-center border-b-2 border-primary pb-2 mb-4">
+                    <h2 style="color: #002d5e; font-size: 20px; font-weight: 900; margin: 0;">J&N SOLUCIONES</h2>
+                    <p style="color: #666; font-size: 11px; margin: 3px 0 0 0;">Comprobante Oficial de Transacción</p>
                 </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="color: #666;">Cliente:</span>
-                    <span id="voucher-client" style="font-weight: bold;"></span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="color: #666;">Monto:</span>
-                    <span id="voucher-amount" style="font-weight: bold; color: #002d5e;"></span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="color: #666;">Interés:</span>
-                    <span id="voucher-interest" style="font-weight: bold; color: #10b981;"></span>
-                </div>
-                <div style="border-top: 2px solid #eee; padding-top: 12px; margin-top: 12px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 16px;">
-                        <span style="color: #666;">Saldo Pendiente:</span>
-                        <span id="voucher-balance" style="font-weight: 900; color: #ef4444;"></span>
+                
+                <div style="line-height: 1.6; font-size: 13px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <span style="color: #666;">Tipo:</span>
+                        <span id="voucher-type" style="font-weight: bold; color: #002d5e;"></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <span style="color: #666;">Cliente:</span>
+                        <span id="voucher-client" style="font-weight: bold; text-align: right; max-width: 60%;"></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <span style="color: #666;">Monto:</span>
+                        <span id="voucher-amount" style="font-weight: bold; color: #002d5e;"></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <span style="color: #666;">Interés:</span>
+                        <span id="voucher-interest" style="font-weight: bold; color: #10b981;"></span>
+                    </div>
+                    <div style="border-top: 2px solid #eee; padding-top: 8px; margin-top: 8px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                            <span style="color: #666;">Saldo Pendiente:</span>
+                            <span id="voucher-balance" style="font-weight: 900; color: #ef4444;"></span>
+                        </div>
+                    </div>
+                    <div style="background: rgba(0, 45, 94, 0.05); padding: 10px; border-radius: 8px; margin-top: 12px; border: 1px solid rgba(0, 45, 94, 0.1);">
+                        <p style="color: #666; font-size: 11px; margin: 0 0 3px 0;">Próximo Pago:</p>
+                        <p id="voucher-next-date" style="font-weight: bold; margin: 0; color: #1f2937; font-size: 13px;"></p>
+                        <p id="voucher-next-amount" style="color: #ef4444; font-weight: bold; margin: 3px 0 0 0; font-size: 12px;"></p>
                     </div>
                 </div>
-                <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; margin-top: 16px;">
-                    <p style="color: #666; font-size: 12px; margin: 0 0 4px 0;">Próximo Pago:</p>
-                    <p id="voucher-next-date" style="font-weight: bold; margin: 0; color: #1f2937;"></p>
-                    <p id="voucher-next-amount" style="color: #ef4444; font-weight: bold; margin: 4px 0 0 0;"></p>
+                
+                <div style="text-align: center; margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; font-size: 9px; color: #999;">
+                    <p id="voucher-date" style="margin: 0;"></p>
+                    <p style="margin: 3px 0 0 0;">Validado por Sistema J&N PRO</p>
                 </div>
-            </div>
-            <div style="text-align: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid #eee; font-size: 10px; color: #999;">
-                <p id="voucher-date" style="margin: 0;"></p>
-                <p style="margin: 4px 0 0 0;">Validado por Sistema J&N PRO</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Firebase Config - REEMPLAZA CON TUS DATOS REALES
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyBXHcdK3FtNjXXYwSWhyXt35-eBZ1Rtk8U",
             authDomain: "jn-soluciones-2026.firebaseapp.com",
@@ -879,7 +1137,6 @@
             appId: "1:123456789:web:abcdef123456"
         };
 
-        // Initialize Firebase with error handling
         let app, db, auth;
         let firebaseConnected = false;
         
@@ -890,7 +1147,6 @@
             firebaseConnected = true;
         } catch (e) {
             console.error('Firebase init error:', e);
-            firebaseConnected = false;
         }
 
         // App State
@@ -899,14 +1155,137 @@
             loans: [],
             payments: [],
             blacklist: [],
-            settings: { interestRate: 10 },
-            lastSync: null
+            vouchers: [],
+            settings: { interestRate: 10, pin: '0417' }
         };
 
         let currentUser = null;
         let charts = {};
         let isOffline = false;
         let syncQueue = [];
+        let currentPin = '';
+        let currentVoucherBlob = null;
+        let isMoreMenuOpen = false;
+
+        // PIN Functions
+        function enterPin(digit) {
+            if (currentPin.length < 4) {
+                currentPin += digit;
+                updatePinDisplay();
+                
+                if (currentPin.length === 4) {
+                    setTimeout(validatePin, 200);
+                }
+            }
+        }
+
+        function deletePin() {
+            if (currentPin.length > 0) {
+                currentPin = currentPin.slice(0, -1);
+                updatePinDisplay();
+            }
+        }
+
+        function clearPin() {
+            currentPin = '';
+            updatePinDisplay();
+            document.querySelectorAll('.pin-dot').forEach(dot => dot.classList.remove('error'));
+            document.getElementById('pin-error').style.opacity = '0';
+        }
+
+        function updatePinDisplay() {
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById(`pin-${i}`);
+                if (i <= currentPin.length) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                }
+            }
+        }
+
+        function validatePin() {
+            const savedPin = appData.settings?.pin || '0417';
+            
+            if (currentPin === savedPin) {
+                currentUser = { uid: 'local', name: 'Administrador' };
+                document.getElementById('user-name').textContent = 'Admin';
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-content').classList.remove('hidden');
+                document.getElementById('app-content').classList.add('flex');
+                initApp();
+                showToast('Bienvenido', 'success');
+            } else {
+                document.querySelectorAll('.pin-dot').forEach(dot => {
+                    dot.classList.remove('filled');
+                    dot.classList.add('error');
+                });
+                document.getElementById('pin-error').style.opacity = '1';
+                currentPin = '';
+                setTimeout(() => {
+                    document.querySelectorAll('.pin-dot').forEach(dot => dot.classList.remove('error'));
+                    document.getElementById('pin-error').style.opacity = '0';
+                }, 1000);
+            }
+        }
+
+        function changePin() {
+            const current = document.getElementById('current-pin').value;
+            const newPin = document.getElementById('new-pin').value;
+            const confirm = document.getElementById('confirm-pin').value;
+            const savedPin = appData.settings?.pin || '0417';
+            
+            if (current !== savedPin) {
+                showToast('PIN actual incorrecto', 'error');
+                return;
+            }
+            
+            if (newPin.length !== 4 || !/^\d{4}$/.test(newPin)) {
+                showToast('El PIN debe ser de 4 dígitos numéricos', 'error');
+                return;
+            }
+            
+            if (newPin !== confirm) {
+                showToast('Los PINs no coinciden', 'error');
+                return;
+            }
+            
+            appData.settings.pin = newPin;
+            saveData();
+            showToast('PIN cambiado exitosamente', 'success');
+            
+            document.getElementById('current-pin').value = '';
+            document.getElementById('new-pin').value = '';
+            document.getElementById('confirm-pin').value = '';
+        }
+
+        // More Menu Toggle
+        function toggleMoreMenu() {
+            const modal = document.getElementById('modal-more');
+            const btnMore = document.getElementById('btn-more');
+            
+            if (isMoreMenuOpen) {
+                // Close menu
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                btnMore.classList.remove('text-accent');
+                btnMore.classList.add('text-gray-400');
+                isMoreMenuOpen = false;
+            } else {
+                // Open menu
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                btnMore.classList.add('text-accent');
+                btnMore.classList.remove('text-gray-400');
+                isMoreMenuOpen = true;
+            }
+        }
+
+        function handleMoreBackdropClick(event) {
+            if (event.target === event.currentTarget) {
+                toggleMoreMenu();
+            }
+        }
 
         // Network Status
         function updateOnlineStatus() {
@@ -920,7 +1299,6 @@
                 statusDot.classList.remove('bg-success', 'pulse-ring');
                 statusDot.classList.add('bg-warning');
                 statusText.textContent = 'Offline';
-                showToast('Modo offline activado', 'warning');
             } else {
                 indicator.classList.remove('show');
                 statusDot.classList.add('bg-success', 'pulse-ring');
@@ -935,110 +1313,40 @@
         window.addEventListener('online', updateOnlineStatus);
         window.addEventListener('offline', updateOnlineStatus);
 
-        // Auth Functions
-        function login() {
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
-            
-            if (!email || !password) {
-                showToast('Ingrese correo y contraseña', 'error');
-                return;
-            }
-
-            document.getElementById('login-form').classList.add('hidden');
-            document.getElementById('login-loading').classList.remove('hidden');
-
-            if (!firebaseConnected) {
-                showToast('Error de conexión con Firebase', 'error');
-                document.getElementById('login-form').classList.remove('hidden');
-                document.getElementById('login-loading').classList.add('hidden');
-                return;
-            }
-
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    currentUser = userCredential.user;
-                    completeLogin();
-                })
-                .catch((error) => {
-                    document.getElementById('login-form').classList.remove('hidden');
-                    document.getElementById('login-loading').classList.add('hidden');
-                    showToast('Error: ' + error.message, 'error');
-                });
-        }
-
         function loginDemo() {
-            currentUser = { uid: 'demo', email: 'demo@jn.com', name: 'Demo' };
+            currentUser = { uid: 'demo', name: 'Demo' };
             document.getElementById('user-name').textContent = 'Modo Demo';
-            completeLogin();
-            showToast('Modo demo activado - Datos locales', 'info');
-        }
-
-        function completeLogin() {
-            if (currentUser.email) {
-                document.getElementById('user-name').textContent = currentUser.email.split('@')[0];
-            }
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-content').classList.remove('hidden');
             document.getElementById('app-content').classList.add('flex');
             initApp();
+            showToast('Modo demo activado', 'info');
         }
 
         function logout() {
-            if (auth) {
-                auth.signOut().catch(console.error);
-            }
             localStorage.removeItem('jn_pro_current_user');
             location.reload();
-        }
-
-        // Check existing session
-        const savedUser = localStorage.getItem('jn_pro_current_user');
-        if (savedUser) {
-            try {
-                currentUser = JSON.parse(savedUser);
-                completeLogin();
-            } catch(e) {
-                localStorage.removeItem('jn_pro_current_user');
-            }
         }
 
         // Initialize App
         function initApp() {
             updateOnlineStatus();
-            
-            // Load local data first (fast)
             loadLocalData();
             
-            // Then try Firebase
             if (firebaseConnected && navigator.onLine) {
                 loadFromFirebase();
                 setupRealtimeSync();
             }
             
             setDefaultDates();
-            setupAuthListener();
+            renderVouchersList();
             
-            // Save session
             if (currentUser) {
                 localStorage.setItem('jn_pro_current_user', JSON.stringify({
-                    uid: currentUser.uid || 'demo',
-                    email: currentUser.email || 'demo@jn.com',
-                    name: currentUser.name || currentUser.email?.split('@')[0] || 'Usuario'
+                    uid: currentUser.uid || 'local',
+                    name: currentUser.name || 'Admin'
                 }));
             }
-        }
-
-        function setupAuthListener() {
-            if (!auth) return;
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    currentUser = user;
-                } else if (!currentUser || currentUser.uid !== 'demo') {
-                    // Only logout if not in demo mode
-                    // location.reload();
-                }
-            });
         }
 
         function setDefaultDates() {
@@ -1070,7 +1378,6 @@
                 appData.lastSync = new Date().toISOString();
             } catch (e) {
                 console.error('Error saving local data:', e);
-                showToast('Error guardando datos locales', 'error');
             }
         }
 
@@ -1081,18 +1388,17 @@
                 .then((snapshot) => {
                     const data = snapshot.val();
                     if (data) {
-                        // Merge with local data (local wins if newer)
                         appData = {
                             ...appData,
                             ...data,
                             clients: mergeArrays(appData.clients, data.clients || []),
                             loans: mergeArrays(appData.loans, data.loans || []),
                             payments: mergeArrays(appData.payments, data.payments || []),
-                            blacklist: mergeArrays(appData.blacklist, data.blacklist || [])
+                            blacklist: mergeArrays(appData.blacklist, data.blacklist || []),
+                            vouchers: data.vouchers || appData.vouchers || []
                         };
                         updateUI();
                         saveLocalData();
-                        showToast('Datos sincronizados', 'success');
                     }
                 })
                 .catch((err) => {
@@ -1103,13 +1409,11 @@
         function mergeArrays(local, remote) {
             const merged = [...local];
             const localIds = new Set(local.map(i => i.id));
-            
             remote.forEach(item => {
                 if (!localIds.has(item.id)) {
                     merged.push(item);
                 }
             });
-            
             return merged;
         }
 
@@ -1128,16 +1432,13 @@
         }
 
         function saveData() {
-            // Always save locally first
             saveLocalData();
             
-            // Queue for Firebase if offline
             if (isOffline || !firebaseConnected) {
                 syncQueue.push({ action: 'save', data: appData });
                 return;
             }
             
-            // Save to Firebase
             if (db) {
                 db.ref('jn_pro_2026').set(appData)
                     .then(() => {
@@ -1205,7 +1506,6 @@
         }
 
         function updateCharts() {
-            // Debounce chart updates on mobile
             if (window.innerWidth < 768) {
                 setTimeout(() => {
                     updateEvolutionChart();
@@ -1419,13 +1719,10 @@
             const client = appData.clients.find(c => c.id === clientId);
             if (!client) return;
             
-            // Filter loans for this client
             document.getElementById('search-clients').value = client.name;
             renderClients();
             
-            // Switch to loans page and filter
             showPage('loans');
-            // You could add specific filtering here
         }
 
         function saveNewClient() {
@@ -1501,11 +1798,11 @@
                         <div class="grid grid-cols-3 gap-2 md:gap-4 mb-3 md:mb-4 text-sm">
                             <div>
                                 <p class="text-[10px] md:text-xs text-gray-500">Capital</p>
-                                <p class="font-bold text-sm md:text-base">${formatCurrency(loan.amount)}</p>
+                                <p class="font-bold text-sm md:text-base truncate-number">${formatCurrency(loan.amount)}</p>
                             </div>
                             <div>
                                 <p class="text-[10px] md:text-xs text-gray-500">Interés</p>
-                                <p class="font-bold text-success text-sm md:text-base">${formatCurrency(interest)}</p>
+                                <p class="font-bold text-success text-sm md:text-base truncate-number">${formatCurrency(interest)}</p>
                             </div>
                             <div>
                                 <p class="text-[10px] md:text-xs text-gray-500">Próximo</p>
@@ -1592,7 +1889,6 @@
             showToast('Préstamo creado exitosamente', 'success');
             clearModalInputs('modal-new-loan');
             
-            // Generate voucher after short delay
             setTimeout(() => {
                 generateVoucher('APERTURA DE CRÉDITO', client.name, amount, 0, amount, date);
             }, 500);
@@ -1617,11 +1913,11 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div class="bg-surface rounded-xl p-3">
                             <p class="text-xs text-gray-400">Monto Original</p>
-                            <p class="font-bold">${formatCurrency(loan.originalAmount || loan.amount)}</p>
+                            <p class="font-bold truncate-number">${formatCurrency(loan.originalAmount || loan.amount)}</p>
                         </div>
                         <div class="bg-surface rounded-xl p-3">
                             <p class="text-xs text-gray-400">Saldo Actual</p>
-                            <p class="font-bold ${loan.amount > 0 ? 'text-danger' : 'text-success'}">${formatCurrency(loan.amount)}</p>
+                            <p class="font-bold ${loan.amount > 0 ? 'text-danger' : 'text-success'} truncate-number">${formatCurrency(loan.amount)}</p>
                         </div>
                         <div class="bg-surface rounded-xl p-3">
                             <p class="text-xs text-gray-400">Tasa</p>
@@ -1651,7 +1947,7 @@
                                         </div>
                                         <div class="text-right">
                                             <div class="text-success">+${formatCurrency(p.interest || 0)} int.</div>
-                                            ${p.capital > 0 ? `<div class="text-accent">-${formatCurrency(p.capital)} cap.</div>` : ''}
+                                            ${p.capital > 0 ? `<div class="text-accent">- ${formatCurrency(p.capital)} cap.</div>` : ''}
                                         </div>
                                     </div>
                                 `).join('')}
@@ -1704,7 +2000,6 @@
             loanSelect.innerHTML = '<option value="">Seleccionar préstamo...</option>' + 
                 loans.map(l => `<option value="${l.id}">${formatCurrency(l.amount)} - Vence ${formatDate(l.nextPaymentDate)}</option>`).join('');
             
-            // Clear previous values
             document.getElementById('payment-interest').value = '';
             document.getElementById('payment-capital').value = '';
         }
@@ -1720,7 +2015,6 @@
             
             document.getElementById('payment-interest').value = interest;
             
-            // Set next date to 7 days from now by default
             const nextWeek = new Date();
             nextWeek.setDate(nextWeek.getDate() + 7);
             document.getElementById('payment-next-date').value = nextWeek.toISOString().split('T')[0];
@@ -1745,13 +2039,11 @@
             
             const client = appData.clients.find(c => c.id === loan.clientId);
             
-            // Validate capital payment doesn't exceed balance
             if (capital > loan.amount) {
                 showToast('El abono no puede exceder el saldo', 'error');
                 return;
             }
             
-            // Update loan
             const newAmount = loan.amount - capital;
             loan.amount = newAmount;
             if (nextDate) {
@@ -1764,7 +2056,6 @@
                 loan.paidAt = new Date().toISOString();
             }
             
-            // Record payment
             const payment = {
                 id: Date.now().toString(),
                 loanId,
@@ -1782,11 +2073,9 @@
             
             showToast(loan.paid ? 'Préstamo liquidado' : 'Pago registrado', 'success');
             
-            // Generate voucher
             const type = loan.paid ? 'LIQUIDACIÓN' : 'RECIBO DE PAGO';
             generateVoucher(type, client?.name || loan.clientName, capital, interest, newAmount, nextDate);
             
-            // Clear form
             document.getElementById('payment-client').value = '';
             document.getElementById('payment-loan').innerHTML = '<option value="">Seleccionar...</option>';
             document.getElementById('payment-interest').value = '';
@@ -1799,7 +2088,6 @@
             showPage('payments');
             setTimeout(() => {
                 document.getElementById('payment-loan').value = loanId;
-                // Find client for this loan
                 const loan = appData.loans.find(l => l.id === loanId);
                 if (loan) {
                     document.getElementById('payment-client').value = loan.clientId;
@@ -1822,7 +2110,7 @@
                     <td class="py-3">${p.clientName}</td>
                     <td class="py-3 text-success">+${formatCurrency(p.interest)}</td>
                     <td class="py-3">${formatCurrency(p.capital)}</td>
-                    <td class="py-3 font-bold">${formatCurrency(p.balance)}</td>
+                    <td class="py-3 font-bold truncate-number">${formatCurrency(p.balance)}</td>
                 </tr>
             `).join('') || '<tr><td colspan="5" class="py-8 text-center text-gray-500">No hay pagos registrados</td></tr>';
         }
@@ -1836,10 +2124,8 @@
             
             const loan = appData.loans[loanIndex];
             
-            // Remove from active loans
             appData.loans.splice(loanIndex, 1);
             
-            // Add to blacklist
             appData.blacklist.push({
                 ...loan,
                 blacklistedAt: new Date().toISOString(),
@@ -1860,7 +2146,6 @@
             const item = appData.blacklist[index];
             appData.blacklist.splice(index, 1);
             
-            // Restore to loans if not paid
             if (!item.paid) {
                 appData.loans.push(item);
             }
@@ -1887,7 +2172,7 @@
                                     <p class="text-xs text-gray-400">Bloqueado: ${formatDate(item.blacklistedAt)}</p>
                                 </div>
                             </div>
-                            <span class="text-danger font-bold text-sm md:text-base">${formatCurrency(item.amount)}</span>
+                            <span class="text-danger font-bold text-sm md:text-base truncate-number">${formatCurrency(item.amount)}</span>
                         </div>
                         <button onclick="removeFromBlacklist('${item.id}')" class="w-full px-4 py-2 bg-success/20 text-success rounded-lg text-sm hover:bg-success/30 touch-feedback">
                             <i class="fas fa-check mr-2"></i> Restaurar Cliente
@@ -1911,7 +2196,7 @@
                 document.getElementById('voucher-date').textContent = new Date().toLocaleString('es-ES');
                 
                 const voucherTemplate = document.getElementById('voucher-template');
-                const voucherEl = voucherTemplate.querySelector('.voucher-preview');
+                const voucherEl = document.getElementById('voucher-element');
                 
                 // Make visible for capture
                 voucherTemplate.classList.remove('hidden');
@@ -1946,7 +2231,37 @@
                         return;
                     }
                     
+                    currentVoucherBlob = blob;
                     const fileName = `VOUCHER_${(client || 'CLIENTE').replace(/\s+/g, '_')}_${Date.now()}.png`;
+                    
+                    // Store voucher in appData
+                    const voucherData = {
+                        id: Date.now().toString(),
+                        type,
+                        client: client || 'N/A',
+                        amount,
+                        interest,
+                        balance,
+                        nextDate,
+                        date: new Date().toISOString(),
+                        fileName
+                    };
+                    
+                    appData.vouchers.unshift(voucherData);
+                    saveData();
+                    renderVouchersList();
+                    
+                    // Show preview modal
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(blob);
+                    img.className = 'max-w-full h-auto rounded-lg';
+                    img.style.maxHeight = '60vh';
+                    
+                    const container = document.getElementById('voucher-preview-container');
+                    container.innerHTML = '';
+                    container.appendChild(img);
+                    
+                    openModal('modal-voucher-preview');
                     
                     // Try native sharing first (mobile)
                     if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: 'image/png' })] })) {
@@ -1958,12 +2273,8 @@
                             });
                             showToast('Voucher compartido', 'success');
                         } catch (err) {
-                            // Fallback to download
-                            downloadBlob(blob, fileName);
+                            // User cancelled or failed, preview is already shown
                         }
-                    } else {
-                        // Desktop fallback
-                        downloadBlob(blob, fileName);
                     }
                 }, 'image/png');
                 
@@ -1972,6 +2283,69 @@
                 document.getElementById('voucher-template').classList.add('hidden');
                 showToast('Error al generar voucher', 'error');
             }
+        }
+
+        function downloadCurrentVoucher() {
+            if (!currentVoucherBlob) return;
+            
+            const fileName = `VOUCHER_${Date.now()}.png`;
+            downloadBlob(currentVoucherBlob, fileName);
+            showToast('Voucher descargado', 'success');
+        }
+
+        async function shareCurrentVoucher() {
+            if (!currentVoucherBlob) return;
+            
+            const fileName = `VOUCHER_${Date.now()}.png`;
+            
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        files: [new File([currentVoucherBlob], fileName, { type: 'image/png' })],
+                        title: 'Comprobante J&N Soluciones',
+                        text: 'Voucher de transacción'
+                    });
+                    showToast('Voucher compartido', 'success');
+                } catch (err) {
+                    showToast('Error al compartir', 'error');
+                }
+            } else {
+                showToast('Compartir no disponible en este dispositivo', 'warning');
+            }
+        }
+
+        function renderVouchersList() {
+            const list = document.getElementById('vouchers-list');
+            const noVouchers = document.getElementById('no-vouchers');
+            
+            if (appData.vouchers.length === 0) {
+                list.innerHTML = '';
+                noVouchers.classList.remove('hidden');
+                return;
+            }
+            
+            noVouchers.classList.add('hidden');
+            
+            list.innerHTML = appData.vouchers.slice(0, 20).map(v => `
+                <div class="voucher-thumb" onclick="regenerateVoucher('${v.id}')">
+                    <i class="fas fa-file-invoice"></i>
+                    <span class="truncate w-full">${v.type}</span>
+                    <span class="text-[10px] text-gray-500">${formatDate(v.date)}</span>
+                    <span class="text-accent font-bold text-xs">${formatCurrency(v.amount)}</span>
+                </div>
+            `).join('');
+        }
+
+        function regenerateVoucher(voucherId) {
+            const voucher = appData.vouchers.find(v => v.id === voucherId);
+            if (!voucher) return;
+            
+            // Regenerate the voucher with stored data
+            generateVoucher(voucher.type, voucher.client, voucher.amount, voucher.interest, voucher.balance, voucher.nextDate);
+        }
+
+        function generateTestVoucher() {
+            generateVoucher('TEST', 'CLIENTE DE PRUEBA', 1000, 100, 900, new Date().toISOString().split('T')[0]);
         }
 
         function downloadBlob(blob, fileName) {
@@ -1983,7 +2357,6 @@
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-            showToast('Voucher descargado', 'success');
         }
 
         // Reports
@@ -2026,11 +2399,11 @@
                 <div class="grid grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6">
                     <div class="bg-surface rounded-xl p-3 md:p-4">
                         <p class="text-xs md:text-sm text-gray-400">Total Intereses</p>
-                        <p class="text-xl md:text-2xl font-bold text-success">${formatCurrency(totalInterest)}</p>
+                        <p class="text-xl md:text-2xl font-bold text-success truncate-number">${formatCurrency(totalInterest)}</p>
                     </div>
                     <div class="bg-surface rounded-xl p-3 md:p-4">
                         <p class="text-xs md:text-sm text-gray-400">Capital Recuperado</p>
-                        <p class="text-xl md:text-2xl font-bold text-accent">${formatCurrency(totalCapital)}</p>
+                        <p class="text-xl md:text-2xl font-bold text-accent truncate-number">${formatCurrency(totalCapital)}</p>
                     </div>
                 </div>
                 <div class="overflow-x-auto">
@@ -2087,7 +2460,6 @@
                     // User cancelled
                 }
             } else {
-                // Copy to clipboard
                 navigator.clipboard.writeText(reportText).then(() => {
                     showToast('Reporte copiado al portapapeles', 'success');
                 });
@@ -2117,7 +2489,6 @@
                         return;
                     }
                     
-                    // Merge data
                     appData.clients = mergeArrays(appData.clients, data.clients || []);
                     appData.loans = mergeArrays(appData.loans, data.loans || []);
                     appData.payments = mergeArrays(appData.payments, data.payments || []);
@@ -2148,7 +2519,7 @@
             if (!confirm('¿ELIMINAR TODOS LOS DATOS? Esta acción no se puede deshacer.')) return;
             if (!prompt('Escriba BORRAR para confirmar:') === 'BORRAR') return;
             
-            appData = { clients: [], loans: [], payments: [], blacklist: [], settings: { interestRate: 10 } };
+            appData = { clients: [], loans: [], payments: [], blacklist: [], vouchers: [], settings: { interestRate: 10, pin: appData.settings.pin } };
             saveData();
             showToast('Todos los datos han sido eliminados', 'warning');
             updateUI();
@@ -2157,8 +2528,13 @@
         // Navigation
         function showPage(page) {
             if (page === 'more') {
-                openModal('modal-more');
+                toggleMoreMenu();
                 return;
+            }
+            
+            // Close more menu if open
+            if (isMoreMenuOpen) {
+                toggleMoreMenu();
             }
             
             // Hide all views
@@ -2177,6 +2553,7 @@
                 clients: 'Clientes',
                 loans: 'Préstamos',
                 payments: 'Cobros',
+                vouchers: 'Comprobantes',
                 blacklist: 'Lista Negra',
                 reports: 'Reportes',
                 settings: 'Configuración'
@@ -2319,8 +2696,18 @@
         // Initialize on load
         document.addEventListener('DOMContentLoaded', () => {
             // Check for saved session
-            if (!currentUser && !savedUser) {
-                // Stay on login screen
+            const savedUser = localStorage.getItem('jn_pro_current_user');
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    document.getElementById('user-name').textContent = currentUser.name || 'Admin';
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('app-content').classList.remove('hidden');
+                    document.getElementById('app-content').classList.add('flex');
+                    initApp();
+                } catch(e) {
+                    localStorage.removeItem('jn_pro_current_user');
+                }
             }
         });
     </script>
