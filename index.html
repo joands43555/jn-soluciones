@@ -1075,7 +1075,16 @@ Cerrar
 <span id="voucher-balance" style="font-weight: 900; color: #ef4444;"></span>
 </div>
 </div>
-<div style="background: rgba(0, 45, 94, 0.05); padding: 10px; border-radius: 8px; margin-top: 12px; border: 1px solid rgba(0, 45, 94, 0.1);">
+<!-- Sección condicional: Pago Completado vs Próximo Pago -->
+<div id="voucher-completed-message" style="display: none; background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 8px; padding: 12px; margin-top: 12px; text-align: center;">
+<div style="width: 40px; height: 40px; background: #22c55e; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+<span style="color: white; font-size: 20px; font-weight: bold;">✓</span>
+</div>
+<p style="color: #15803d; margin: 0 0 5px 0; font-size: 13px; font-weight: bold;">¡PRÉSTAMO COMPLETAMENTE PAGADO!</p>
+<p style="color: #166534; margin: 0; font-size: 11px;">El cliente ha cumplido con el pago total de su obligación.</p>
+<p style="color: #15803d; margin: 8px 0 0 0; font-size: 11px; font-style: italic; font-weight: bold;">Gracias por su preferencia</p>
+</div>
+<div id="voucher-next-payment" style="background: rgba(0, 45, 94, 0.05); padding: 10px; border-radius: 8px; margin-top: 12px; border: 1px solid rgba(0, 45, 94, 0.1);">
 <p style="color: #666; font-size: 11px; margin: 0 0 3px 0;">Próximo Pago:</p>
 <p id="voucher-next-date" style="font-weight: bold; margin: 0; color: #1f2937; font-size: 13px;"></p>
 <p id="voucher-next-amount" style="color: #ef4444; font-weight: bold; margin: 3px 0 0 0; font-size: 12px;"></p>
@@ -1871,7 +1880,7 @@ loan.amount = oldAmount + increaseAmount;
 loan.originalAmount = (loan.originalAmount || oldAmount) + increaseAmount;
 loan.nextPaymentDate = newDate;
 if (notes) {
-loan.notes = loan.notes ? loan.notes + '\n[AUMENTO]: ' + notes : '[AUMENTO]: ' + notes;
+loan.notes = loan.notes ? loan.notes + '\n- ' + notes : '- ' + notes;
 }
 saveData();
 closeModal('modal-increase-capital');
@@ -2075,9 +2084,19 @@ document.getElementById('voucher-client').textContent = (client || 'N/A').toUppe
 document.getElementById('voucher-amount').textContent = formatCurrency(amount);
 document.getElementById('voucher-interest').textContent = formatCurrency(interest);
 document.getElementById('voucher-balance').textContent = formatCurrency(balance);
-document.getElementById('voucher-next-date').textContent = nextDate ? formatDate(nextDate) : 'N/A';
-document.getElementById('voucher-next-amount').textContent = balance > 0 ? 'Cuota: ' + formatCurrency(Math.round(balance * 0.1)) : 'COMPLETADO';
 document.getElementById('voucher-date').textContent = new Date().toLocaleString('es-ES');
+// Lógica condicional para voucher completado vs pendiente
+const completedMsg = document.getElementById('voucher-completed-message');
+const nextPaymentDiv = document.getElementById('voucher-next-payment');
+if (balance <= 0) {
+completedMsg.style.display = 'block';
+nextPaymentDiv.style.display = 'none';
+} else {
+completedMsg.style.display = 'none';
+nextPaymentDiv.style.display = 'block';
+document.getElementById('voucher-next-date').textContent = nextDate ? formatDate(nextDate) : 'N/A';
+document.getElementById('voucher-next-amount').textContent = 'Cuota: ' + formatCurrency(Math.round(balance * 0.1));
+}
 const voucherTemplate = document.getElementById('voucher-template');
 const voucherEl = document.getElementById('voucher-element');
 // Make visible for capture
@@ -2178,6 +2197,7 @@ showToast('Error al compartir', 'error');
 showToast('Compartir no disponible en este dispositivo', 'warning');
 }
 }
+// MODIFICACIÓN 2: Botón para eliminar vouchers
 function renderVouchersList() {
 const list = document.getElementById('vouchers-list');
 const noVouchers = document.getElementById('no-vouchers');
@@ -2188,7 +2208,10 @@ return;
 }
 noVouchers.classList.add('hidden');
 list.innerHTML = appData.vouchers.slice(0, 20).map(v => `
-<div class="voucher-thumb" onclick="regenerateVoucher('${v.id}')">
+<div class="voucher-thumb relative group" onclick="regenerateVoucher('${v.id}')">
+<button onclick="event.stopPropagation(); deleteVoucher('${v.id}')" class="absolute top-1 right-1 w-6 h-6 bg-danger/80 hover:bg-danger text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10" title="Eliminar">
+<i class="fas fa-times text-xs"></i>
+</button>
 <i class="fas fa-file-invoice"></i>
 <span class="truncate w-full">${v.type}</span>
 <span class="text-[10px] text-gray-500">${formatDate(v.date)}</span>
@@ -2201,6 +2224,17 @@ const voucher = appData.vouchers.find(v => v.id === voucherId);
 if (!voucher) return;
 // Regenerate the voucher with stored data
 generateVoucher(voucher.type, voucher.client, voucher.amount, voucher.interest, voucher.balance, voucher.nextDate);
+}
+// MODIFICACIÓN 2: Función para eliminar vouchers
+function deleteVoucher(voucherId) {
+if (!confirm('¿Eliminar este comprobante?')) return;
+const index = appData.vouchers.findIndex(v => v.id === voucherId);
+if (index > -1) {
+appData.vouchers.splice(index, 1);
+saveData();
+renderVouchersList();
+showToast('Comprobante eliminado', 'success');
+}
 }
 function downloadBlob(blob, fileName) {
 const url = URL.createObjectURL(blob);
@@ -2456,65 +2490,46 @@ error: 'fa-times-circle',
 warning: 'fa-exclamation-triangle',
 info: 'fa-info-circle'
 };
-toast.className = `notification flex items-center gap-3 px-4 py-3 rounded-xl border ${colors[type]} backdrop-blur-md shadow-lg pointer-events-auto`;
+toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border ${colors[type]} shadow-lg slide-in`;
 toast.innerHTML = `
-<i class="fas ${icons[type]} text-lg"></i>
+<i class="fas ${icons[type]}"></i>
 <span class="font-medium text-sm">${message}</span>
 `;
 container.appendChild(toast);
 setTimeout(() => {
-toast.style.opacity = '0';
-toast.style.transform = 'translateY(-10px)';
+toast.classList.add('slide-out');
 setTimeout(() => toast.remove(), 300);
 }, 3000);
 }
 // Utility Functions
 function formatCurrency(amount) {
 const num = parseFloat(amount) || 0;
-return '$' + num.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+return '$' + num.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 function formatDate(dateStr) {
 if (!dateStr) return 'N/A';
-try {
 const date = new Date(dateStr);
-if (isNaN(date.getTime())) return 'Fecha inválida';
+if (isNaN(date.getTime())) return dateStr;
 return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
-} catch (e) {
-return 'N/A';
 }
+function showNotifications() {
+showToast('No hay notificaciones nuevas', 'info');
 }
-// Prevent double-tap zoom on mobile
-let lastTouchEnd = 0;
-document.addEventListener('touchend', (e) => {
-const now = Date.now();
-if (now - lastTouchEnd <= 300) {
-e.preventDefault();
-}
-lastTouchEnd = now;
-}, false);
-// Handle visibility change (save data when app goes to background)
-document.addEventListener('visibilitychange', () => {
-if (document.hidden) {
-saveLocalData();
-}
-});
-// Initialize on load
-document.addEventListener('DOMContentLoaded', () => {
-// Check for saved session
+// Auto-login if session exists
 const savedUser = localStorage.getItem('jn_pro_current_user');
 if (savedUser) {
 try {
-currentUser = JSON.parse(savedUser);
-document.getElementById('user-name').textContent = currentUser.name || 'Admin';
+const userData = JSON.parse(savedUser);
+currentUser = userData;
+document.getElementById('user-name').textContent = userData.name || 'Admin';
 document.getElementById('login-screen').classList.add('hidden');
 document.getElementById('app-content').classList.remove('hidden');
 document.getElementById('app-content').classList.add('flex');
 initApp();
-} catch(e) {
-localStorage.removeItem('jn_pro_current_user');
+} catch (e) {
+console.error('Error restoring session:', e);
 }
 }
-});
 </script>
 </body>
 </html>
