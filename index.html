@@ -8,21 +8,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="description" content="Sistema profesional de gestión de préstamos y cobranzas">
 <title>J&N SOLUCIONES PRO - Gestión Financiera</title>
-<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
-<!-- Firebase v9 Compat -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<!-- html2canvas -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<!-- jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>
 tailwind.config = {
@@ -46,343 +39,79 @@ sans: ['Inter', 'sans-serif']
 }
 </script>
 <style>
-* {
--webkit-tap-highlight-color: transparent;
-scrollbar-width: thin;
-scrollbar-color: #334155 #0f172a;
-}
+* {-webkit-tap-highlight-color: transparent; scrollbar-width: thin; scrollbar-color: #334155 #0f172a;}
 *::-webkit-scrollbar { width: 4px; }
 *::-webkit-scrollbar-track { background: #0f172a; }
 *::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-body {
-font-family: 'Inter', sans-serif;
-background: #0b0f19;
-overscroll-behavior: none;
--webkit-font-smoothing: antialiased;
-}
-.glass-effect {
-background: rgba(26, 34, 51, 0.85);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
-border: 1px solid rgba(255, 255, 255, 0.1);
-}
-.gradient-text {
-background: linear-gradient(135deg, #00a8e8 0%, #002d5e 100%);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
-}
-.card-hover {
-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.card-hover:active {
-transform: scale(0.98);
-}
-.btn-gradient {
-background: linear-gradient(135deg, #002d5e 0%, #00a8e8 100%);
-transition: all 0.3s ease;
-}
-.btn-gradient:active {
-transform: scale(0.95);
-opacity: 0.9;
-}
-.pulse-ring {
-animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-}
-@keyframes pulse-ring {
-0% { transform: scale(0.8); opacity: 1; }
-100% { transform: scale(2); opacity: 0; }
-}
-.slide-in {
-animation: slideIn 0.3s ease-out;
-}
-@keyframes slideIn {
-from { opacity: 0; transform: translateY(20px); }
-to { opacity: 1; transform: translateY(0); }
-}
-.slide-out {
-animation: slideOut 0.3s ease-in forwards;
-}
-@keyframes slideOut {
-from { opacity: 1; transform: translateY(0); }
-to { opacity: 0; transform: translateY(20px); }
-}
-.fade-in {
-animation: fadeIn 0.3s ease-out;
-}
-@keyframes fadeIn {
-from { opacity: 0; }
-to { opacity: 1; }
-}
-.notification {
-animation: slideDown 0.4s ease-out;
-}
-@keyframes slideDown {
-from { transform: translateY(-100%); opacity: 0; }
-to { transform: translateY(0); opacity: 1; }
-}
-.loading-spinner {
-border: 3px solid rgba(255,255,255,0.1);
-border-top: 3px solid #00a8e8;
-border-radius: 50%;
-width: 40px;
-height: 40px;
-animation: spin 1s linear infinite;
-}
-@keyframes spin {
-0% { transform: rotate(0deg); }
-100% { transform: rotate(360deg); }
-}
-.stat-card {
-background: linear-gradient(135deg, rgba(26, 34, 51, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
-border: 1px solid rgba(0, 168, 232, 0.2);
-overflow: hidden;
-}
-.stat-value {
-font-size: clamp(1rem, 4vw, 1.5rem);
-word-break: break-all;
-line-height: 1.2;
-}
-.menu-item {
-transition: all 0.2s ease;
-}
-.menu-item:hover {
-background: rgba(0, 168, 232, 0.1);
-border-left: 3px solid #00a8e8;
-}
-.menu-item.active {
-background: linear-gradient(90deg, rgba(0, 168, 232, 0.2) 0%, transparent 100%);
-border-left: 3px solid #00a8e8;
-color: #00a8e8;
-}
-.input-focus:focus {
-outline: none;
-border-color: #00a8e8;
-box-shadow: 0 0 0 3px rgba(0, 168, 232, 0.2);
-}
-.status-badge {
-display: inline-flex;
-align-items: center;
-gap: 6px;
-padding: 4px 12px;
-border-radius: 20px;
-font-size: 12px;
-font-weight: 600;
-}
+body {font-family: 'Inter', sans-serif; background: #0b0f19; overscroll-behavior: none; -webkit-font-smoothing: antialiased;}
+.glass-effect {background: rgba(26, 34, 51, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1);}
+.gradient-text {background: linear-gradient(135deg, #00a8e8 0%, #002d5e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;}
+.card-hover {transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);}
+.card-hover:active {transform: scale(0.98);}
+.btn-gradient {background: linear-gradient(135deg, #002d5e 0%, #00a8e8 100%); transition: all 0.3s ease;}
+.btn-gradient:active {transform: scale(0.95); opacity: 0.9;}
+.pulse-ring {animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;}
+@keyframes pulse-ring {0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2); opacity: 0; }}
+.slide-in {animation: slideIn 0.3s ease-out;}
+@keyframes slideIn {from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); }}
+.slide-out {animation: slideOut 0.3s ease-in forwards;}
+@keyframes slideOut {from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(20px); }}
+.fade-in {animation: fadeIn 0.3s ease-out;}
+@keyframes fadeIn {from { opacity: 0; } to { opacity: 1; }}
+.loading-spinner {border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #00a8e8; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;}
+@keyframes spin {0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }}
+.stat-card {background: linear-gradient(135deg, rgba(26, 34, 51, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1px solid rgba(0, 168, 232, 0.2); overflow: hidden;}
+.stat-value {font-size: clamp(1rem, 4vw, 1.5rem); word-break: break-all; line-height: 1.2;}
+.menu-item {transition: all 0.2s ease;}
+.menu-item:hover {background: rgba(0, 168, 232, 0.1); border-left: 3px solid #00a8e8;}
+.menu-item.active {background: linear-gradient(90deg, rgba(0, 168, 232, 0.2) 0%, transparent 100%); border-left: 3px solid #00a8e8; color: #00a8e8;}
+.input-focus:focus {outline: none; border-color: #00a8e8; box-shadow: 0 0 0 3px rgba(0, 168, 232, 0.2);}
+.status-badge {display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;}
 .status-active { background: rgba(16, 185, 129, 0.2); color: #10b981; }
 .status-overdue { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
 .status-blacklist { background: rgba(0, 0, 0, 0.4); color: #9ca3af; }
-/* PIN Pad Styles */
-.pin-dot {
-width: 16px;
-height: 16px;
-border-radius: 50%;
-background: rgba(255,255,255,0.2);
-transition: all 0.2s;
-}
-.pin-dot.filled {
-background: #00a8e8;
-box-shadow: 0 0 10px rgba(0, 168, 232, 0.5);
-}
-.pin-dot.error {
-background: #ef4444;
-animation: shake 0.5s;
-}
-@keyframes shake {
-0%, 100% { transform: translateX(0); }
-25% { transform: translateX(-10px); }
-75% { transform: translateX(10px); }
-}
-.pin-key {
-width: 70px;
-height: 70px;
-border-radius: 50%;
-background: rgba(255,255,255,0.1);
-border: 1px solid rgba(255,255,255,0.1);
-color: white;
-font-size: 24px;
-font-weight: 600;
-display: flex;
-align-items: center;
-justify-content: center;
-cursor: pointer;
-transition: all 0.1s;
-user-select: none;
-}
-.pin-key:active {
-background: rgba(0, 168, 232, 0.3);
-transform: scale(0.95);
-}
+.pin-dot {width: 16px; height: 16px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.2s;}
+.pin-dot.filled {background: #00a8e8; box-shadow: 0 0 10px rgba(0, 168, 232, 0.5);}
+.pin-dot.error {background: #ef4444; animation: shake 0.5s;}
+@keyframes shake {0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); }}
+.pin-key {width: 70px; height: 70px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 24px; font-weight: 600; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.1s; user-select: none;}
+.pin-key:active {background: rgba(0, 168, 232, 0.3); transform: scale(0.95);}
 @media (max-width: 768px) {
-.mobile-menu {
-position: fixed;
-bottom: 0;
-left: 0;
-right: 0;
-z-index: 1000;
-background: rgba(26, 34, 51, 0.98);
-backdrop-filter: blur(20px);
--webkit-backdrop-filter: blur(20px);
-border-top: 1px solid rgba(255,255,255,0.1);
-padding-bottom: env(safe-area-inset-bottom);
+.mobile-menu {position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; background: rgba(26, 34, 51, 0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.1); padding-bottom: env(safe-area-inset-bottom);}
+.mobile-nav {padding: 8px 4px; min-height: 56px;}
+.content-area {padding-bottom: calc(80px + env(safe-area-inset-bottom));}
+.pin-key {width: 60px; height: 60px; font-size: 20px;}
+.stat-value {font-size: clamp(0.875rem, 3.5vw, 1.25rem);}
 }
-.mobile-nav {
-padding: 8px 4px;
-min-height: 56px;
-}
-.content-area {
-padding-bottom: calc(80px + env(safe-area-inset-bottom));
-}
-.pin-key {
-width: 60px;
-height: 60px;
-font-size: 20px;
-}
-.stat-value {
-font-size: clamp(0.875rem, 3.5vw, 1.25rem);
-}
-}
-.chart-container {
-position: relative;
-height: 250px;
-}
-@media (min-width: 768px) {
-.chart-container {
-height: 300px;
-}
-}
-/* Voucher with background image */
-.voucher-container {
-position: relative;
-width: 350px;
-background: white;
-border-radius: 12px;
-overflow: hidden;
-box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-.voucher-bg {
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-object-fit: cover;
-opacity: 0.15;
-pointer-events: none;
-}
-.voucher-content {
-position: relative;
-z-index: 1;
-padding: 30px;
-font-family: Arial, sans-serif;
-color: #1f2937;
-}
-.voucher-logo {
-width: 80px;
-height: 80px;
-object-fit: contain;
-margin: 0 auto 10px;
-display: block;
-}
-.touch-feedback {
-position: relative;
-overflow: hidden;
-}
-.touch-feedback::after {
-content: '';
-position: absolute;
-top: 50%;
-left: 50%;
-width: 0;
-height: 0;
-background: rgba(255,255,255,0.2);
-border-radius: 50%;
-transform: translate(-50%, -50%);
-transition: width 0.3s, height 0.3s;
-}
-.touch-feedback:active::after {
-width: 200%;
-height: 200%;
-}
+.chart-container {position: relative; height: 250px;}
+@media (min-width: 768px) {.chart-container {height: 300px;}}
+.voucher-container {position: relative; width: 350px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);}
+.voucher-bg {position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.15; pointer-events: none;}
+.voucher-content {position: relative; z-index: 1; padding: 30px; font-family: Arial, sans-serif; color: #1f2937;}
+.voucher-logo {width: 80px; height: 80px; object-fit: contain; margin: 0 auto 10px; display: block;}
+.touch-feedback {position: relative; overflow: hidden;}
+.touch-feedback::after {content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; background: rgba(255,255,255,0.2); border-radius: 50%; transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s;}
+.touch-feedback:active::after {width: 200%; height: 200%;}
 .safe-top { padding-top: env(safe-area-inset-top); }
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
-.offline-indicator {
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-background: #f59e0b;
-color: #000;
-text-align: center;
-padding: 8px;
-font-size: 12px;
-font-weight: 600;
-z-index: 9999;
-transform: translateY(-100%);
-transition: transform 0.3s;
-}
-.offline-indicator.show {
-transform: translateY(0);
-}
-/* Voucher gallery */
-.voucher-gallery {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-gap: 10px;
-max-height: 400px;
-overflow-y: auto;
-}
-.voucher-thumb {
-aspect-ratio: 1;
-background: #1a2233;
-border-radius: 8px;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-cursor: pointer;
-border: 2px solid transparent;
-transition: all 0.2s;
-}
-.voucher-thumb:hover {
-border-color: #00a8e8;
-}
-.voucher-thumb i {
-font-size: 32px;
-color: #00a8e8;
-margin-bottom: 8px;
-}
-.voucher-thumb span {
-font-size: 11px;
-color: #9ca3af;
-text-align: center;
-padding: 0 8px;
-}
-/* Modal improvements */
-.modal-backdrop {
-background: rgba(0, 0, 0, 0.8);
-backdrop-filter: blur(4px);
-}
-/* Number formatting */
-.truncate-number {
-overflow: hidden;
-text-overflow: ellipsis;
-white-space: nowrap;
-max-width: 100%;
-}
-/* Blacklist loss summary */
-.blacklist-summary {
-background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(0, 0, 0, 0.3) 100%);
-border: 1px solid rgba(239, 68, 68, 0.3);
-}
+.offline-indicator {position: fixed; top: 0; left: 0; right: 0; background: #f59e0b; color: #000; text-align: center; padding: 8px; font-size: 12px; font-weight: 600; z-index: 9999; transform: translateY(-100%); transition: transform 0.3s;}
+.offline-indicator.show {transform: translateY(0);}
+.voucher-gallery {display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; max-height: 400px; overflow-y: auto;}
+.voucher-thumb {aspect-ratio: 1; background: #1a2233; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent; transition: all 0.2s;}
+.voucher-thumb:hover {border-color: #00a8e8;}
+.voucher-thumb i {font-size: 32px; color: #00a8e8; margin-bottom: 8px;}
+.voucher-thumb span {font-size: 11px; color: #9ca3af; text-align: center; padding: 0 8px;}
+.modal-backdrop {background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(4px);}
+.truncate-number {overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;}
+.blacklist-summary {background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(0, 0, 0, 0.3) 100%); border: 1px solid rgba(239, 68, 68, 0.3);}
+.client-actions {opacity: 0; transition: opacity 0.2s ease;}
+.glass-effect:hover .client-actions {opacity: 1;}
+@media (max-width: 768px) {.client-actions {opacity: 1;}}
 </style>
+<base target="_blank">
 </head>
 <body class="text-gray-100 min-h-screen">
-<!-- Offline Indicator -->
-<div id="offline-indicator" class="offline-indicator">
-<i class="fas fa-wifi-slash mr-2"></i> Sin conexión - Modo offline activo
-</div>
-<!-- Login Screen with PIN -->
+<div id="offline-indicator" class="offline-indicator"><i class="fas fa-wifi-slash mr-2"></i> Sin conexión - Modo offline activo</div>
 <div id="login-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-dark via-card to-dark p-4">
 <div class="w-full max-w-sm">
 <div class="text-center mb-8">
@@ -392,14 +121,12 @@ border: 1px solid rgba(239, 68, 68, 0.3);
 <h1 class="text-2xl font-black gradient-text mb-2">J&N SOLUCIONES</h1>
 <p class="text-gray-400 text-sm">Ingrese su PIN de acceso</p>
 </div>
-<!-- PIN Display -->
 <div class="flex justify-center gap-4 mb-8">
 <div class="pin-dot" id="pin-1"></div>
 <div class="pin-dot" id="pin-2"></div>
 <div class="pin-dot" id="pin-3"></div>
 <div class="pin-dot" id="pin-4"></div>
 </div>
-<!-- PIN Pad -->
 <div class="grid grid-cols-3 gap-4 max-w-[240px] mx-auto mb-6">
 <button class="pin-key touch-feedback" onclick="enterPin(1)">1</button>
 <button class="pin-key touch-feedback" onclick="enterPin(2)">2</button>
@@ -410,107 +137,62 @@ border: 1px solid rgba(239, 68, 68, 0.3);
 <button class="pin-key touch-feedback" onclick="enterPin(7)">7</button>
 <button class="pin-key touch-feedback" onclick="enterPin(8)">8</button>
 <button class="pin-key touch-feedback" onclick="enterPin(9)">9</button>
-<button class="pin-key touch-feedback text-danger" onclick="clearPin()">
-<i class="fas fa-times"></i>
-</button>
+<button class="pin-key touch-feedback text-danger" onclick="clearPin()"><i class="fas fa-times"></i></button>
 <button class="pin-key touch-feedback" onclick="enterPin(0)">0</button>
-<button class="pin-key touch-feedback text-accent" onclick="deletePin()">
-<i class="fas fa-backspace"></i>
-</button>
+<button class="pin-key touch-feedback text-accent" onclick="deletePin()"><i class="fas fa-backspace"></i></button>
 </div>
 <p id="pin-error" class="text-danger text-center text-sm mb-4 opacity-0 transition-opacity">PIN incorrecto</p>
-<button onclick="loginDemo()" class="w-full py-3 text-gray-500 text-sm hover:text-accent transition-colors">
-<i class="fas fa-user-shield mr-2"></i> Modo Demo (Sin conexión)
-</button>
+<button onclick="loginDemo()" class="w-full py-3 text-gray-500 text-sm hover:text-accent transition-colors"><i class="fas fa-user-shield mr-2"></i> Modo Demo (Sin conexión)</button>
 <p class="text-xs text-gray-600 text-center mt-6">Versión PRO 2026</p>
 </div>
 </div>
-<!-- Main App -->
 <div id="app-content" class="hidden min-h-screen flex flex-col lg:flex-row">
-<!-- Sidebar (Desktop) -->
 <aside class="hidden lg:flex w-72 flex-col glass-effect border-r border-gray-800 fixed h-full z-30">
 <div class="p-6 border-b border-gray-800">
 <div class="flex items-center gap-3">
-<div class="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-<i class="fas fa-chart-line text-white"></i>
-</div>
-<div>
-<h2 class="font-bold text-white">J&N PRO</h2>
-<p class="text-xs text-gray-400">v2026.2</p>
-</div>
+<div class="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center"><i class="fas fa-chart-line text-white"></i></div>
+<div><h2 class="font-bold text-white">J&N PRO</h2><p class="text-xs text-gray-400">v2026.2</p></div>
 </div>
 </div>
 <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
-<button onclick="showPage('dashboard')" id="nav-dashboard" class="menu-item active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left touch-feedback">
-<i class="fas fa-home w-5"></i> Dashboard
-</button>
-<button onclick="showPage('clients')" id="nav-clients" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback">
-<i class="fas fa-users w-5"></i> Clientes
-</button>
-<button onclick="showPage('loans')" id="nav-loans" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback">
-<i class="fas fa-hand-holding-usd w-5"></i> Préstamos
-</button>
-<button onclick="showPage('payments')" id="nav-payments" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback">
-<i class="fas fa-money-bill-wave w-5"></i> Cobros
-</button>
-<button onclick="showPage('vouchers')" id="nav-vouchers" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback">
-<i class="fas fa-receipt w-5"></i> Comprobantes
-</button>
-<button onclick="showPage('blacklist')" id="nav-blacklist" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback">
-<i class="fas fa-ban w-5"></i> Lista Negra
-</button>
-<button onclick="showPage('reports')" id="nav-reports" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback">
-<i class="fas fa-chart-pie w-5"></i> Reportes
-</button>
-<button onclick="showPage('settings')" id="nav-settings" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback">
-<i class="fas fa-cog w-5"></i> Configuración
-</button>
+<button onclick="showPage('dashboard')" id="nav-dashboard" class="menu-item active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left touch-feedback"><i class="fas fa-home w-5"></i> Dashboard</button>
+<button onclick="showPage('clients')" id="nav-clients" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback"><i class="fas fa-users w-5"></i> Clientes</button>
+<button onclick="showPage('loans')" id="nav-loans" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback"><i class="fas fa-hand-holding-usd w-5"></i> Préstamos</button>
+<button onclick="showPage('payments')" id="nav-payments" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback"><i class="fas fa-money-bill-wave w-5"></i> Cobros</button>
+<button onclick="showPage('vouchers')" id="nav-vouchers" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback"><i class="fas fa-receipt w-5"></i> Comprobantes</button>
+<button onclick="showPage('blacklist')" id="nav-blacklist" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback"><i class="fas fa-ban w-5"></i> Lista Negra</button>
+<button onclick="showPage('reports')" id="nav-reports" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback"><i class="fas fa-chart-pie w-5"></i> Reportes</button>
+<button onclick="showPage('settings')" id="nav-settings" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-400 touch-feedback"><i class="fas fa-cog w-5"></i> Configuración</button>
 </nav>
 <div class="p-4 border-t border-gray-800">
 <div class="flex items-center gap-3 mb-3">
 <div id="sync-status-dot" class="w-2 h-2 rounded-full bg-success pulse-ring"></div>
 <span id="sync-status-text" class="text-xs text-gray-400">Sincronizado</span>
 </div>
-<button onclick="logout()" class="w-full flex items-center gap-2 px-4 py-2 rounded-lg bg-danger/20 text-danger text-sm hover:bg-danger/30 transition-all touch-feedback">
-<i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-</button>
+<button onclick="logout()" class="w-full flex items-center gap-2 px-4 py-2 rounded-lg bg-danger/20 text-danger text-sm hover:bg-danger/30 transition-all touch-feedback"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
 </div>
 </aside>
-<!-- Main Content -->
 <main class="flex-1 flex flex-col min-h-screen lg:ml-72 content-area">
-<!-- Header -->
 <header class="glass-effect border-b border-gray-800 px-4 md:px-6 py-4 flex items-center justify-between sticky top-0 z-40 safe-top">
 <div class="flex items-center gap-3">
-<button class="lg:hidden text-gray-400 p-2 -ml-2" onclick="toggleMobileMenu()">
-<i class="fas fa-bars text-xl"></i>
-</button>
+<button class="lg:hidden text-gray-400 p-2 -ml-2" onclick="toggleMobileMenu()"><i class="fas fa-bars text-xl"></i></button>
 <img src="logo-jn.png" alt="J&N Soluciones" class="h-8 md:h-10 w-auto object-contain">
 <h1 id="page-title" class="text-lg md:text-xl font-bold">Dashboard</h1>
 </div>
 <div class="flex items-center gap-3">
-<button onclick="showNotifications()" class="relative p-2 text-gray-400 hover:text-white transition-all touch-feedback">
-<i class="fas fa-bell text-lg md:text-xl"></i>
-<span id="notif-badge" class="absolute top-0 right-0 w-5 h-5 bg-danger rounded-full text-xs flex items-center justify-center hidden">0</span>
-</button>
+<button onclick="showNotifications()" class="relative p-2 text-gray-400 hover:text-white transition-all touch-feedback"><i class="fas fa-bell text-lg md:text-xl"></i><span id="notif-badge" class="absolute top-0 right-0 w-5 h-5 bg-danger rounded-full text-xs flex items-center justify-center hidden">0</span></button>
 <div class="flex items-center gap-2">
-<div class="w-8 h-8 bg-gradient-to-br from-accent to-primary rounded-full flex items-center justify-center">
-<i class="fas fa-user text-sm"></i>
-</div>
+<div class="w-8 h-8 bg-gradient-to-br from-accent to-primary rounded-full flex items-center justify-center"><i class="fas fa-user text-sm"></i></div>
 <span id="user-name" class="hidden sm:block text-sm font-medium">Admin</span>
 </div>
 </div>
 </header>
-<!-- Content Area -->
 <div class="flex-1 p-4 md:p-6 overflow-auto">
-<!-- Dashboard -->
 <div id="page-dashboard" class="view space-y-4 md:space-y-6">
-<!-- Stats Grid -->
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
 <div class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback">
 <div class="flex items-center justify-between mb-2 md:mb-4">
-<div class="w-8 h-8 md:w-12 md:h-12 bg-danger/20 rounded-xl flex items-center justify-center">
-<i class="fas fa-wallet text-danger text-sm md:text-xl"></i>
-</div>
+<div class="w-8 h-8 md:w-12 md:h-12 bg-danger/20 rounded-xl flex items-center justify-center"><i class="fas fa-wallet text-danger text-sm md:text-xl"></i></div>
 <span class="text-[10px] md:text-xs text-gray-500">Capital</span>
 </div>
 <p class="stat-value font-black text-white truncate-number" id="stat-capital">$0</p>
@@ -518,9 +200,7 @@ border: 1px solid rgba(239, 68, 68, 0.3);
 </div>
 <div class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback">
 <div class="flex items-center justify-between mb-2 md:mb-4">
-<div class="w-8 h-8 md:w-12 md:h-12 bg-success/20 rounded-xl flex items-center justify-center">
-<i class="fas fa-chart-line text-success text-sm md:text-xl"></i>
-</div>
+<div class="w-8 h-8 md:w-12 md:h-12 bg-success/20 rounded-xl flex items-center justify-center"><i class="fas fa-chart-line text-success text-sm md:text-xl"></i></div>
 <span class="text-[10px] md:text-xs text-gray-500">Ganancias</span>
 </div>
 <p class="stat-value font-black text-success truncate-number" id="stat-profits">$0</p>
@@ -528,9 +208,7 @@ border: 1px solid rgba(239, 68, 68, 0.3);
 </div>
 <div class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback">
 <div class="flex items-center justify-between mb-2 md:mb-4">
-<div class="w-8 h-8 md:w-12 md:h-12 bg-accent/20 rounded-xl flex items-center justify-center">
-<i class="fas fa-users text-accent text-sm md:text-xl"></i>
-</div>
+<div class="w-8 h-8 md:w-12 md:h-12 bg-accent/20 rounded-xl flex items-center justify-center"><i class="fas fa-users text-accent text-sm md:text-xl"></i></div>
 <span class="text-[10px] md:text-xs text-gray-500">Clientes</span>
 </div>
 <p class="text-lg md:text-2xl font-black text-white" id="stat-clients">0</p>
@@ -538,65 +216,41 @@ border: 1px solid rgba(239, 68, 68, 0.3);
 </div>
 <div class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback">
 <div class="flex items-center justify-between mb-2 md:mb-4">
-<div class="w-8 h-8 md:w-12 md:h-12 bg-warning/20 rounded-xl flex items-center justify-center">
-<i class="fas fa-exclamation-triangle text-warning text-sm md:text-xl"></i>
-</div>
+<div class="w-8 h-8 md:w-12 md:h-12 bg-warning/20 rounded-xl flex items-center justify-center"><i class="fas fa-exclamation-triangle text-warning text-sm md:text-xl"></i></div>
 <span class="text-[10px] md:text-xs text-gray-500">Vencidos</span>
 </div>
 <p class="text-lg md:text-2xl font-black text-warning" id="stat-overdue">0</p>
 <p class="text-[10px] md:text-xs text-gray-500 mt-1">Préstamos</p>
 </div>
 </div>
-<!-- Charts -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
 <div class="glass-effect rounded-2xl p-4 md:p-6">
-<h3 class="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
-<i class="fas fa-chart-area text-accent"></i> Evolución
-</h3>
-<div class="chart-container">
-<canvas id="chart-evolution"></canvas>
-</div>
+<h3 class="text-base md:text-lg font-bold mb-4 flex items-center gap-2"><i class="fas fa-chart-area text-accent"></i> Evolución</h3>
+<div class="chart-container"><canvas id="chart-evolution"></canvas></div>
 </div>
 <div class="glass-effect rounded-2xl p-4 md:p-6">
-<h3 class="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
-<i class="fas fa-chart-pie text-accent"></i> Distribución
-</h3>
-<div class="chart-container">
-<canvas id="chart-distribution"></canvas>
+<h3 class="text-base md:text-lg font-bold mb-4 flex items-center gap-2"><i class="fas fa-chart-pie text-accent"></i> Distribución</h3>
+<div class="chart-container"><canvas id="chart-distribution"></canvas></div>
 </div>
 </div>
-</div>
-<!-- Recent Activity -->
 <div class="glass-effect rounded-2xl p-4 md:p-6">
 <div class="flex items-center justify-between mb-4">
-<h3 class="text-base md:text-lg font-bold flex items-center gap-2">
-<i class="fas fa-history text-accent"></i> Actividad Reciente
-</h3>
+<h3 class="text-base md:text-lg font-bold flex items-center gap-2"><i class="fas fa-history text-accent"></i> Actividad Reciente</h3>
 <button onclick="showPage('payments')" class="text-sm text-accent hover:underline">Ver todo</button>
 </div>
-<div id="recent-activity" class="space-y-3">
-<p class="text-gray-500 text-center py-8">No hay actividad reciente</p>
+<div id="recent-activity" class="space-y-3"><p class="text-gray-500 text-center py-8">No hay actividad reciente</p></div>
 </div>
 </div>
-</div>
-<!-- Clients -->
 <div id="page-clients" class="view hidden space-y-4 md:space-y-6">
 <div class="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
 <div class="relative flex-1 max-w-md w-full">
 <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
-<input type="text" id="search-clients" placeholder="Buscar cliente..."
-class="w-full pl-12 pr-4 py-3 bg-surface border border-gray-700 rounded-xl text-white placeholder-gray-500 input-focus text-base"
-onkeyup="searchClients()">
+<input type="text" id="search-clients" placeholder="Buscar cliente..." class="w-full pl-12 pr-4 py-3 bg-surface border border-gray-700 rounded-xl text-white placeholder-gray-500 input-focus text-base" onkeyup="searchClients()">
 </div>
-<button onclick="openModal('modal-new-client')" class="btn-gradient px-4 md:px-6 py-3 rounded-xl font-bold text-white flex items-center gap-2 touch-feedback w-full sm:w-auto justify-center">
-<i class="fas fa-plus"></i> <span class="hidden sm:inline">Nuevo Cliente</span><span class="sm:hidden">Nuevo</span>
-</button>
+<button onclick="openModal('modal-new-client')" class="btn-gradient px-4 md:px-6 py-3 rounded-xl font-bold text-white flex items-center gap-2 touch-feedback w-full sm:w-auto justify-center"><i class="fas fa-plus"></i> <span class="hidden sm:inline">Nuevo Cliente</span><span class="sm:hidden">Nuevo</span></button>
 </div>
-<div id="clients-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4">
-<!-- Clients will be rendered here -->
+<div id="clients-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4"></div>
 </div>
-</div>
-<!-- Loans -->
 <div id="page-loans" class="view hidden space-y-4 md:space-y-6">
 <div class="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
 <div class="flex gap-2 overflow-x-auto pb-2 sm:pb-0 w-full sm:w-auto">
@@ -604,96 +258,46 @@ onkeyup="searchClients()">
 <button onclick="filterLoans('active')" class="filter-btn px-3 md:px-4 py-2 rounded-lg bg-surface text-gray-400 text-sm font-medium whitespace-nowrap" data-filter="active">Activos</button>
 <button onclick="filterLoans('overdue')" class="filter-btn px-3 md:px-4 py-2 rounded-lg bg-surface text-gray-400 text-sm font-medium whitespace-nowrap" data-filter="overdue">Vencidos</button>
 </div>
-<button onclick="openModal('modal-new-loan')" class="btn-gradient px-4 md:px-6 py-3 rounded-xl font-bold text-white flex items-center gap-2 touch-feedback w-full sm:w-auto justify-center">
-<i class="fas fa-plus"></i> <span class="hidden sm:inline">Nuevo Préstamo</span><span class="sm:hidden">Nuevo</span>
-</button>
+<button onclick="openModal('modal-new-loan')" class="btn-gradient px-4 md:px-6 py-3 rounded-xl font-bold text-white flex items-center gap-2 touch-feedback w-full sm:w-auto justify-center"><i class="fas fa-plus"></i> <span class="hidden sm:inline">Nuevo Préstamo</span><span class="sm:hidden">Nuevo</span></button>
 </div>
-<div id="loans-grid" class="space-y-3 md:space-y-4">
-<!-- Loans will be rendered here -->
+<div id="loans-grid" class="space-y-3 md:space-y-4"></div>
 </div>
-</div>
-<!-- Payments -->
 <div id="page-payments" class="view hidden space-y-4 md:space-y-6">
 <div class="glass-effect rounded-2xl p-4 md:p-6">
 <h3 class="text-base md:text-lg font-bold mb-4 md:mb-6">Registrar Pago</h3>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-<div>
-<label class="block text-sm text-gray-400 mb-2">Seleccionar Cliente</label>
-<select id="payment-client" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" onchange="loadClientLoans()">
-<option value="">Seleccionar...</option>
-</select>
-</div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Préstamo</label>
-<select id="payment-loan" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" onchange="calculatePayment()">
-<option value="">Seleccionar...</option>
-</select>
-</div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Interés (10%)</label>
-<input type="number" id="payment-interest" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" readonly>
-</div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Abono a Capital</label>
-<input type="number" id="payment-capital" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="0">
-</div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Próxima Fecha</label>
-<input type="date" id="payment-next-date" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base">
-</div>
-<div class="flex items-end">
-<button onclick="processPayment()" class="w-full btn-gradient py-3 rounded-xl font-bold text-white touch-feedback">
-<i class="fas fa-check mr-2"></i> Procesar Pago
-</button>
-</div>
+<div><label class="block text-sm text-gray-400 mb-2">Seleccionar Cliente</label><select id="payment-client" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" onchange="loadClientLoans()"><option value="">Seleccionar...</option></select></div>
+<div><label class="block text-sm text-gray-400 mb-2">Préstamo</label><select id="payment-loan" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" onchange="calculatePayment()"><option value="">Seleccionar...</option></select></div>
+<div><label class="block text-sm text-gray-400 mb-2">Interés (10%)</label><input type="number" id="payment-interest" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" readonly></div>
+<div><label class="block text-sm text-gray-400 mb-2">Abono a Capital</label><input type="number" id="payment-capital" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="0"></div>
+<div><label class="block text-sm text-gray-400 mb-2">Próxima Fecha</label><input type="date" id="payment-next-date" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base"></div>
+<div class="flex items-end"><button onclick="processPayment()" class="w-full btn-gradient py-3 rounded-xl font-bold text-white touch-feedback"><i class="fas fa-check mr-2"></i> Procesar Pago</button></div>
 </div>
 </div>
 <div class="glass-effect rounded-2xl p-4 md:p-6">
 <h3 class="text-base md:text-lg font-bold mb-4">Historial de Pagos</h3>
 <div id="payments-history" class="overflow-x-auto -mx-4 px-4">
 <table class="w-full min-w-[600px]">
-<thead>
-<tr class="text-left text-gray-400 border-b border-gray-700 text-sm">
-<th class="pb-3">Fecha</th>
-<th class="pb-3">Cliente</th>
-<th class="pb-3">Interés</th>
-<th class="pb-3">Capital</th>
-<th class="pb-3">Saldo</th>
-</tr>
-</thead>
-<tbody id="payments-table-body">
-<!-- Payments will be rendered here -->
-</tbody>
+<thead><tr class="text-left text-gray-400 border-b border-gray-700 text-sm"><th class="pb-3">Fecha</th><th class="pb-3">Cliente</th><th class="pb-3">Interés</th><th class="pb-3">Capital</th><th class="pb-3">Saldo</th><th class="pb-3 text-right">Acción</th></tr></thead>
+<tbody id="payments-table-body"></tbody>
 </table>
 </div>
 </div>
 </div>
-<!-- Vouchers Page -->
 <div id="page-vouchers" class="view hidden space-y-4 md:space-y-6">
 <div class="glass-effect rounded-2xl p-4 md:p-6">
 <div class="flex items-center justify-between mb-4 md:mb-6">
-<div>
-<h3 class="text-base md:text-lg font-bold flex items-center gap-2">
-<i class="fas fa-receipt text-accent"></i> Comprobantes Generados
-</h3>
-<p class="text-xs md:text-sm text-gray-400 mt-1">Los vouchers se guardan localmente en tu dispositivo</p>
+<div><h3 class="text-base md:text-lg font-bold flex items-center gap-2"><i class="fas fa-receipt text-accent"></i> Comprobantes Generados</h3><p class="text-xs md:text-sm text-gray-400 mt-1">Los vouchers se guardan localmente en tu dispositivo</p></div>
 </div>
-</div>
-<div id="vouchers-list" class="voucher-gallery">
-<!-- Vouchers will be listed here -->
-</div>
+<div id="vouchers-list" class="voucher-gallery"></div>
 <div id="no-vouchers" class="text-center py-12">
-<div class="w-16 h-16 bg-surface rounded-full flex items-center justify-center mx-auto mb-4">
-<i class="fas fa-receipt text-2xl text-gray-600"></i>
-</div>
+<div class="w-16 h-16 bg-surface rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-receipt text-2xl text-gray-600"></i></div>
 <p class="text-gray-500">No hay comprobantes guardados</p>
 <p class="text-xs text-gray-600 mt-2">Los vouchers se generan automáticamente al crear préstamos o recibir pagos</p>
 </div>
 </div>
 <div class="glass-effect rounded-2xl p-4 md:p-6 border border-gray-700">
-<h4 class="font-bold mb-4 flex items-center gap-2">
-<i class="fas fa-info-circle text-accent"></i> Información Importante
-</h4>
+<h4 class="font-bold mb-4 flex items-center gap-2"><i class="fas fa-info-circle text-accent"></i> Información Importante</h4>
 <div class="space-y-3 text-sm text-gray-400">
 <p><i class="fas fa-mobile-alt mr-2 text-accent"></i> <strong>En móvil:</strong> Los vouchers se descargan a tu carpeta de Descargas o se abren en una nueva pestaña para que los guardes manualmente.</p>
 <p><i class="fas fa-share-alt mr-2 text-accent"></i> <strong>Compartir:</strong> Puedes compartir directamente por WhatsApp desde el botón de compartir.</p>
@@ -701,19 +305,12 @@ onkeyup="searchClients()">
 </div>
 </div>
 </div>
-<!-- Blacklist -->
 <div id="page-blacklist" class="view hidden space-y-4 md:space-y-6">
-<!-- Blacklist Loss Summary -->
 <div class="blacklist-summary rounded-2xl p-4 md:p-6">
 <div class="flex items-center justify-between">
 <div class="flex items-center gap-3">
-<div class="w-12 h-12 bg-danger/20 rounded-xl flex items-center justify-center">
-<i class="fas fa-exclamation-triangle text-danger text-xl"></i>
-</div>
-<div>
-<h3 class="text-base md:text-lg font-bold text-danger">Pérdida Total Estimada</h3>
-<p class="text-xs md:text-sm text-gray-400">Suma de todos los préstamos en lista negra</p>
-</div>
+<div class="w-12 h-12 bg-danger/20 rounded-xl flex items-center justify-center"><i class="fas fa-exclamation-triangle text-danger text-xl"></i></div>
+<div><h3 class="text-base md:text-lg font-bold text-danger">Pérdida Total Estimada</h3><p class="text-xs md:text-sm text-gray-400">Suma de todos los préstamos en lista negra</p></div>
 </div>
 <div class="text-right">
 <p class="text-2xl md:text-3xl font-black text-danger truncate-number" id="blacklist-total-loss">$0.00</p>
@@ -723,206 +320,105 @@ onkeyup="searchClients()">
 </div>
 <div class="glass-effect rounded-2xl p-4 md:p-6 border border-danger/30">
 <div class="flex items-center gap-3 mb-4 md:mb-6">
-<div class="w-10 h-10 md:w-12 md:h-12 bg-danger/20 rounded-xl flex items-center justify-center">
-<i class="fas fa-ban text-danger text-lg md:text-xl"></i>
+<div class="w-10 h-10 md:w-12 md:h-12 bg-danger/20 rounded-xl flex items-center justify-center"><i class="fas fa-ban text-danger text-lg md:text-xl"></i></div>
+<div><h3 class="text-base md:text-lg font-bold text-danger">Lista Negra</h3><p class="text-xs md:text-sm text-gray-400">Clientes bloqueados por morosidad</p></div>
 </div>
-<div>
-<h3 class="text-base md:text-lg font-bold text-danger">Lista Negra</h3>
-<p class="text-xs md:text-sm text-gray-400">Clientes bloqueados por morosidad</p>
+<div id="blacklist-grid" class="space-y-3 md:space-y-4"></div>
 </div>
 </div>
-<div id="blacklist-grid" class="space-y-3 md:space-y-4">
-<!-- Blacklist items will be rendered here -->
-</div>
-</div>
-</div>
-<!-- Reports -->
 <div id="page-reports" class="view hidden space-y-4 md:space-y-6">
 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-<button onclick="generateReport('daily')" class="glass-effect rounded-2xl p-4 md:p-6 text-left card-hover border border-gray-700 hover:border-accent/50 touch-feedback">
-<i class="fas fa-calendar-day text-accent text-xl md:text-2xl mb-3"></i>
-<h4 class="font-bold text-sm md:text-base">Reporte Diario</h4>
-<p class="text-xs md:text-sm text-gray-400">Resumen de hoy</p>
-</button>
-<button onclick="generateReport('weekly')" class="glass-effect rounded-2xl p-4 md:p-6 text-left card-hover border border-gray-700 hover:border-accent/50 touch-feedback">
-<i class="fas fa-calendar-week text-accent text-xl md:text-2xl mb-3"></i>
-<h4 class="font-bold text-sm md:text-base">Reporte Semanal</h4>
-<p class="text-xs md:text-sm text-gray-400">Últimos 7 días</p>
-</button>
-<button onclick="generateReport('monthly')" class="glass-effect rounded-2xl p-4 md:p-6 text-left card-hover border border-gray-700 hover:border-accent/50 touch-feedback">
-<i class="fas fa-calendar-alt text-accent text-xl md:text-2xl mb-3"></i>
-<h4 class="font-bold text-sm md:text-base">Reporte Mensual</h4>
-<p class="text-xs md:text-sm text-gray-400">Este mes</p>
-</button>
+<button onclick="generateReport('daily')" class="glass-effect rounded-2xl p-4 md:p-6 text-left card-hover border border-gray-700 hover:border-accent/50 touch-feedback"><i class="fas fa-calendar-day text-accent text-xl md:text-2xl mb-3"></i><h4 class="font-bold text-sm md:text-base">Reporte Diario</h4><p class="text-xs md:text-sm text-gray-400">Resumen de hoy</p></button>
+<button onclick="generateReport('weekly')" class="glass-effect rounded-2xl p-4 md:p-6 text-left card-hover border border-gray-700 hover:border-accent/50 touch-feedback"><i class="fas fa-calendar-week text-accent text-xl md:text-2xl mb-3"></i><h4 class="font-bold text-sm md:text-base">Reporte Semanal</h4><p class="text-xs md:text-sm text-gray-400">Últimos 7 días</p></button>
+<button onclick="generateReport('monthly')" class="glass-effect rounded-2xl p-4 md:p-6 text-left card-hover border border-gray-700 hover:border-accent/50 touch-feedback"><i class="fas fa-calendar-alt text-accent text-xl md:text-2xl mb-3"></i><h4 class="font-bold text-sm md:text-base">Reporte Mensual</h4><p class="text-xs md:text-sm text-gray-400">Este mes</p></button>
 </div>
 <div id="report-content" class="glass-effect rounded-2xl p-4 md:p-6 hidden">
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 md:mb-6">
 <h3 id="report-title" class="text-base md:text-lg font-bold"></h3>
 <div class="flex gap-2 w-full sm:w-auto">
-<button onclick="exportReportPDF()" class="flex-1 sm:flex-none px-3 md:px-4 py-2 bg-danger/20 text-danger rounded-lg text-xs md:text-sm font-medium hover:bg-danger/30 touch-feedback">
-<i class="fas fa-file-pdf mr-1 md:mr-2"></i> PDF
-</button>
-<button onclick="shareReport()" class="flex-1 sm:flex-none px-3 md:px-4 py-2 bg-success/20 text-success rounded-lg text-xs md:text-sm font-medium hover:bg-success/30 touch-feedback">
-<i class="fas fa-share-alt mr-1 md:mr-2"></i> Compartir
-</button>
+<button onclick="exportReportPDF()" class="flex-1 sm:flex-none px-3 md:px-4 py-2 bg-danger/20 text-danger rounded-lg text-xs md:text-sm font-medium hover:bg-danger/30 touch-feedback"><i class="fas fa-file-pdf mr-1 md:mr-2"></i> PDF</button>
+<button onclick="shareReport()" class="flex-1 sm:flex-none px-3 md:px-4 py-2 bg-success/20 text-success rounded-lg text-xs md:text-sm font-medium hover:bg-success/30 touch-feedback"><i class="fas fa-share-alt mr-1 md:mr-2"></i> Compartir</button>
 </div>
 </div>
 <div id="report-data" class="overflow-x-auto"></div>
 </div>
 </div>
-<!-- Settings -->
 <div id="page-settings" class="view hidden space-y-4 md:space-y-6">
 <div class="glass-effect rounded-2xl p-4 md:p-6">
-<h3 class="text-base md:text-lg font-bold mb-4 md:mb-6 flex items-center gap-2">
-<i class="fas fa-lock text-accent"></i> Cambiar PIN de Acceso
-</h3>
+<h3 class="text-base md:text-lg font-bold mb-4 md:mb-6 flex items-center gap-2"><i class="fas fa-lock text-accent"></i> Cambiar PIN de Acceso</h3>
 <div class="max-w-md space-y-4">
-<div>
-<label class="block text-sm text-gray-400 mb-2">PIN Actual</label>
-<input type="password" id="current-pin" maxlength="4" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base tracking-widest" placeholder="••••">
-</div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Nuevo PIN (4 dígitos)</label>
-<input type="password" id="new-pin" maxlength="4" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base tracking-widest" placeholder="••••">
-</div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Confirmar Nuevo PIN</label>
-<input type="password" id="confirm-pin" maxlength="4" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base tracking-widest" placeholder="••••">
-</div>
-<button onclick="changePin()" class="w-full btn-gradient py-3 rounded-xl font-bold text-white touch-feedback">
-<i class="fas fa-save mr-2"></i> Cambiar PIN
-</button>
+<div><label class="block text-sm text-gray-400 mb-2">PIN Actual</label><input type="password" id="current-pin" maxlength="4" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base tracking-widest" placeholder="••••"></div>
+<div><label class="block text-sm text-gray-400 mb-2">Nuevo PIN (4 dígitos)</label><input type="password" id="new-pin" maxlength="4" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base tracking-widest" placeholder="••••"></div>
+<div><label class="block text-sm text-gray-400 mb-2">Confirmar Nuevo PIN</label><input type="password" id="confirm-pin" maxlength="4" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base tracking-widest" placeholder="••••"></div>
+<button onclick="changePin()" class="w-full btn-gradient py-3 rounded-xl font-bold text-white touch-feedback"><i class="fas fa-save mr-2"></i> Cambiar PIN</button>
 </div>
 </div>
 <div class="glass-effect rounded-2xl p-4 md:p-6">
-<h3 class="text-base md:text-lg font-bold mb-4 md:mb-6 flex items-center gap-2">
-<i class="fas fa-database text-accent"></i> Backup y Restauración
-</h3>
+<h3 class="text-base md:text-lg font-bold mb-4 md:mb-6 flex items-center gap-2"><i class="fas fa-database text-accent"></i> Backup y Restauración</h3>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-<button onclick="exportData()" class="p-4 md:p-6 bg-surface rounded-xl border border-gray-700 hover:border-accent/50 transition-all text-left touch-feedback">
-<i class="fas fa-download text-accent text-xl md:text-2xl mb-3"></i>
-<h4 class="font-bold text-sm md:text-base">Exportar Datos</h4>
-<p class="text-xs md:text-sm text-gray-400">Descargar backup JSON</p>
-</button>
-<label class="p-4 md:p-6 bg-surface rounded-xl border border-gray-700 hover:border-accent/50 transition-all text-left cursor-pointer touch-feedback">
-<i class="fas fa-upload text-accent text-xl md:text-2xl mb-3"></i>
-<h4 class="font-bold text-sm md:text-base">Importar Datos</h4>
-<p class="text-xs md:text-sm text-gray-400">Restaurar desde archivo</p>
-<input type="file" id="import-file" class="hidden" accept=".json" onchange="importData()">
-</label>
+<button onclick="exportData()" class="p-4 md:p-6 bg-surface rounded-xl border border-gray-700 hover:border-accent/50 transition-all text-left touch-feedback"><i class="fas fa-download text-accent text-xl md:text-2xl mb-3"></i><h4 class="font-bold text-sm md:text-base">Exportar Datos</h4><p class="text-xs md:text-sm text-gray-400">Descargar backup JSON</p></button>
+<label class="p-4 md:p-6 bg-surface rounded-xl border border-gray-700 hover:border-accent/50 transition-all text-left cursor-pointer touch-feedback"><i class="fas fa-upload text-accent text-xl md:text-2xl mb-3"></i><h4 class="font-bold text-sm md:text-base">Importar Datos</h4><p class="text-xs md:text-sm text-gray-400">Restaurar desde archivo</p><input type="file" id="import-file" class="hidden" accept=".json" onchange="importData()"></label>
 </div>
 </div>
 <div class="glass-effect rounded-2xl p-4 md:p-6">
-<h3 class="text-base md:text-lg font-bold mb-4 md:mb-6 flex items-center gap-2">
-<i class="fas fa-percentage text-accent"></i> Configuración de Tasas
-</h3>
-<div class="max-w-md">
-<label class="block text-sm text-gray-400 mb-2">Tasa de Interés Predeterminada (%)</label>
-<div class="flex gap-2">
-<input type="number" id="settings-rate" value="10" class="flex-1 px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base">
-<button onclick="saveSettings()" class="btn-gradient px-4 md:px-6 py-3 rounded-xl font-bold text-white touch-feedback">Guardar</button>
-</div>
-</div>
+<h3 class="text-base md:text-lg font-bold mb-4 md:mb-6 flex items-center gap-2"><i class="fas fa-percentage text-accent"></i> Configuración de Tasas</h3>
+<div class="max-w-md"><label class="block text-sm text-gray-400 mb-2">Tasa de Interés Predeterminada (%)</label><div class="flex gap-2"><input type="number" id="settings-rate" value="10" class="flex-1 px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base"><button onclick="saveSettings()" class="btn-gradient px-4 md:px-6 py-3 rounded-xl font-bold text-white touch-feedback">Guardar</button></div></div>
 </div>
 <div class="glass-effect rounded-2xl p-4 md:p-6 border border-danger/30">
-<h3 class="text-base md:text-lg font-bold mb-4 md:mb-6 text-danger flex items-center gap-2">
-<i class="fas fa-exclamation-triangle"></i> Zona de Peligro
-</h3>
-<button onclick="resetAllData()" class="w-full md:w-auto px-4 md:px-6 py-3 bg-danger/20 text-danger rounded-xl font-medium hover:bg-danger/30 transition-all touch-feedback text-sm md:text-base">
-<i class="fas fa-trash-alt mr-2"></i> Reiniciar Todos los Datos
-</button>
+<h3 class="text-base md:text-lg font-bold mb-4 md:mb-6 text-danger flex items-center gap-2"><i class="fas fa-exclamation-triangle"></i> Zona de Peligro</h3>
+<button onclick="resetAllData()" class="w-full md:w-auto px-4 md:px-6 py-3 bg-danger/20 text-danger rounded-xl font-medium hover:bg-danger/30 transition-all touch-feedback text-sm md:text-base"><i class="fas fa-trash-alt mr-2"></i> Reiniciar Todos los Datos</button>
 </div>
 </div>
 </div>
 </main>
-<!-- Mobile Menu -->
 <nav class="mobile-menu lg:hidden flex justify-around p-2">
-<button onclick="showPage('dashboard')" class="mobile-nav flex flex-col items-center gap-1 text-accent px-2" data-page="dashboard">
-<i class="fas fa-home text-lg"></i>
-<span class="text-[10px]">Inicio</span>
-</button>
-<button onclick="showPage('clients')" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-2" data-page="clients">
-<i class="fas fa-users text-lg"></i>
-<span class="text-[10px]">Clientes</span>
-</button>
-<button onclick="showPage('loans')" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-2" data-page="loans">
-<i class="fas fa-hand-holding-usd text-lg"></i>
-<span class="text-[10px]">Préstamos</span>
-</button>
-<button onclick="showPage('vouchers')" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-2" data-page="vouchers">
-<i class="fas fa-receipt text-lg"></i>
-<span class="text-[10px]">Vouchers</span>
-</button>
-<button onclick="toggleMoreMenu()" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-2" data-page="more" id="btn-more">
-<i class="fas fa-ellipsis-h text-lg"></i>
-<span class="text-[10px]">Más</span>
-</button>
+<button onclick="showPage('dashboard')" class="mobile-nav flex flex-col items-center gap-1 text-accent px-2" data-page="dashboard"><i class="fas fa-home text-lg"></i><span class="text-[10px]">Inicio</span></button>
+<button onclick="showPage('clients')" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-2" data-page="clients"><i class="fas fa-users text-lg"></i><span class="text-[10px]">Clientes</span></button>
+<button onclick="showPage('loans')" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-2" data-page="loans"><i class="fas fa-hand-holding-usd text-lg"></i><span class="text-[10px]">Préstamos</span></button>
+<button onclick="showPage('vouchers')" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-2" data-page="vouchers"><i class="fas fa-receipt text-lg"></i><span class="text-[10px]">Vouchers</span></button>
+<button onclick="toggleMoreMenu()" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-2" data-page="more" id="btn-more"><i class="fas fa-ellipsis-h text-lg"></i><span class="text-[10px]">Más</span></button>
 </nav>
 </div>
-<!-- Mobile More Menu Modal -->
 <div id="modal-more" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300" onclick="handleMoreBackdropClick(event)">
 <div class="glass-effect rounded-t-3xl p-6 w-full max-w-sm mx-auto slide-in safe-bottom transform transition-transform duration-300" id="more-menu-content">
 <div class="w-12 h-1 bg-gray-600 rounded-full mx-auto mb-6"></div>
 <div class="space-y-2">
-<button onclick="showPage('payments'); toggleMoreMenu()" class="w-full flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-white/5 text-left touch-feedback">
-<div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center">
-<i class="fas fa-money-bill-wave text-accent"></i>
+<button onclick="showPage('payments'); toggleMoreMenu()" class="w-full flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-white/5 text-left touch-feedback"><div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center"><i class="fas fa-money-bill-wave text-accent"></i></div><span class="font-medium">Cobros</span></button>
+<button onclick="showPage('blacklist'); toggleMoreMenu()" class="w-full flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-white/5 text-left touch-feedback"><div class="w-10 h-10 bg-danger/20 rounded-lg flex items-center justify-center"><i class="fas fa-ban text-danger"></i></div><span class="font-medium">Lista Negra</span></button>
+<button onclick="showPage('reports'); toggleMoreMenu()" class="w-full flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-white/5 text-left touch-feedback"><div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center"><i class="fas fa-chart-pie text-accent"></i></div><span class="font-medium">Reportes</span></button>
+<button onclick="showPage('settings'); toggleMoreMenu()" class="w-full flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-white/5 text-left touch-feedback"><div class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center"><i class="fas fa-cog text-gray-300"></i></div><span class="font-medium">Configuración</span></button>
 </div>
-<span class="font-medium">Cobros</span>
-</button>
-<button onclick="showPage('blacklist'); toggleMoreMenu()" class="w-full flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-white/5 text-left touch-feedback">
-<div class="w-10 h-10 bg-danger/20 rounded-lg flex items-center justify-center">
-<i class="fas fa-ban text-danger"></i>
-</div>
-<span class="font-medium">Lista Negra</span>
-</button>
-<button onclick="showPage('reports'); toggleMoreMenu()" class="w-full flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-white/5 text-left touch-feedback">
-<div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center">
-<i class="fas fa-chart-pie text-accent"></i>
-</div>
-<span class="font-medium">Reportes</span>
-</button>
-<button onclick="showPage('settings'); toggleMoreMenu()" class="w-full flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-white/5 text-left touch-feedback">
-<div class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center">
-<i class="fas fa-cog text-gray-300"></i>
-</div>
-<span class="font-medium">Configuración</span>
-</button>
-</div>
-<button onclick="toggleMoreMenu()" class="w-full mt-4 py-3 bg-surface rounded-xl text-gray-400 font-medium touch-feedback">
-Cerrar
-</button>
+<button onclick="toggleMoreMenu()" class="w-full mt-4 py-3 bg-surface rounded-xl text-gray-400 font-medium touch-feedback">Cerrar</button>
 </div>
 </div>
-<!-- Modals -->
 <div id="modal-new-client" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto" onclick="if(event.target === this) closeModal('modal-new-client')">
 <div class="glass-effect rounded-2xl p-6 w-full max-w-md mx-auto slide-in my-auto">
 <div class="flex justify-between items-center mb-6">
 <h3 class="text-lg md:text-xl font-bold">Nuevo Cliente</h3>
-<button onclick="closeModal('modal-new-client')" class="text-gray-400 hover:text-white p-2">
-<i class="fas fa-times text-xl"></i>
-</button>
+<button onclick="closeModal('modal-new-client')" class="text-gray-400 hover:text-white p-2"><i class="fas fa-times text-xl"></i></button>
 </div>
 <div class="space-y-4">
-<div>
-<label class="block text-sm text-gray-400 mb-2">Nombre Completo *</label>
-<input type="text" id="new-client-name" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="Ej: Juan Pérez">
+<div><label class="block text-sm text-gray-400 mb-2">Nombre Completo *</label><input type="text" id="new-client-name" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="Ej: Juan Pérez"></div>
+<div><label class="block text-sm text-gray-400 mb-2">Cédula / ID</label><input type="text" id="new-client-id" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="Ej: 001-0000000-0"></div>
+<div><label class="block text-sm text-gray-400 mb-2">Teléfono *</label><input type="tel" id="new-client-phone" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="Ej: 809-000-0000"></div>
+<div><label class="block text-sm text-gray-400 mb-2">Dirección (Opcional)</label><textarea id="new-client-address" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus resize-none text-base" rows="2" placeholder="Dirección del cliente"></textarea></div>
+<button onclick="saveNewClient()" class="w-full btn-gradient py-3 rounded-xl font-bold text-white mt-4 touch-feedback"><i class="fas fa-save mr-2"></i> Guardar Cliente</button>
 </div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Cédula / ID</label>
-<input type="text" id="new-client-id" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="Ej: 001-0000000-0">
 </div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Teléfono *</label>
-<input type="tel" id="new-client-phone" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="Ej: 809-000-0000">
 </div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Dirección (Opcional)</label>
-<textarea id="new-client-address" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus resize-none text-base" rows="2" placeholder="Dirección del cliente"></textarea>
+<div id="modal-edit-client" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto" onclick="if(event.target === this) closeModal('modal-edit-client')">
+<div class="glass-effect rounded-2xl p-6 w-full max-w-md mx-auto slide-in my-auto">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-lg md:text-xl font-bold"><i class="fas fa-edit text-accent mr-2"></i>Editar Cliente</h3>
+<button onclick="closeModal('modal-edit-client')" class="text-gray-400 hover:text-white p-2"><i class="fas fa-times text-xl"></i></button>
 </div>
-<button onclick="saveNewClient()" class="w-full btn-gradient py-3 rounded-xl font-bold text-white mt-4 touch-feedback">
-<i class="fas fa-save mr-2"></i> Guardar Cliente
-</button>
+<div class="space-y-4">
+<input type="hidden" id="edit-client-id">
+<div><label class="block text-sm text-gray-400 mb-2">Nombre Completo *</label><input type="text" id="edit-client-name" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="Ej: Juan Pérez"></div>
+<div><label class="block text-sm text-gray-400 mb-2">Cédula / ID</label><input type="text" id="edit-client-idcard" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="Ej: 001-0000000-0"></div>
+<div><label class="block text-sm text-gray-400 mb-2">Teléfono *</label><input type="tel" id="edit-client-phone" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="Ej: 809-000-0000"></div>
+<div><label class="block text-sm text-gray-400 mb-2">Dirección</label><textarea id="edit-client-address" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus resize-none text-base" rows="2" placeholder="Dirección del cliente"></textarea></div>
+<button onclick="updateClient()" class="w-full btn-gradient py-3 rounded-xl font-bold text-white mt-4 touch-feedback"><i class="fas fa-save mr-2"></i> Guardar Cambios</button>
 </div>
 </div>
 </div>
@@ -930,36 +426,15 @@ Cerrar
 <div class="glass-effect rounded-2xl p-6 w-full max-w-md mx-auto slide-in my-auto">
 <div class="flex justify-between items-center mb-6">
 <h3 class="text-lg md:text-xl font-bold">Nuevo Préstamo</h3>
-<button onclick="closeModal('modal-new-loan')" class="text-gray-400 hover:text-white p-2">
-<i class="fas fa-times text-xl"></i>
-</button>
+<button onclick="closeModal('modal-new-loan')" class="text-gray-400 hover:text-white p-2"><i class="fas fa-times text-xl"></i></button>
 </div>
 <div class="space-y-4">
-<div>
-<label class="block text-sm text-gray-400 mb-2">Cliente *</label>
-<select id="new-loan-client" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base">
-<option value="">Seleccionar cliente...</option>
-</select>
-</div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Monto del Préstamo *</label>
-<input type="number" id="new-loan-amount" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="$0.00">
-</div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Tasa de Interés (%)</label>
-<input type="number" id="new-loan-rate" value="10" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base">
-</div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Fecha Primer Pago *</label>
-<input type="date" id="new-loan-date" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base">
-</div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Notas (Opcional)</label>
-<textarea id="new-loan-notes" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus resize-none text-base" rows="2" placeholder="Notas adicionales"></textarea>
-</div>
-<button onclick="saveNewLoan()" class="w-full btn-gradient py-3 rounded-xl font-bold text-white mt-4 touch-feedback">
-<i class="fas fa-hand-holding-usd mr-2"></i> Crear Préstamo
-</button>
+<div><label class="block text-sm text-gray-400 mb-2">Cliente *</label><select id="new-loan-client" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base"><option value="">Seleccionar cliente...</option></select></div>
+<div><label class="block text-sm text-gray-400 mb-2">Monto del Préstamo *</label><input type="number" id="new-loan-amount" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="$0.00"></div>
+<div><label class="block text-sm text-gray-400 mb-2">Tasa de Interés (%)</label><input type="number" id="new-loan-rate" value="10" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base"></div>
+<div><label class="block text-sm text-gray-400 mb-2">Fecha Primer Pago *</label><input type="date" id="new-loan-date" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base"></div>
+<div><label class="block text-sm text-gray-400 mb-2">Notas (Opcional)</label><textarea id="new-loan-notes" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus resize-none text-base" rows="2" placeholder="Notas adicionales"></textarea></div>
+<button onclick="saveNewLoan()" class="w-full btn-gradient py-3 rounded-xl font-bold text-white mt-4 touch-feedback"><i class="fas fa-hand-holding-usd mr-2"></i> Crear Préstamo</button>
 </div>
 </div>
 </div>
@@ -967,119 +442,63 @@ Cerrar
 <div class="glass-effect rounded-2xl p-6 w-full max-w-lg mx-auto slide-in max-h-[90vh] overflow-auto">
 <div class="flex justify-between items-center mb-6">
 <h3 class="text-lg md:text-xl font-bold">Detalles del Préstamo</h3>
-<button onclick="closeModal('modal-loan-details')" class="text-gray-400 hover:text-white p-2">
-<i class="fas fa-times text-xl"></i>
-</button>
+<button onclick="closeModal('modal-loan-details')" class="text-gray-400 hover:text-white p-2"><i class="fas fa-times text-xl"></i></button>
 </div>
 <div id="loan-details-content"></div>
 </div>
 </div>
-<!-- Modal Aumentar Capital -->
 <div id="modal-increase-capital" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto" onclick="if(event.target === this) closeModal('modal-increase-capital')">
 <div class="glass-effect rounded-2xl p-6 w-full max-w-md mx-auto slide-in my-auto">
 <div class="flex justify-between items-center mb-6">
 <h3 class="text-lg md:text-xl font-bold text-accent">Aumentar Capital</h3>
-<button onclick="closeModal('modal-increase-capital')" class="text-gray-400 hover:text-white p-2">
-<i class="fas fa-times text-xl"></i>
-</button>
+<button onclick="closeModal('modal-increase-capital')" class="text-gray-400 hover:text-white p-2"><i class="fas fa-times text-xl"></i></button>
 </div>
 <div class="space-y-4">
-<div class="bg-surface rounded-xl p-4">
-<p class="text-xs text-gray-400">Cliente</p>
-<p class="font-bold text-lg" id="increase-client-name">-</p>
-</div>
+<div class="bg-surface rounded-xl p-4"><p class="text-xs text-gray-400">Cliente</p><p class="font-bold text-lg" id="increase-client-name">-</p></div>
 <div class="grid grid-cols-2 gap-3">
-<div class="bg-surface rounded-xl p-3">
-<p class="text-xs text-gray-400">Capital Actual</p>
-<p class="font-bold text-accent" id="increase-current-amount">$0</p>
+<div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Capital Actual</p><p class="font-bold text-accent" id="increase-current-amount">$0</p></div>
+<div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Nuevo Total</p><p class="font-bold text-success" id="increase-new-total">$0</p></div>
 </div>
-<div class="bg-surface rounded-xl p-3">
-<p class="text-xs text-gray-400">Nuevo Total</p>
-<p class="font-bold text-success" id="increase-new-total">$0</p>
-</div>
-</div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Monto a Aumentar *</label>
-<input type="number" id="increase-amount" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="$0.00" oninput="calculateIncreaseTotal()">
-</div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Nueva Fecha de Pago *</label>
-<input type="date" id="increase-new-date" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base">
-</div>
-<div>
-<label class="block text-sm text-gray-400 mb-2">Notas (Opcional)</label>
-<textarea id="increase-notes" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus resize-none text-base" rows="2" placeholder="Motivo del aumento"></textarea>
-</div>
-<button onclick="processCapitalIncrease()" class="w-full btn-gradient py-3 rounded-xl font-bold text-white mt-4 touch-feedback">
-<i class="fas fa-plus-circle mr-2"></i> Aumentar Capital
-</button>
+<div><label class="block text-sm text-gray-400 mb-2">Monto a Aumentar *</label><input type="number" id="increase-amount" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="$0.00" oninput="calculateIncreaseTotal()"></div>
+<div><label class="block text-sm text-gray-400 mb-2">Nueva Fecha de Pago *</label><input type="date" id="increase-new-date" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base"></div>
+<div><label class="block text-sm text-gray-400 mb-2">Notas (Opcional)</label><textarea id="increase-notes" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus resize-none text-base" rows="2" placeholder="Motivo del aumento"></textarea></div>
+<button onclick="processCapitalIncrease()" class="w-full btn-gradient py-3 rounded-xl font-bold text-white mt-4 touch-feedback"><i class="fas fa-plus-circle mr-2"></i> Aumentar Capital</button>
 </div>
 </div>
 </div>
-<!-- Voucher Preview Modal -->
 <div id="modal-voucher-preview" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 backdrop-blur-sm p-4" onclick="if(event.target === this) closeModal('modal-voucher-preview')">
 <div class="bg-white rounded-2xl p-4 w-full max-w-md mx-auto slide-in">
 <div class="flex justify-between items-center mb-4 border-b pb-4">
 <h3 class="text-lg font-bold text-gray-800">Vista Previa</h3>
-<button onclick="closeModal('modal-voucher-preview')" class="text-gray-500 hover:text-gray-800">
-<i class="fas fa-times text-xl"></i>
-</button>
+<button onclick="closeModal('modal-voucher-preview')" class="text-gray-500 hover:text-gray-800"><i class="fas fa-times text-xl"></i></button>
 </div>
-<div id="voucher-preview-container" class="mb-4 flex justify-center">
-<!-- Voucher image will be inserted here -->
-</div>
+<div id="voucher-preview-container" class="mb-4 flex justify-center"></div>
 <div class="flex gap-2">
-<button onclick="downloadCurrentVoucher()" class="flex-1 btn-gradient py-3 rounded-xl font-bold text-white touch-feedback">
-<i class="fas fa-download mr-2"></i> Descargar
-</button>
-<button onclick="shareCurrentVoucher()" class="flex-1 bg-success py-3 rounded-xl font-bold text-white touch-feedback">
-<i class="fas fa-share-alt mr-2"></i> Compartir
-</button>
+<button onclick="downloadCurrentVoucher()" class="flex-1 btn-gradient py-3 rounded-xl font-bold text-white touch-feedback"><i class="fas fa-download mr-2"></i> Descargar</button>
+<button onclick="shareCurrentVoucher()" class="flex-1 bg-success py-3 rounded-xl font-bold text-white touch-feedback"><i class="fas fa-share-alt mr-2"></i> Compartir</button>
 </div>
 </div>
 </div>
-<!-- Toast Notifications -->
 <div id="toast-container" class="fixed top-4 right-4 left-4 md:left-auto z-[60] space-y-2 pointer-events-none"></div>
-<!-- Voucher Template with Background -->
 <div id="voucher-template" class="hidden fixed top-0 left-0 z-[-1]">
 <div class="voucher-container" id="voucher-element">
-<!-- Background Image - Logo J&N -->
 <img src="logo-jn.png" class="voucher-bg" id="voucher-bg-img" alt="background" style="opacity: 0.08;">
 <div class="voucher-content">
-<!-- Logo J&N -->
 <img src="logo-jn.png" class="voucher-logo" id="voucher-logo-img" alt="J&N Soluciones">
 <div class="text-center border-b-2 border-primary pb-2 mb-4">
 <h2 style="color: #002d5e; font-size: 20px; font-weight: 900; margin: 0;">J&N SOLUCIONES</h2>
 <p style="color: #666; font-size: 11px; margin: 3px 0 0 0;">Comprobante Oficial de Transacción</p>
 </div>
 <div style="line-height: 1.6; font-size: 13px;">
-<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-<span style="color: #666;">Tipo:</span>
-<span id="voucher-type" style="font-weight: bold; color: #002d5e;"></span>
-</div>
-<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-<span style="color: #666;">Cliente:</span>
-<span id="voucher-client" style="font-weight: bold; text-align: right; max-width: 60%;"></span>
-</div>
-<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-<span style="color: #666;">Monto:</span>
-<span id="voucher-amount" style="font-weight: bold; color: #002d5e;"></span>
-</div>
-<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-<span style="color: #666;">Interés:</span>
-<span id="voucher-interest" style="font-weight: bold; color: #10b981;"></span>
-</div>
+<div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span style="color: #666;">Tipo:</span><span id="voucher-type" style="font-weight: bold; color: #002d5e;"></span></div>
+<div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span style="color: #666;">Cliente:</span><span id="voucher-client" style="font-weight: bold; text-align: right; max-width: 60%;"></span></div>
+<div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span style="color: #666;">Monto:</span><span id="voucher-amount" style="font-weight: bold; color: #002d5e;"></span></div>
+<div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span style="color: #666;">Interés:</span><span id="voucher-interest" style="font-weight: bold; color: #10b981;"></span></div>
 <div style="border-top: 2px solid #eee; padding-top: 8px; margin-top: 8px;">
-<div style="display: flex; justify-content: space-between; font-size: 14px;">
-<span style="color: #666;">Saldo Pendiente:</span>
-<span id="voucher-balance" style="font-weight: 900; color: #ef4444;"></span>
+<div style="display: flex; justify-content: space-between; font-size: 14px;"><span style="color: #666;">Saldo Pendiente:</span><span id="voucher-balance" style="font-weight: 900; color: #ef4444;"></span></div>
 </div>
-</div>
-<!-- Sección condicional: Pago Completado vs Próximo Pago -->
 <div id="voucher-completed-message" style="display: none; background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 8px; padding: 12px; margin-top: 12px; text-align: center;">
-<div style="width: 40px; height: 40px; background: #22c55e; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px;">
-<span style="color: white; font-size: 20px; font-weight: bold;">✓</span>
-</div>
+<div style="width: 40px; height: 40px; background: #22c55e; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px;"><span style="color: white; font-size: 20px; font-weight: bold;">✓</span></div>
 <p style="color: #15803d; margin: 0 0 5px 0; font-size: 13px; font-weight: bold;">¡PRÉSTAMO COMPLETAMENTE PAGADO!</p>
 <p style="color: #166534; margin: 0; font-size: 11px;">El cliente ha cumplido con el pago total de su obligación.</p>
 <p style="color: #15803d; margin: 8px 0 0 0; font-size: 11px; font-style: italic; font-weight: bold;">Gracias por su preferencia</p>
@@ -1098,7 +517,6 @@ Cerrar
 </div>
 </div>
 <script>
-// Firebase Config
 const firebaseConfig = {
 apiKey: "AIzaSyBXHcdK3FtNjXXYwSWhyXt35-eBZ1Rtk8U",
 authDomain: "jn-soluciones-2026.firebaseapp.com",
@@ -1118,7 +536,6 @@ firebaseConnected = true;
 } catch (e) {
 console.error('Firebase init error:', e);
 }
-// App State
 let appData = {
 clients: [],
 loans: [],
@@ -1135,7 +552,7 @@ let currentPin = '';
 let currentVoucherBlob = null;
 let isMoreMenuOpen = false;
 let currentIncreaseLoanId = null;
-// PIN Functions
+let currentEditClientId = null;
 function enterPin(digit) {
 if (currentPin.length < 4) {
 currentPin += digit;
@@ -1214,7 +631,6 @@ document.getElementById('current-pin').value = '';
 document.getElementById('new-pin').value = '';
 document.getElementById('confirm-pin').value = '';
 }
-// More Menu Toggle
 function toggleMoreMenu() {
 const modal = document.getElementById('modal-more');
 const btnMore = document.getElementById('btn-more');
@@ -1237,7 +653,6 @@ if (event.target === event.currentTarget) {
 toggleMoreMenu();
 }
 }
-// Network Status
 function updateOnlineStatus() {
 isOffline = !navigator.onLine;
 const indicator = document.getElementById('offline-indicator');
@@ -1273,7 +688,6 @@ function logout() {
 localStorage.removeItem('jn_pro_current_user');
 location.reload();
 }
-// Initialize App
 function initApp() {
 updateOnlineStatus();
 loadLocalData();
@@ -1297,7 +711,6 @@ nextWeek.setDate(nextWeek.getDate() + 7);
 document.getElementById('new-loan-date').value = today;
 document.getElementById('payment-next-date').value = nextWeek.toISOString().split('T')[0];
 }
-// Data Management
 function loadLocalData() {
 const saved = localStorage.getItem('jn_pro_data');
 if (saved) {
@@ -1396,7 +809,6 @@ showToast('Sincronización completada', 'success');
 console.error('Sync queue error:', err);
 });
 }
-// UI Updates
 function updateUI() {
 updateStats();
 updateCharts();
@@ -1447,13 +859,9 @@ const date = new Date();
 date.setDate(date.getDate() - i);
 const dateStr = date.toISOString().split('T')[0];
 last7Days.push(date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }));
-const dayProfits = appData.payments
-.filter(p => p.date === dateStr)
-.reduce((sum, p) => sum + (parseFloat(p.interest) || 0), 0);
+const dayProfits = appData.payments.filter(p => p.date === dateStr).reduce((sum, p) => sum + (parseFloat(p.interest) || 0), 0);
 profits.push(dayProfits);
-const dayCapital = appData.loans
-.filter(l => l.date === dateStr && !l.paid)
-.reduce((sum, l) => sum + (parseFloat(l.amount) || 0), 0);
+const dayCapital = appData.loans.filter(l => l.date === dateStr && !l.paid).reduce((sum, l) => sum + (parseFloat(l.amount) || 0), 0);
 capital.push(dayCapital);
 }
 if (charts.evolution) {
@@ -1486,24 +894,11 @@ borderWidth: 2
 options: {
 responsive: true,
 maintainAspectRatio: false,
-interaction: {
-mode: 'index',
-intersect: false,
-},
-plugins: {
-legend: {
-labels: { color: '#fff', font: { size: 11 } }
-}
-},
+interaction: { mode: 'index', intersect: false },
+plugins: { legend: { labels: { color: '#fff', font: { size: 11 } } } },
 scales: {
-y: {
-ticks: { color: '#9ca3af', font: { size: 10 } },
-grid: { color: '#334155' }
-},
-x: {
-ticks: { color: '#9ca3af', font: { size: 10 } },
-grid: { color: '#334155' }
-}
+y: { ticks: { color: '#9ca3af', font: { size: 10 } }, grid: { color: '#334155' } },
+x: { ticks: { color: '#9ca3af', font: { size: 10 } }, grid: { color: '#334155' } }
 }
 }
 });
@@ -1530,12 +925,7 @@ borderWidth: 0
 options: {
 responsive: true,
 maintainAspectRatio: false,
-plugins: {
-legend: {
-position: 'bottom',
-labels: { color: '#fff', font: { size: 11 }, padding: 15 }
-}
-}
+plugins: { legend: { position: 'bottom', labels: { color: '#fff', font: { size: 11 }, padding: 15 } } }
 }
 });
 }
@@ -1551,23 +941,13 @@ const client = appData.clients.find(c => c.id === p.clientId);
 return `
 <div class="flex items-center justify-between p-3 bg-surface rounded-xl">
 <div class="flex items-center gap-3">
-<div class="w-10 h-10 bg-success/20 rounded-lg flex items-center justify-center">
-<i class="fas fa-arrow-down text-success"></i>
+<div class="w-10 h-10 bg-success/20 rounded-lg flex items-center justify-center"><i class="fas fa-arrow-down text-success"></i></div>
+<div><p class="font-medium text-sm">${client?.name || p.clientName || 'Cliente'}</p><p class="text-xs text-gray-500">${formatDate(p.date)}</p></div>
 </div>
-<div>
-<p class="font-medium text-sm">${client?.name || p.clientName || 'Cliente'}</p>
-<p class="text-xs text-gray-500">${formatDate(p.date)}</p>
-</div>
-</div>
-<div class="text-right">
-<p class="font-bold text-success text-sm">+${formatCurrency(p.interest)}</p>
-<p class="text-xs text-gray-500">Interés</p>
-</div>
-</div>
-`;
+<div class="text-right"><p class="font-bold text-success text-sm">+${formatCurrency(p.interest)}</p><p class="text-xs text-gray-500">Interés</p></div>
+</div>`;
 }).join('');
 }
-// Client Functions
 function renderClients() {
 const grid = document.getElementById('clients-grid');
 const searchTerm = (document.getElementById('search-clients')?.value || '').toLowerCase();
@@ -1584,31 +964,26 @@ const clientLoans = appData.loans.filter(l => l.clientId === client.id && !l.pai
 const totalDebt = clientLoans.reduce((sum, l) => sum + (parseFloat(l.amount) || 0), 0);
 const isBlacklisted = appData.blacklist.some(b => b.clientId === client.id);
 return `
-<div class="glass-effect rounded-2xl p-4 md:p-6 card-hover touch-feedback" onclick="viewClientLoans('${client.id}')">
-<div class="flex items-start justify-between mb-3">
-<div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-accent to-primary rounded-xl flex items-center justify-center text-lg md:text-xl font-bold">
-${(client.name || '?').charAt(0).toUpperCase()}
+<div class="glass-effect rounded-2xl p-4 md:p-6 card-hover relative group">
+<div class="client-actions absolute top-3 right-3 flex gap-2 z-10">
+<button onclick="event.stopPropagation(); openEditClient('${client.id}')" class="w-8 h-8 bg-accent/80 hover:bg-accent text-white rounded-lg flex items-center justify-center transition-all" title="Editar"><i class="fas fa-pencil-alt text-xs"></i></button>
+<button onclick="event.stopPropagation(); deleteClient('${client.id}')" class="w-8 h-8 bg-danger/80 hover:bg-danger text-white rounded-lg flex items-center justify-center transition-all" title="Eliminar"><i class="fas fa-times text-xs"></i></button>
 </div>
-<span class="status-badge ${isBlacklisted ? 'status-blacklist' : (totalDebt > 0 ? 'status-active' : 'bg-gray-700 text-gray-300')} text-xs">
-${isBlacklisted ? 'Bloqueado' : (totalDebt > 0 ? 'Activo' : 'Al día')}
-</span>
+<div onclick="viewClientLoans('${client.id}')" class="cursor-pointer">
+<div class="flex items-start justify-between mb-3">
+<div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-accent to-primary rounded-xl flex items-center justify-center text-lg md:text-xl font-bold">${(client.name || '?').charAt(0).toUpperCase()}</div>
+<span class="status-badge ${isBlacklisted ? 'status-blacklist' : (totalDebt > 0 ? 'status-active' : 'bg-gray-700 text-gray-300')} text-xs">${isBlacklisted ? 'Bloqueado' : (totalDebt > 0 ? 'Activo' : 'Al día')}</span>
 </div>
 <h4 class="font-bold text-base md:text-lg mb-1 truncate">${client.name || 'Sin nombre'}</h4>
 <p class="text-xs md:text-sm text-gray-400 mb-2">${client.idCard || 'Sin cédula'}</p>
-<div class="flex items-center gap-2 text-xs md:text-sm text-gray-400 mb-3">
-<i class="fas fa-phone text-xs"></i> ${client.phone || 'Sin teléfono'}
-</div>
+<div class="flex items-center gap-2 text-xs md:text-sm text-gray-400 mb-3"><i class="fas fa-phone text-xs"></i> ${client.phone || 'Sin teléfono'}</div>
+${client.address ? `<div class="flex items-center gap-2 text-xs text-gray-500 mb-3 truncate"><i class="fas fa-map-marker-alt text-xs"></i> ${client.address}</div>` : ''}
 <div class="flex justify-between items-center pt-3 border-t border-gray-700">
-<div>
-<p class="text-[10px] md:text-xs text-gray-500">Deuda Total</p>
-<p class="font-bold text-sm md:text-base ${totalDebt > 0 ? 'text-danger' : 'text-success'}">${formatCurrency(totalDebt)}</p>
-</div>
-<button class="px-3 py-1.5 bg-accent/20 text-accent rounded-lg text-xs md:text-sm hover:bg-accent/30">
-Ver
-</button>
+<div><p class="text-[10px] md:text-xs text-gray-500">Deuda Total</p><p class="font-bold text-sm md:text-base ${totalDebt > 0 ? 'text-danger' : 'text-success'}">${formatCurrency(totalDebt)}</p></div>
+<span class="px-3 py-1.5 bg-accent/20 text-accent rounded-lg text-xs md:text-sm">Ver</span>
 </div>
 </div>
-`;
+</div>`;
 }).join('') || '<p class="text-gray-500 text-center col-span-full py-8">No hay clientes registrados</p>';
 }
 function searchClients() {
@@ -1649,7 +1024,85 @@ showToast('Cliente guardado exitosamente', 'success');
 clearModalInputs('modal-new-client');
 renderClients();
 }
-// Loan Functions
+function openEditClient(clientId) {
+const client = appData.clients.find(c => c.id === clientId);
+if (!client) {
+showToast('Cliente no encontrado', 'error');
+return;
+}
+currentEditClientId = clientId;
+document.getElementById('edit-client-id').value = clientId;
+document.getElementById('edit-client-name').value = client.name || '';
+document.getElementById('edit-client-idcard').value = client.idCard || '';
+document.getElementById('edit-client-phone').value = client.phone || '';
+document.getElementById('edit-client-address').value = client.address || '';
+openModal('modal-edit-client');
+}
+function updateClient() {
+const name = document.getElementById('edit-client-name').value.trim();
+const idCard = document.getElementById('edit-client-idcard').value.trim();
+const phone = document.getElementById('edit-client-phone').value.trim();
+const address = document.getElementById('edit-client-address').value.trim();
+if (!name) {
+showToast('Ingrese el nombre del cliente', 'error');
+return;
+}
+if (!phone) {
+showToast('Ingrese el teléfono del cliente', 'error');
+return;
+}
+const clientIndex = appData.clients.findIndex(c => c.id === currentEditClientId);
+if (clientIndex === -1) {
+showToast('Cliente no encontrado', 'error');
+return;
+}
+appData.clients[clientIndex].name = name.toUpperCase();
+appData.clients[clientIndex].idCard = idCard;
+appData.clients[clientIndex].phone = phone;
+appData.clients[clientIndex].address = address;
+appData.clients[clientIndex].updatedAt = new Date().toISOString();
+appData.loans.forEach(loan => {
+if (loan.clientId === currentEditClientId) {
+loan.clientName = name.toUpperCase();
+}
+});
+appData.payments.forEach(payment => {
+if (payment.clientId === currentEditClientId) {
+payment.clientName = name.toUpperCase();
+}
+});
+saveData();
+closeModal('modal-edit-client');
+showToast('Cliente actualizado exitosamente', 'success');
+renderClients();
+updateSelects();
+}
+function deleteClient(clientId) {
+const client = appData.clients.find(c => c.id === clientId);
+if (!client) {
+showToast('Cliente no encontrado', 'error');
+return;
+}
+const activeLoans = appData.loans.filter(l => l.clientId === clientId && !l.paid);
+if (activeLoans.length > 0) {
+if (!confirm(`⚠️ ${client.name} tiene ${activeLoans.length} préstamo(s) activo(s).\n\n¿Está seguro de eliminar este cliente?\n\nLos préstamos activos también se eliminarán.`)) {
+return;
+}
+} else {
+if (!confirm(`¿Está seguro de eliminar a ${client.name}?\n\nEsta acción no se puede deshacer.`)) {
+return;
+}
+}
+appData.loans = appData.loans.filter(l => l.clientId !== clientId);
+appData.payments = appData.payments.filter(p => p.clientId !== clientId);
+appData.blacklist = appData.blacklist.filter(b => b.clientId !== clientId);
+appData.clients = appData.clients.filter(c => c.id !== clientId);
+saveData();
+showToast('Cliente eliminado exitosamente', 'success');
+renderClients();
+updateSelects();
+updateUI();
+}
 function renderLoans() {
 const grid = document.getElementById('loans-grid');
 const filter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
@@ -1673,44 +1126,21 @@ const interest = Math.round((parseFloat(loan.amount) || 0) * (parseFloat(loan.in
 return `
 <div class="glass-effect rounded-2xl p-4 md:p-6 card-hover ${isOverdue ? 'border border-danger/50' : ''}">
 <div class="flex items-start justify-between mb-3 md:mb-4">
-<div class="min-w-0 flex-1">
-<h4 class="font-bold text-base md:text-lg truncate">${client?.name || 'Cliente eliminado'}</h4>
-<p class="text-xs md:text-sm text-gray-400">#${loan.id.slice(-6)}</p>
-</div>
-<span class="status-badge ${isOverdue ? 'status-overdue' : 'status-active'} text-xs ml-2">
-${isOverdue ? 'Vencido' : 'Activo'}
-</span>
+<div class="min-w-0 flex-1"><h4 class="font-bold text-base md:text-lg truncate">${client?.name || 'Cliente eliminado'}</h4><p class="text-xs md:text-sm text-gray-400">#${loan.id.slice(-6)}</p></div>
+<span class="status-badge ${isOverdue ? 'status-overdue' : 'status-active'} text-xs ml-2">${isOverdue ? 'Vencido' : 'Activo'}</span>
 </div>
 <div class="grid grid-cols-3 gap-2 md:gap-4 mb-3 md:mb-4 text-sm">
-<div>
-<p class="text-[10px] md:text-xs text-gray-500">Capital</p>
-<p class="font-bold text-sm md:text-base truncate-number">${formatCurrency(loan.amount)}</p>
-</div>
-<div>
-<p class="text-[10px] md:text-xs text-gray-500">Interés</p>
-<p class="font-bold text-success text-sm md:text-base truncate-number">${formatCurrency(interest)}</p>
-</div>
-<div>
-<p class="text-[10px] md:text-xs text-gray-500">Próximo</p>
-<p class="font-bold text-xs md:text-sm ${isOverdue ? 'text-danger' : ''}">${formatDate(loan.nextPaymentDate)}</p>
-</div>
+<div><p class="text-[10px] md:text-xs text-gray-500">Capital</p><p class="font-bold text-sm md:text-base truncate-number">${formatCurrency(loan.amount)}</p></div>
+<div><p class="text-[10px] md:text-xs text-gray-500">Interés</p><p class="font-bold text-success text-sm md:text-base truncate-number">${formatCurrency(interest)}</p></div>
+<div><p class="text-[10px] md:text-xs text-gray-500">Próximo</p><p class="font-bold text-xs md:text-sm ${isOverdue ? 'text-danger' : ''}">${formatDate(loan.nextPaymentDate)}</p></div>
 </div>
 <div class="flex gap-2">
-<button onclick="viewLoanDetails('${loan.id}')" class="flex-1 px-3 py-2 bg-surface rounded-lg text-xs md:text-sm hover:bg-gray-700 touch-feedback">
-<i class="fas fa-eye mr-1"></i> Ver
-</button>
-<button onclick="quickPay('${loan.id}')" class="flex-1 px-3 py-2 btn-gradient rounded-lg text-xs md:text-sm font-bold touch-feedback">
-<i class="fas fa-money-bill-wave mr-1"></i> Cobrar
-</button>
-<button onclick="openIncreaseCapital('${loan.id}')" class="px-3 py-2 bg-accent/20 text-accent rounded-lg text-xs md:text-sm hover:bg-accent/30 touch-feedback" title="Aumentar Capital">
-<i class="fas fa-plus"></i>
-</button>
-<button onclick="addToBlacklist('${loan.id}')" class="px-3 py-2 bg-danger/20 text-danger rounded-lg text-xs md:text-sm hover:bg-danger/30 touch-feedback" title="Bloquear">
-<i class="fas fa-ban"></i>
-</button>
+<button onclick="viewLoanDetails('${loan.id}')" class="flex-1 px-3 py-2 bg-surface rounded-lg text-xs md:text-sm hover:bg-gray-700 touch-feedback"><i class="fas fa-eye mr-1"></i> Ver</button>
+<button onclick="quickPay('${loan.id}')" class="flex-1 px-3 py-2 btn-gradient rounded-lg text-xs md:text-sm font-bold touch-feedback"><i class="fas fa-money-bill-wave mr-1"></i> Cobrar</button>
+<button onclick="openIncreaseCapital('${loan.id}')" class="px-3 py-2 bg-accent/20 text-accent rounded-lg text-xs md:text-sm hover:bg-accent/30 touch-feedback" title="Aumentar Capital"><i class="fas fa-plus"></i></button>
+<button onclick="addToBlacklist('${loan.id}')" class="px-3 py-2 bg-danger/20 text-danger rounded-lg text-xs md:text-sm hover:bg-danger/30 touch-feedback" title="Bloquear"><i class="fas fa-ban"></i></button>
 </div>
-</div>
-`;
+</div>`;
 }).join('') || '<p class="text-gray-500 text-center py-8">No hay préstamos activos</p>';
 }
 function filterLoans(type) {
@@ -1778,66 +1208,29 @@ const payments = appData.payments.filter(p => p.loanId === loanId).sort((a,b) =>
 const content = document.getElementById('loan-details-content');
 content.innerHTML = `
 <div class="space-y-4">
-<div class="bg-surface rounded-xl p-4">
-<p class="text-xs text-gray-400">Cliente</p>
-<p class="font-bold text-lg">${client?.name || 'N/A'}</p>
-<p class="text-sm text-gray-400">${client?.phone || ''}</p>
-</div>
+<div class="bg-surface rounded-xl p-4"><p class="text-xs text-gray-400">Cliente</p><p class="font-bold text-lg">${client?.name || 'N/A'}</p><p class="text-sm text-gray-400">${client?.phone || ''}</p></div>
 <div class="grid grid-cols-2 gap-3">
-<div class="bg-surface rounded-xl p-3">
-<p class="text-xs text-gray-400">Monto Original</p>
-<p class="font-bold truncate-number">${formatCurrency(loan.originalAmount || loan.amount)}</p>
+<div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Monto Original</p><p class="font-bold truncate-number">${formatCurrency(loan.originalAmount || loan.amount)}</p></div>
+<div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Saldo Actual</p><p class="font-bold ${loan.amount > 0 ? 'text-danger' : 'text-success'} truncate-number">${formatCurrency(loan.amount)}</p></div>
+<div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Tasa</p><p class="font-bold">${loan.interestRate || 10}%</p></div>
+<div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Próximo Pago</p><p class="font-bold">${formatDate(loan.nextPaymentDate)}</p></div>
 </div>
-<div class="bg-surface rounded-xl p-3">
-<p class="text-xs text-gray-400">Saldo Actual</p>
-<p class="font-bold ${loan.amount > 0 ? 'text-danger' : 'text-success'} truncate-number">${formatCurrency(loan.amount)}</p>
-</div>
-<div class="bg-surface rounded-xl p-3">
-<p class="text-xs text-gray-400">Tasa</p>
-<p class="font-bold">${loan.interestRate || 10}%</p>
-</div>
-<div class="bg-surface rounded-xl p-3">
-<p class="text-xs text-gray-400">Próximo Pago</p>
-<p class="font-bold">${formatDate(loan.nextPaymentDate)}</p>
-</div>
-</div>
-${loan.notes ? `
-<div class="bg-surface rounded-xl p-3">
-<p class="text-xs text-gray-400">Notas</p>
-<p class="text-sm">${loan.notes}</p>
-</div>
-` : ''}
+${loan.notes ? `<div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Notas</p><p class="text-sm">${loan.notes}</p></div>` : ''}
 <div class="bg-surface rounded-xl p-4">
 <p class="text-xs text-gray-400 mb-3">Historial de Pagos (${payments.length})</p>
-${payments.length > 0 ? `
-<div class="space-y-2 max-h-60 overflow-y-auto">
-${payments.map(p => `
+${payments.length > 0 ? `<div class="space-y-2 max-h-60 overflow-y-auto">${payments.map(p => `
 <div class="flex justify-between items-center p-2 bg-dark rounded-lg text-sm">
-<div>
-<span class="text-gray-300">${formatDate(p.date)}</span>
-</div>
-<div class="text-right">
-<div class="text-success">+${formatCurrency(p.interest || 0)} int.</div>
-${p.capital > 0 ? `<div class="text-accent">- ${formatCurrency(p.capital)} cap.</div>` : ''}
-</div>
-</div>
-`).join('')}
-</div>
-` : '<p class="text-gray-500 text-sm">Sin pagos registrados</p>'}
+<div><span class="text-gray-300">${formatDate(p.date)}</span></div>
+<div class="text-right"><div class="text-success">+${formatCurrency(p.interest || 0)} int.</div>${p.capital > 0 ? `<div class="text-accent">- ${formatCurrency(p.capital)} cap.</div>` : ''}</div>
+</div>`).join('')}</div>` : '<p class="text-gray-500 text-sm">Sin pagos registrados</p>'}
 </div>
 <div class="flex gap-2">
-<button onclick="openIncreaseCapital('${loan.id}'); closeModal('modal-loan-details');" class="flex-1 btn-gradient py-3 rounded-xl font-bold text-white touch-feedback">
-<i class="fas fa-plus-circle mr-2"></i> Aumentar Capital
-</button>
-<button onclick="quickPay('${loan.id}'); closeModal('modal-loan-details');" class="flex-1 bg-success py-3 rounded-xl font-bold text-white touch-feedback">
-<i class="fas fa-money-bill-wave mr-2"></i> Registrar Pago
-</button>
+<button onclick="openIncreaseCapital('${loan.id}'); closeModal('modal-loan-details');" class="flex-1 btn-gradient py-3 rounded-xl font-bold text-white touch-feedback"><i class="fas fa-plus-circle mr-2"></i> Aumentar Capital</button>
+<button onclick="quickPay('${loan.id}'); closeModal('modal-loan-details');" class="flex-1 bg-success py-3 rounded-xl font-bold text-white touch-feedback"><i class="fas fa-money-bill-wave mr-2"></i> Registrar Pago</button>
 </div>
-</div>
-`;
+</div>`;
 openModal('modal-loan-details');
 }
-// Capital Increase Functions
 function openIncreaseCapital(loanId) {
 const loan = appData.loans.find(l => l.id === loanId);
 if (!loan) return;
@@ -1890,7 +1283,6 @@ generateVoucher('AUMENTO DE CAPITAL', client?.name || loan.clientName, increaseA
 }, 500);
 updateUI();
 }
-// Payment Functions
 function updateSelects() {
 const clientSelect = document.getElementById('payment-client');
 const loanClientSelect = document.getElementById('new-loan-client');
@@ -1898,15 +1290,12 @@ const activeClients = appData.clients.filter(c => {
 const hasLoans = appData.loans.some(l => l.clientId === c.id && !l.paid);
 return hasLoans || appData.loans.filter(l => l.clientId === c.id).length === 0;
 });
-const clientOptions = activeClients.map(c =>
-`<option value="${c.id}">${c.name}</option>`
-).join('');
+const clientOptions = activeClients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
 if (clientSelect) {
 clientSelect.innerHTML = '<option value="">Seleccionar...</option>' + clientOptions;
 }
 if (loanClientSelect) {
-loanClientSelect.innerHTML = '<option value="">Seleccionar cliente...</option>' +
-appData.clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+loanClientSelect.innerHTML = '<option value="">Seleccionar cliente...</option>' + appData.clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
 }
 }
 function loadClientLoans() {
@@ -1917,8 +1306,7 @@ loanSelect.innerHTML = '<option value="">Seleccionar...</option>';
 return;
 }
 const loans = appData.loans.filter(l => l.clientId === clientId && !l.paid);
-loanSelect.innerHTML = '<option value="">Seleccionar préstamo...</option>' +
-loans.map(l => `<option value="${l.id}">${formatCurrency(l.amount)} - Vence ${formatDate(l.nextPaymentDate)}</option>`).join('');
+loanSelect.innerHTML = '<option value="">Seleccionar préstamo...</option>' + loans.map(l => `<option value="${l.id}">${formatCurrency(l.amount)} - Vence ${formatDate(l.nextPaymentDate)}</option>`).join('');
 document.getElementById('payment-interest').value = '';
 document.getElementById('payment-capital').value = '';
 }
@@ -2003,16 +1391,43 @@ function renderPayments() {
 const tbody = document.getElementById('payments-table-body');
 const recentPayments = [...appData.payments].sort((a,b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)).slice(0, 50);
 tbody.innerHTML = recentPayments.map(p => `
-<tr class="border-b border-gray-700 text-sm">
+<tr class="border-b border-gray-700 text-sm group hover:bg-surface/50">
 <td class="py-3">${formatDate(p.date)}</td>
 <td class="py-3">${p.clientName}</td>
 <td class="py-3 text-success">+${formatCurrency(p.interest)}</td>
 <td class="py-3">${formatCurrency(p.capital)}</td>
 <td class="py-3 font-bold truncate-number">${formatCurrency(p.balance)}</td>
-</tr>
-`).join('') || '<tr><td colspan="5" class="py-8 text-center text-gray-500">No hay pagos registrados</td></tr>';
+<td class="py-3 text-right">
+<button onclick="deletePayment('${p.id}')" class="w-7 h-7 bg-danger/20 hover:bg-danger text-danger hover:text-white rounded-lg flex items-center justify-center transition-all opacity-0 group-hover:opacity-100" title="Eliminar pago">
+<i class="fas fa-times text-xs"></i>
+</button>
+</td>
+</tr>`).join('') || '<tr><td colspan="6" class="py-8 text-center text-gray-500">No hay pagos registrados</td></tr>';
 }
-// Blacklist Functions
+function deletePayment(paymentId) {
+if (!confirm('¿Eliminar este pago?\n\nEl saldo del préstamo se actualizará revertiendo este pago.')) return;
+const paymentIndex = appData.payments.findIndex(p => p.id === paymentId);
+if (paymentIndex === -1) {
+showToast('Pago no encontrado', 'error');
+return;
+}
+const payment = appData.payments[paymentIndex];
+const loan = appData.loans.find(l => l.id === payment.loanId);
+if (loan) {
+// Revertir el abono a capital
+loan.amount = parseFloat(loan.amount) + parseFloat(payment.capital || 0);
+// Si el préstamo estaba pagado, reactivarlo
+if (loan.paid) {
+loan.paid = false;
+loan.paidAt = null;
+}
+}
+// Eliminar el pago
+appData.payments.splice(paymentIndex, 1);
+saveData();
+showToast('Pago eliminado correctamente', 'success');
+updateUI();
+}
 function addToBlacklist(loanId) {
 if (!confirm('¿Mover este cliente a la lista negra? Se marcará como moroso.')) return;
 const loanIndex = appData.loans.findIndex(l => l.id === loanId);
@@ -2045,47 +1460,33 @@ function renderBlacklist() {
 const grid = document.getElementById('blacklist-grid');
 const totalLossEl = document.getElementById('blacklist-total-loss');
 const countEl = document.getElementById('blacklist-count');
-// Calculate total loss
 const totalLoss = appData.blacklist.reduce((sum, b) => sum + (parseFloat(b.amount) || 0), 0);
 const count = appData.blacklist.length;
-// Update summary
 if (totalLossEl) totalLossEl.textContent = formatCurrency(totalLoss);
 if (countEl) countEl.textContent = count;
-// Render blacklist items
 grid.innerHTML = appData.blacklist.map(item => {
 const client = appData.clients.find(c => c.id === item.clientId);
 return `
 <div class="glass-effect rounded-2xl p-4 md:p-6 border border-danger/30">
 <div class="flex items-start justify-between mb-3 md:mb-4">
 <div class="flex items-center gap-3">
-<div class="w-10 h-10 md:w-12 md:h-12 bg-danger/20 rounded-xl flex items-center justify-center">
-<i class="fas fa-ban text-danger text-lg"></i>
-</div>
-<div class="min-w-0">
-<h4 class="font-bold text-sm md:text-base truncate">${client?.name || item.clientName || 'Cliente eliminado'}</h4>
-<p class="text-xs text-gray-400">Bloqueado: ${formatDate(item.blacklistedAt)}</p>
-</div>
+<div class="w-10 h-10 md:w-12 md:h-12 bg-danger/20 rounded-xl flex items-center justify-center"><i class="fas fa-ban text-danger text-lg"></i></div>
+<div class="min-w-0"><h4 class="font-bold text-sm md:text-base truncate">${client?.name || item.clientName || 'Cliente eliminado'}</h4><p class="text-xs text-gray-400">Bloqueado: ${formatDate(item.blacklistedAt)}</p></div>
 </div>
 <span class="text-danger font-bold text-sm md:text-base truncate-number">${formatCurrency(item.amount)}</span>
 </div>
-<button onclick="removeFromBlacklist('${item.id}')" class="w-full px-4 py-2 bg-success/20 text-success rounded-lg text-sm hover:bg-success/30 touch-feedback">
-<i class="fas fa-check mr-2"></i> Restaurar Cliente
-</button>
-</div>
-`;
+<button onclick="removeFromBlacklist('${item.id}')" class="w-full px-4 py-2 bg-success/20 text-success rounded-lg text-sm hover:bg-success/30 touch-feedback"><i class="fas fa-check mr-2"></i> Restaurar Cliente</button>
+</div>`;
 }).join('') || '<p class="text-gray-500 text-center py-8">Lista negra vacía</p>';
 }
-// Voucher Generation - Optimized for mobile
 async function generateVoucher(type, client, amount, interest, balance, nextDate) {
 try {
-// Update voucher content
 document.getElementById('voucher-type').textContent = type;
 document.getElementById('voucher-client').textContent = (client || 'N/A').toUpperCase();
 document.getElementById('voucher-amount').textContent = formatCurrency(amount);
 document.getElementById('voucher-interest').textContent = formatCurrency(interest);
 document.getElementById('voucher-balance').textContent = formatCurrency(balance);
 document.getElementById('voucher-date').textContent = new Date().toLocaleString('es-ES');
-// Lógica condicional para voucher completado vs pendiente
 const completedMsg = document.getElementById('voucher-completed-message');
 const nextPaymentDiv = document.getElementById('voucher-next-payment');
 if (balance <= 0) {
@@ -2099,16 +1500,13 @@ document.getElementById('voucher-next-amount').textContent = 'Cuota: ' + formatC
 }
 const voucherTemplate = document.getElementById('voucher-template');
 const voucherEl = document.getElementById('voucher-element');
-// Make visible for capture
 voucherTemplate.classList.remove('hidden');
 voucherTemplate.style.opacity = '1';
 voucherTemplate.style.position = 'fixed';
 voucherTemplate.style.top = '0';
 voucherTemplate.style.left = '0';
 voucherTemplate.style.zIndex = '-1';
-// Wait for render
 await new Promise(resolve => setTimeout(resolve, 100));
-// Use html2canvas with mobile-friendly options
 const canvas = await html2canvas(voucherEl, {
 scale: 2,
 backgroundColor: '#ffffff',
@@ -2118,10 +1516,8 @@ logging: false,
 width: 350,
 height: voucherEl.offsetHeight
 });
-// Hide again
 voucherTemplate.classList.add('hidden');
 voucherTemplate.style.opacity = '0';
-// Convert to blob for better mobile compatibility
 canvas.toBlob(async (blob) => {
 if (!blob) {
 showToast('Error generando voucher', 'error');
@@ -2129,7 +1525,6 @@ return;
 }
 currentVoucherBlob = blob;
 const fileName = `VOUCHER_${(client || 'CLIENTE').replace(/\s+/g, '_')}_${Date.now()}.png`;
-// Store voucher in appData
 const voucherData = {
 id: Date.now().toString(),
 type,
@@ -2144,7 +1539,6 @@ fileName
 appData.vouchers.unshift(voucherData);
 saveData();
 renderVouchersList();
-// Show preview modal
 const img = document.createElement('img');
 img.src = URL.createObjectURL(blob);
 img.className = 'max-w-full h-auto rounded-lg';
@@ -2153,7 +1547,6 @@ const container = document.getElementById('voucher-preview-container');
 container.innerHTML = '';
 container.appendChild(img);
 openModal('modal-voucher-preview');
-// Try native sharing first (mobile)
 if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: 'image/png' })] })) {
 try {
 await navigator.share({
@@ -2162,9 +1555,7 @@ title: 'Comprobante J&N Soluciones',
 text: `${type} - ${client}`
 });
 showToast('Voucher compartido', 'success');
-} catch (err) {
-// User cancelled or failed, preview is already shown
-}
+} catch (err) {}
 }
 }, 'image/png');
 } catch (err) {
@@ -2197,7 +1588,6 @@ showToast('Error al compartir', 'error');
 showToast('Compartir no disponible en este dispositivo', 'warning');
 }
 }
-// MODIFICACIÓN 2: Botón para eliminar vouchers
 function renderVouchersList() {
 const list = document.getElementById('vouchers-list');
 const noVouchers = document.getElementById('no-vouchers');
@@ -2209,23 +1599,18 @@ return;
 noVouchers.classList.add('hidden');
 list.innerHTML = appData.vouchers.slice(0, 20).map(v => `
 <div class="voucher-thumb relative group" onclick="regenerateVoucher('${v.id}')">
-<button onclick="event.stopPropagation(); deleteVoucher('${v.id}')" class="absolute top-1 right-1 w-6 h-6 bg-danger/80 hover:bg-danger text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10" title="Eliminar">
-<i class="fas fa-times text-xs"></i>
-</button>
+<button onclick="event.stopPropagation(); deleteVoucher('${v.id}')" class="absolute top-1 right-1 w-6 h-6 bg-danger/80 hover:bg-danger text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10" title="Eliminar"><i class="fas fa-times text-xs"></i></button>
 <i class="fas fa-file-invoice"></i>
 <span class="truncate w-full">${v.type}</span>
 <span class="text-[10px] text-gray-500">${formatDate(v.date)}</span>
 <span class="text-accent font-bold text-xs">${formatCurrency(v.amount)}</span>
-</div>
-`).join('');
+</div>`).join('');
 }
 function regenerateVoucher(voucherId) {
 const voucher = appData.vouchers.find(v => v.id === voucherId);
 if (!voucher) return;
-// Regenerate the voucher with stored data
 generateVoucher(voucher.type, voucher.client, voucher.amount, voucher.interest, voucher.balance, voucher.nextDate);
 }
-// MODIFICACIÓN 2: Función para eliminar vouchers
 function deleteVoucher(voucherId) {
 if (!confirm('¿Eliminar este comprobante?')) return;
 const index = appData.vouchers.findIndex(v => v.id === voucherId);
@@ -2246,7 +1631,6 @@ link.click();
 document.body.removeChild(link);
 URL.revokeObjectURL(url);
 }
-// Reports
 function generateReport(type) {
 const content = document.getElementById('report-content');
 const dataDiv = document.getElementById('report-data');
@@ -2277,39 +1661,22 @@ const totalInterest = payments.reduce((sum, p) => sum + (parseFloat(p.interest) 
 const totalCapital = payments.reduce((sum, p) => sum + (parseFloat(p.capital) || 0), 0);
 dataDiv.innerHTML = `
 <div class="grid grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6">
-<div class="bg-surface rounded-xl p-3 md:p-4">
-<p class="text-xs md:text-sm text-gray-400">Total Intereses</p>
-<p class="text-xl md:text-2xl font-bold text-success truncate-number">${formatCurrency(totalInterest)}</p>
-</div>
-<div class="bg-surface rounded-xl p-3 md:p-4">
-<p class="text-xs md:text-sm text-gray-400">Capital Recuperado</p>
-<p class="text-xl md:text-2xl font-bold text-accent truncate-number">${formatCurrency(totalCapital)}</p>
-</div>
+<div class="bg-surface rounded-xl p-3 md:p-4"><p class="text-xs md:text-sm text-gray-400">Total Intereses</p><p class="text-xl md:text-2xl font-bold text-success truncate-number">${formatCurrency(totalInterest)}</p></div>
+<div class="bg-surface rounded-xl p-3 md:p-4"><p class="text-xs md:text-sm text-gray-400">Capital Recuperado</p><p class="text-xl md:text-2xl font-bold text-accent truncate-number">${formatCurrency(totalCapital)}</p></div>
 </div>
 <div class="overflow-x-auto">
 <table class="w-full min-w-[500px] text-sm">
-<thead>
-<tr class="text-left text-gray-400 border-b border-gray-700">
-<th class="pb-2">Fecha</th>
-<th class="pb-2">Cliente</th>
-<th class="pb-2 text-right">Interés</th>
-<th class="pb-2 text-right">Capital</th>
-</tr>
-</thead>
-<tbody>
-${payments.map(p => `
+<thead><tr class="text-left text-gray-400 border-b border-gray-700"><th class="pb-2">Fecha</th><th class="pb-2">Cliente</th><th class="pb-2 text-right">Interés</th><th class="pb-2 text-right">Capital</th></tr></thead>
+<tbody>${payments.map(p => `
 <tr class="border-b border-gray-800">
 <td class="py-2">${formatDate(p.date)}</td>
 <td class="py-2">${p.clientName}</td>
 <td class="py-2 text-right text-success">${formatCurrency(p.interest)}</td>
 <td class="py-2 text-right">${formatCurrency(p.capital)}</td>
-</tr>
-`).join('')}
-</tbody>
+</tr>`).join('')}</tbody>
 </table>
 </div>
-${payments.length === 0 ? '<p class="text-gray-500 text-center py-8">No hay datos para este período</p>' : ''}
-`;
+${payments.length === 0 ? '<p class="text-gray-500 text-center py-8">No hay datos para este período</p>' : ''}`;
 }
 function exportReportPDF() {
 const { jsPDF } = window.jspdf;
@@ -2323,24 +1690,17 @@ doc.save('reporte_jn.pdf');
 showToast('PDF descargado', 'success');
 }
 async function shareReport() {
-const reportText = document.getElementById('report-title').textContent + '\n\n' +
-document.getElementById('report-data').innerText;
+const reportText = document.getElementById('report-title').textContent + '\n\n' + document.getElementById('report-data').innerText;
 if (navigator.share) {
 try {
-await navigator.share({
-title: 'Reporte J&N Soluciones',
-text: reportText
-});
-} catch (err) {
-// User cancelled
-}
+await navigator.share({ title: 'Reporte J&N Soluciones', text: reportText });
+} catch (err) {}
 } else {
 navigator.clipboard.writeText(reportText).then(() => {
 showToast('Reporte copiado al portapapeles', 'success');
 });
 }
 }
-// Backup & Import
 function exportData() {
 const dataStr = JSON.stringify(appData, null, 2);
 const blob = new Blob([dataStr], { type: 'application/json' });
@@ -2389,25 +1749,20 @@ saveData();
 showToast('Todos los datos han sido eliminados', 'warning');
 updateUI();
 }
-// Navigation
 function showPage(page) {
 if (page === 'more') {
 toggleMoreMenu();
 return;
 }
-// Close more menu if open
 if (isMoreMenuOpen) {
 toggleMoreMenu();
 }
-// Hide all views
 document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
-// Show selected view
 const pageEl = document.getElementById(`page-${page}`);
 if (pageEl) {
 pageEl.classList.remove('hidden');
 pageEl.classList.add('fade-in');
 }
-// Update title
 const titles = {
 dashboard: 'Dashboard',
 clients: 'Clientes',
@@ -2419,7 +1774,6 @@ reports: 'Reportes',
 settings: 'Configuración'
 };
 document.getElementById('page-title').textContent = titles[page] || 'J&N PRO';
-// Update desktop navigation
 document.querySelectorAll('.menu-item').forEach(btn => {
 btn.classList.remove('active');
 btn.classList.add('text-gray-400');
@@ -2429,7 +1783,6 @@ if (navBtn) {
 navBtn.classList.add('active');
 navBtn.classList.remove('text-gray-400');
 }
-// Update mobile navigation
 document.querySelectorAll('.mobile-nav').forEach(btn => {
 btn.classList.remove('text-accent');
 btn.classList.add('text-gray-400');
@@ -2439,18 +1792,12 @@ if (mobileNav) {
 mobileNav.classList.add('text-accent');
 mobileNav.classList.remove('text-gray-400');
 }
-// Update charts if dashboard
 if (page === 'dashboard') {
 setTimeout(updateCharts, 50);
 }
-// Scroll to top
 window.scrollTo(0, 0);
 }
-function toggleMobileMenu() {
-// Simple toggle for mobile sidebar if needed
-// Currently using bottom nav instead
-}
-// Modal Functions
+function toggleMobileMenu() {}
 function openModal(modalId) {
 const modal = document.getElementById(modalId);
 if (modal) {
@@ -2474,7 +1821,6 @@ input.value = '';
 }
 });
 }
-// Toast Notifications
 function showToast(message, type = 'info') {
 const container = document.getElementById('toast-container');
 const toast = document.createElement('div');
@@ -2491,17 +1837,13 @@ warning: 'fa-exclamation-triangle',
 info: 'fa-info-circle'
 };
 toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border ${colors[type]} shadow-lg slide-in`;
-toast.innerHTML = `
-<i class="fas ${icons[type]}"></i>
-<span class="font-medium text-sm">${message}</span>
-`;
+toast.innerHTML = `<i class="fas ${icons[type]}"></i><span class="font-medium text-sm">${message}</span>`;
 container.appendChild(toast);
 setTimeout(() => {
 toast.classList.add('slide-out');
 setTimeout(() => toast.remove(), 300);
 }, 3000);
 }
-// Utility Functions
 function formatCurrency(amount) {
 const num = parseFloat(amount) || 0;
 return '$' + num.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
@@ -2515,7 +1857,6 @@ return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year
 function showNotifications() {
 showToast('No hay notificaciones nuevas', 'info');
 }
-// Auto-login if session exists
 const savedUser = localStorage.getItem('jn_pro_current_user');
 if (savedUser) {
 try {
