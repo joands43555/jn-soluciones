@@ -1202,27 +1202,25 @@ return nextDate < today;
 }
 grid.innerHTML = loans.map(loan => {
 const client = appData.clients.find(c => c.id === loan.clientId);
+const isOrphan = !client;
 const today = new Date();
 today.setHours(0,0,0,0);
 const isOverdue = loan.nextPaymentDate ? new Date(loan.nextPaymentDate) < today : false;
 const interest = Math.round((parseFloat(loan.amount) || 0) * (parseFloat(loan.interestRate) || 10) / 100);
+const orphanButtons = `<button onclick="deleteOrphanLoan('${loan.id}')" class="flex-1 px-3 py-2 bg-danger/20 text-danger border border-danger/40 rounded-lg text-xs md:text-sm font-bold hover:bg-danger/40 touch-feedback"><i class="fas fa-trash mr-1"></i> Eliminar Préstamo</button>`;
+const normalButtons = `<button onclick="viewLoanDetails('${loan.id}')" class="flex-1 px-3 py-2 bg-surface rounded-lg text-xs md:text-sm hover:bg-gray-700 touch-feedback"><i class="fas fa-eye mr-1"></i> Ver</button><button onclick="quickPay('${loan.id}')" class="flex-1 px-3 py-2 btn-gradient rounded-lg text-xs md:text-sm font-bold touch-feedback"><i class="fas fa-money-bill-wave mr-1"></i> Cobrar</button><button onclick="openIncreaseCapital('${loan.id}')" class="px-3 py-2 bg-accent/20 text-accent rounded-lg text-xs md:text-sm hover:bg-accent/30 touch-feedback" title="Aumentar Capital"><i class="fas fa-plus"></i></button><button onclick="addToBlacklist('${loan.id}')" class="px-3 py-2 bg-danger/20 text-danger rounded-lg text-xs md:text-sm hover:bg-danger/30 touch-feedback" title="Bloquear"><i class="fas fa-ban"></i></button>`;
 return `
-<div class="glass-effect rounded-2xl p-4 md:p-6 card-hover ${isOverdue ? 'border border-danger/50' : ''}">
+<div class="glass-effect rounded-2xl p-4 md:p-6 card-hover ${isOrphan ? 'border border-warning/40' : (isOverdue ? 'border border-danger/50' : '')}">
 <div class="flex items-start justify-between mb-3 md:mb-4">
-<div class="min-w-0 flex-1"><h4 class="font-bold text-base md:text-lg truncate">${client?.name || 'Cliente eliminado'}</h4><p class="text-xs md:text-sm text-gray-400">#${loan.id.slice(-6)}</p></div>
-<span class="status-badge ${isOverdue ? 'status-overdue' : 'status-active'} text-xs ml-2">${isOverdue ? 'Vencido' : 'Activo'}</span>
+<div class="min-w-0 flex-1"><h4 class="font-bold text-base md:text-lg truncate ${isOrphan ? 'text-warning' : ''}">${isOrphan ? '⚠️ Cliente eliminado' : client.name}</h4><p class="text-xs md:text-sm text-gray-400">#${loan.id.slice(-6)}</p>${isOrphan ? '<p class="text-xs text-yellow-400/80 mt-1">Préstamo sin cliente — puede eliminarse</p>' : ''}</div>
+<span class="status-badge ${isOrphan ? 'bg-yellow-500/20 text-yellow-400' : (isOverdue ? 'status-overdue' : 'status-active')} text-xs ml-2">${isOrphan ? 'Sin cliente' : (isOverdue ? 'Vencido' : 'Activo')}</span>
 </div>
 <div class="grid grid-cols-3 gap-2 md:gap-4 mb-3 md:mb-4 text-sm">
 <div><p class="text-[10px] md:text-xs text-gray-500">Capital</p><p class="font-bold text-sm md:text-base truncate-number">${formatCurrency(loan.amount)}</p></div>
 <div><p class="text-[10px] md:text-xs text-gray-500">Interés</p><p class="font-bold text-success text-sm md:text-base truncate-number">${formatCurrency(interest)}</p></div>
 <div><p class="text-[10px] md:text-xs text-gray-500">Próximo</p><p class="font-bold text-xs md:text-sm ${isOverdue ? 'text-danger' : ''}">${formatDate(loan.nextPaymentDate)}</p></div>
 </div>
-<div class="flex gap-2">
-<button onclick="viewLoanDetails('${loan.id}')" class="flex-1 px-3 py-2 bg-surface rounded-lg text-xs md:text-sm hover:bg-gray-700 touch-feedback"><i class="fas fa-eye mr-1"></i> Ver</button>
-<button onclick="quickPay('${loan.id}')" class="flex-1 px-3 py-2 btn-gradient rounded-lg text-xs md:text-sm font-bold touch-feedback"><i class="fas fa-money-bill-wave mr-1"></i> Cobrar</button>
-<button onclick="openIncreaseCapital('${loan.id}')" class="px-3 py-2 bg-accent/20 text-accent rounded-lg text-xs md:text-sm hover:bg-accent/30 touch-feedback" title="Aumentar Capital"><i class="fas fa-plus"></i></button>
-<button onclick="addToBlacklist('${loan.id}')" class="px-3 py-2 bg-danger/20 text-danger rounded-lg text-xs md:text-sm hover:bg-danger/30 touch-feedback" title="Bloquear"><i class="fas fa-ban"></i></button>
-</div>
+<div class="flex gap-2">${isOrphan ? orphanButtons : normalButtons}</div>
 </div>`;
 }).join('') || '<p class="text-gray-500 text-center py-8">No hay préstamos activos</p>';
 }
@@ -1289,7 +1287,7 @@ closeModal('modal-new-loan');
 showToast('Préstamo creado exitosamente', 'success');
 clearModalInputs('modal-new-loan');
 setTimeout(() => {
-generateVoucher('APERTURA DE CRÉDITO', client.name, amount, 0, amount, date);
+generateVoucher('APERTURA DE CRÉDITO', client.name, amount, 0, amount, date, rate);
 }, 500);
 }
 function viewLoanDetails(loanId) {
@@ -1474,7 +1472,7 @@ appData.payments.push(payment);
 saveData();
 showToast(loan.paid ? 'Préstamo liquidado' : 'Pago registrado', 'success');
 const type = loan.paid ? 'LIQUIDACIÓN' : 'RECIBO DE PAGO';
-generateVoucher(type, client?.name || loan.clientName, capital, interest, newAmount, nextDate);
+generateVoucher(type, client?.name || loan.clientName, capital, interest, newAmount, nextDate, loan.interestRate);
 // Reset form
 document.getElementById('payment-client').value = '';
 document.getElementById('payment-loan').innerHTML = '<option value="">Seleccionar...</option>';
@@ -1545,6 +1543,19 @@ saveData();
 showToast('Pago eliminado correctamente', 'success');
 updateUI();
 }
+function deleteOrphanLoan(loanId) {
+if (!confirm('¿Eliminar este préstamo huérfano?\n\nEl cliente ya no existe. Esta acción eliminará el préstamo y sus pagos asociados permanentemente.')) return;
+const loanIndex = appData.loans.findIndex(l => l.id === loanId);
+if (loanIndex === -1) {
+showToast('Préstamo no encontrado', 'error');
+return;
+}
+appData.payments = appData.payments.filter(p => p.loanId !== loanId);
+appData.loans.splice(loanIndex, 1);
+saveData();
+showToast('Préstamo eliminado correctamente', 'success');
+updateUI();
+}
 function addToBlacklist(loanId) {
 if (!confirm('¿Mover este cliente a la lista negra? Se marcará como moroso.')) return;
 const loanIndex = appData.loans.findIndex(l => l.id === loanId);
@@ -1596,7 +1607,7 @@ return `
 </div>`;
 }).join('') || '<p class="text-gray-500 text-center py-8">Lista negra vacía</p>';
 }
-async function generateVoucher(type, client, amount, interest, balance, nextDate) {
+async function generateVoucher(type, client, amount, interest, balance, nextDate, interestRate) {
 try {
 document.getElementById('voucher-type').textContent = type;
 document.getElementById('voucher-client').textContent = (client || 'N/A').toUpperCase();
@@ -1613,7 +1624,8 @@ nextPaymentDiv.style.display = 'none';
 completedMsg.style.display = 'none';
 nextPaymentDiv.style.display = 'block';
 document.getElementById('voucher-next-date').textContent = nextDate ? formatDate(nextDate) : 'N/A';
-document.getElementById('voucher-next-amount').textContent = 'Cuota: ' + formatCurrency(Math.round(balance * 0.1));
+const rate = parseFloat(interestRate) || appData.settings.interestRate || 10;
+document.getElementById('voucher-next-amount').textContent = 'Cuota: ' + formatCurrency(Math.round(balance * rate / 100));
 }
 const voucherTemplate = document.getElementById('voucher-template');
 const voucherEl = document.getElementById('voucher-element');
