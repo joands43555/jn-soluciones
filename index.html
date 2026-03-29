@@ -136,7 +136,41 @@ body {font-family: 'Inter', sans-serif; background: #0b0f19; overscroll-behavior
   -webkit-overflow-scrolling: touch;
 }
 </style>
+
+<script>
+// ── PWA MANIFEST (inline) ──────────────────────────
+const manifestData = {
+  name: "J&N Soluciones PRO",
+  short_name: "J&N PRO",
+  description: "Sistema de gestión de préstamos y cobranzas",
+  start_url: "./",
+  display: "standalone",
+  background_color: "#0b0f19",
+  theme_color: "#002d5e",
+  icons: [{ src: "logo-jn.png", sizes: "192x192", type: "image/png" },
+          { src: "logo-jn.png", sizes: "512x512", type: "image/png" }]
+};
+const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
+document.getElementById('pwa-manifest').href = URL.createObjectURL(manifestBlob);
+
+// ── SERVICE WORKER (cache offline) ─────────────────
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE = 'jn-pro-v1';
+    const ASSETS = ['./', './logo-jn.png'];
+    self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS))));
+    self.addEventListener('fetch', e => e.respondWith(
+      caches.match(e.request).then(r => r || fetch(e.request).catch(() => r))
+    ));
+  `;
+  const swBlob = new Blob([swCode], { type: 'application/javascript' });
+  navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+}
+</script>
 <base target="_blank">
+<link rel="manifest" id="pwa-manifest">
+<meta name="apple-mobile-web-app-title" content="J&N PRO">
+<link rel="apple-touch-icon" href="logo-jn.png">
 </head>
 <body class="text-gray-100 min-h-screen">
 <div id="offline-indicator" class="offline-indicator"><i class="fas fa-wifi-slash mr-2"></i> Sin conexión - Modo offline activo</div>
@@ -251,6 +285,25 @@ body {font-family: 'Inter', sans-serif; background: #0b0f19; overscroll-behavior
 <p class="text-[10px] md:text-xs text-gray-500 mt-1">Préstamos</p>
 </div>
 </div>
+
+<!-- RÉDITO MENSUAL PROYECTADO -->
+<div class="glass-effect rounded-2xl p-4 md:p-6" style="background: linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(0,45,94,0.3) 100%); border: 1px solid rgba(16,185,129,0.3);">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+    <div>
+      <h3 class="text-base md:text-lg font-bold flex items-center gap-2">
+        <i class="fas fa-coins text-success"></i> Rédito Mensual Proyectado
+      </h3>
+      <p class="text-xs text-gray-400 mt-1">Interés total estimado de todos los préstamos activos en 30 días</p>
+    </div>
+    <div class="text-right sm:text-right">
+      <p class="text-2xl md:text-3xl font-black text-success" id="stat-monthly-income">$0</p>
+      <p class="text-xs text-gray-400">/ mes estimado</p>
+    </div>
+  </div>
+  <!-- frecuency boxes removed: rate is monthly, no split needed -->
+  <div id="income-breakdown" class="space-y-2 max-h-52 overflow-y-auto"></div>
+</div>
+
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
 <div class="glass-effect rounded-2xl p-4 md:p-6">
 <h3 class="text-base md:text-lg font-bold mb-4 flex items-center gap-2"><i class="fas fa-chart-area text-accent"></i> Evolución</h3>
@@ -310,7 +363,7 @@ body {font-family: 'Inter', sans-serif; background: #0b0f19; overscroll-behavior
 </select>
 </div>
 <div class="form-group">
-<label class="form-label">Interés (10%)</label>
+<label class="form-label" id="payment-interest-label">Interés</label>
 <input type="number" id="payment-interest" class="form-input" readonly placeholder="0">
 </div>
 <div class="form-group">
@@ -426,6 +479,18 @@ body {font-family: 'Inter', sans-serif; background: #0b0f19; overscroll-behavior
 <div class="glass-effect rounded-2xl p-4 md:p-6">
 <h3 class="text-base md:text-lg font-bold mb-4 md:mb-6 flex items-center gap-2"><i class="fas fa-percentage text-accent"></i> Configuración de Tasas</h3>
 <div class="max-w-md"><label class="block text-sm text-gray-400 mb-2">Tasa de Interés Predeterminada (%)</label><div class="flex gap-2"><input type="number" id="settings-rate" value="10" class="flex-1 px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base"><button onclick="saveSettings()" class="btn-gradient px-4 md:px-6 py-3 rounded-xl font-bold text-white touch-feedback">Guardar</button></div></div>
+</div>
+<div class="glass-effect rounded-2xl p-4 md:p-6 border border-success/30">
+<h3 class="text-base md:text-lg font-bold mb-4 text-success flex items-center gap-2"><i class="fas fa-shield-alt"></i> Seguridad y Backups</h3>
+<div id="backup-status-bar" class="bg-surface rounded-xl p-3 mb-4 flex items-center justify-between">
+<div><p class="text-xs text-gray-400">Último backup automático</p><p id="last-backup-date" class="text-sm font-bold text-white">Calculando...</p></div>
+<div id="backup-health-dot" class="w-3 h-3 rounded-full bg-success"></div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+<button onclick="manualBackupNow()" class="px-4 py-3 bg-success/20 text-success rounded-xl font-medium hover:bg-success/30 transition-all touch-feedback text-sm flex items-center justify-center gap-2"><i class="fas fa-download"></i> Backup Manual Ahora</button>
+<button onclick="restoreAutoBackup()" class="px-4 py-3 bg-accent/20 text-accent rounded-xl font-medium hover:bg-accent/30 transition-all touch-feedback text-sm flex items-center justify-center gap-2"><i class="fas fa-history"></i> Restaurar Último Backup</button>
+</div>
+<p class="text-xs text-gray-500">Se hacen backups automáticos cada 7 días. Guarda el archivo en Google Drive para máxima seguridad.</p>
 </div>
 <div class="glass-effect rounded-2xl p-4 md:p-6 border border-danger/30">
 <h3 class="text-base md:text-lg font-bold mb-4 md:mb-6 text-danger flex items-center gap-2"><i class="fas fa-exclamation-triangle"></i> Zona de Peligro</h3>
@@ -636,6 +701,18 @@ const frequencyDays = {
   monthly: 30
 };
 
+// ── PIN SECURITY HELPERS ──────────────────────────
+async function hashPin(pin) {
+  const data = new TextEncoder().encode(pin + 'jn_salt_2026');
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+async function verifyPin(inputPin, storedHash) {
+  // Legacy: stored as plain 4-digit string
+  if (storedHash && storedHash.length === 4) return inputPin === storedHash;
+  const h = await hashPin(inputPin);
+  return h === storedHash;
+}
 function enterPin(digit) {
 if (currentPin.length < 4) {
 currentPin += digit;
@@ -667,9 +744,10 @@ dot.classList.remove('filled');
 }
 }
 }
-function validatePin() {
+async function validatePin() {
 const savedPin = appData.settings?.pin || '0417';
-if (currentPin === savedPin) {
+const ok = await verifyPin(currentPin, savedPin);
+if (ok) {
 currentUser = { uid: 'local', name: 'Administrador' };
 document.getElementById('user-name').textContent = 'Admin';
 document.getElementById('login-screen').classList.add('hidden');
@@ -707,9 +785,11 @@ if (newPin !== confirm) {
 showToast('Los PINs no coinciden', 'error');
 return;
 }
-appData.settings.pin = newPin;
+hashPin(newPin).then(hashed => {
+appData.settings.pin = hashed;
 saveData();
-showToast('PIN cambiado exitosamente', 'success');
+showToast('PIN cambiado exitosamente ✓', 'success');
+});
 document.getElementById('current-pin').value = '';
 document.getElementById('new-pin').value = '';
 document.getElementById('confirm-pin').value = '';
@@ -786,6 +866,67 @@ uid: currentUser.uid || 'local',
 name: currentUser.name || 'Admin'
 }));
 }
+setTimeout(checkAutoBackup, 2000);
+}
+
+// ── AUTO-BACKUP ────────────────────────────────────
+function checkAutoBackup() {
+const lastBackup = localStorage.getItem('jn_last_auto_backup');
+const now = Date.now();
+const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+if (!lastBackup || (now - parseInt(lastBackup)) > SEVEN_DAYS) {
+runAutoBackup();
+} else if ((now - parseInt(lastBackup)) > THREE_DAYS) {
+showToast('💾 Recuerda hacer un backup de tus datos', 'warning');
+}
+}
+function runAutoBackup() {
+try {
+// Keep rolling backup in localStorage (last 2)
+const backupKey = 'jn_auto_backup_' + new Date().toISOString().split('T')[0];
+const backupData = JSON.stringify(appData);
+localStorage.setItem(backupKey, backupData);
+// Clean old backups keeping only last 2
+const keys = Object.keys(localStorage).filter(k => k.startsWith('jn_auto_backup_')).sort();
+while (keys.length > 2) { localStorage.removeItem(keys.shift()); }
+localStorage.setItem('jn_last_auto_backup', Date.now().toString());
+showToast('✅ Backup automático guardado localmente', 'success');
+} catch(e) { console.error('Auto-backup error:', e); }
+}
+function updateBackupStatus() {
+const last = localStorage.getItem('jn_last_auto_backup');
+const el = document.getElementById('last-backup-date');
+const dot = document.getElementById('backup-health-dot');
+if (!el) return;
+if (!last) {
+el.textContent = 'Nunca';
+if(dot) dot.className = 'w-3 h-3 rounded-full bg-danger';
+return;
+}
+const diff = Date.now() - parseInt(last);
+const days = Math.floor(diff / (1000*60*60*24));
+el.textContent = days === 0 ? 'Hoy ✓' : 'Hace ' + days + ' día(s)';
+if(dot) dot.className = 'w-3 h-3 rounded-full ' + (days < 3 ? 'bg-success' : days < 7 ? 'bg-warning' : 'bg-danger');
+}
+function manualBackupNow() {
+runAutoBackup();
+exportData();
+showToast('💾 Backup descargado y guardado', 'success');
+}
+function restoreAutoBackup() {
+const keys = Object.keys(localStorage).filter(k => k.startsWith('jn_auto_backup_')).sort().reverse();
+if (keys.length === 0) { showToast('No hay backups automáticos disponibles', 'error'); return; }
+const latest = keys[0];
+const date = latest.replace('jn_auto_backup_', '');
+if (!confirm('¿Restaurar backup del ' + date + '?\n\nEsto reemplazará los datos actuales.')) return;
+try {
+const data = JSON.parse(localStorage.getItem(latest));
+appData = { ...appData, ...data };
+saveData();
+updateUI();
+showToast('Backup del ' + date + ' restaurado', 'success');
+} catch(e) { showToast('Error al restaurar backup', 'error'); }
 }
 function setDefaultDates() {
 const today = new Date().toISOString().split('T')[0];
@@ -866,14 +1007,26 @@ syncQueue.push({ action: 'save', data: appData });
 return;
 }
 if (db) {
+const statusText = document.getElementById('sync-status-text');
+const statusDot = document.getElementById('sync-status-dot');
+statusText.textContent = 'Guardando...';
+statusDot.classList.remove('bg-success');
+statusDot.classList.add('bg-accent');
 db.ref('jn_pro_2026').set(appData)
 .then(() => {
-document.getElementById('sync-status-text').textContent = 'Sincronizado';
+statusText.textContent = 'Sincronizado ✓';
+statusDot.classList.add('bg-success');
+statusDot.classList.remove('bg-accent');
+appData.lastFirebaseSync = new Date().toISOString();
+saveLocalData();
 })
 .catch((err) => {
 console.error('Firebase save error:', err);
-document.getElementById('sync-status-text').textContent = 'Error sync';
+statusText.textContent = '⚠ Sin sync';
+statusDot.classList.add('bg-warning');
+statusDot.classList.remove('bg-success', 'bg-accent');
 syncQueue.push({ action: 'save', data: appData });
+showToast('Sin conexión — datos guardados localmente', 'warning');
 });
 }
 }
@@ -919,6 +1072,46 @@ document.getElementById('stat-capital').textContent = formatCurrency(capital);
 document.getElementById('stat-profits').textContent = formatCurrency(profits);
 document.getElementById('stat-clients').textContent = activeClients;
 document.getElementById('stat-overdue').textContent = overdue;
+updateMonthlyIncome(activeLoans);
+}
+
+// ── RÉDITO MENSUAL PROYECTADO ───────────────────────
+// La tasa guardada es siempre mensual: rédito = capital × tasa / 100
+function updateMonthlyIncome(activeLoans) {
+let totalMonthly = 0;
+const rows = [];
+
+activeLoans.forEach(loan => {
+  const capital = parseFloat(loan.amount) || 0;
+  const rate = parseFloat(loan.interestRate) || 10;
+  const monthly = Math.round(capital * rate / 100);
+  totalMonthly += monthly;
+  rows.push({ name: loan.clientName || 'Cliente', capital, rate, monthly });
+});
+
+const el = document.getElementById('stat-monthly-income');
+if (el) el.textContent = formatCurrency(totalMonthly);
+
+// Hide sub-frequency boxes (not needed)
+['daily','weekly','biweekly','monthly'].forEach(f => {
+  const e = document.getElementById('income-' + f);
+  if (e) e.closest('.bg-black\/20')?.parentElement?.classList.add('hidden');
+});
+
+const breakdown = document.getElementById('income-breakdown');
+if (!breakdown) return;
+if (rows.length === 0) {
+  breakdown.innerHTML = '<p class="text-xs text-gray-500 text-center py-2">Sin préstamos activos</p>';
+  return;
+}
+breakdown.innerHTML = rows.sort((a,b) => b.monthly - a.monthly).map(r => `
+  <div class="flex items-center justify-between py-2 px-3 bg-black/20 rounded-lg text-xs">
+    <div class="min-w-0 flex-1">
+      <span class="font-medium text-white truncate block">${r.name}</span>
+      <span class="text-gray-400">${formatCurrency(r.capital)} × ${r.rate}% mensual</span>
+    </div>
+    <span class="font-bold text-success ml-3">${formatCurrency(r.monthly)}<span class="text-gray-500 font-normal">/mes</span></span>
+  </div>`).join('');
 }
 function updateCharts() {
 if (window.innerWidth < 768) {
@@ -1408,8 +1601,12 @@ const loanId = document.getElementById('payment-loan').value;
 if (!loanId) return;
 const loan = appData.loans.find(l => l.id === loanId);
 if (!loan) return;
-const interest = Math.round((parseFloat(loan.amount) || 0) * (parseFloat(loan.interestRate) || 10) / 100);
+const rate = parseFloat(loan.interestRate) || 10;
+const interest = Math.round((parseFloat(loan.amount) || 0) * rate / 100);
 document.getElementById('payment-interest').value = interest;
+// Update label with the real rate
+const lbl = document.getElementById('payment-interest-label');
+if (lbl) lbl.textContent = 'Interés (' + rate + '%)';
 // Set frequency from loan if exists
 if (loan.paymentFrequency) {
 document.getElementById('payment-frequency').value = loan.paymentFrequency;
@@ -1923,6 +2120,9 @@ mobileNav.classList.remove('text-gray-400');
 }
 if (page === 'dashboard') {
 setTimeout(updateCharts, 50);
+}
+if (page === 'settings') {
+updateBackupStatus();
 }
 window.scrollTo(0, 0);
 }
