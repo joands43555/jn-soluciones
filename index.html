@@ -108,8 +108,6 @@ body {font-family: 'Inter', sans-serif; background: #0b0f19; overscroll-behavior
 .client-actions {opacity: 0; transition: opacity 0.2s ease;}
 .glass-effect:hover .client-actions {opacity: 1;}
 @media (max-width: 768px) {.client-actions {opacity: 1;}}
-
-/* iPhone optimizations */
 @supports (-webkit-touch-callout: none) {
   .ios-scroll { -webkit-overflow-scrolling: touch; }
   input, select, textarea { font-size: 16px !important; }
@@ -123,8 +121,6 @@ body {font-family: 'Inter', sans-serif; background: #0b0f19; overscroll-behavior
 .form-select:focus { border-color: #00a8e8; outline: none; box-shadow: 0 0 0 3px rgba(0, 168, 232, 0.2); }
 .btn-primary { width: 100%; padding: 1rem; background: linear-gradient(135deg, #002d5e 0%, #00a8e8 100%); border: none; border-radius: 0.75rem; color: white; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1.5rem; }
 .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
-
-/* Modal scroll fixes for iPhone */
 .modal-scrollable {
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
@@ -135,10 +131,16 @@ body {font-family: 'Inter', sans-serif; background: #0b0f19; overscroll-behavior
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
+/* Renganche badge */
+.renganche-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700;
+  background: rgba(245,158,11,0.15); color: #f59e0b;
+  border: 1px solid rgba(245,158,11,0.3);
+}
 </style>
 
 <script>
-// ── PWA MANIFEST (inline) ──────────────────────────
 const manifestData = {
   name: "J&N Soluciones PRO",
   short_name: "J&N PRO",
@@ -153,7 +155,6 @@ const manifestData = {
 const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
 document.getElementById('pwa-manifest').href = URL.createObjectURL(manifestBlob);
 
-// ── SERVICE WORKER (cache offline) ─────────────────
 if ('serviceWorker' in navigator) {
   const swCode = `
     const CACHE = 'jn-pro-v1';
@@ -213,7 +214,7 @@ if ('serviceWorker' in navigator) {
 <div class="p-6 border-b border-gray-800">
 <div class="flex items-center gap-3">
 <div class="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center"><i class="fas fa-chart-line text-white"></i></div>
-<div><h2 class="font-bold text-white">J&N PRO</h2><p class="text-xs text-gray-400">v2026.2</p></div>
+<div><h2 class="font-bold text-white">J&N PRO</h2><p class="text-xs text-gray-400">v2026.3</p></div>
 </div>
 </div>
 <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
@@ -286,7 +287,6 @@ if ('serviceWorker' in navigator) {
 </div>
 </div>
 
-<!-- RÉDITO MENSUAL PROYECTADO -->
 <div class="glass-effect rounded-2xl p-4 md:p-6" style="background: linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(0,45,94,0.3) 100%); border: 1px solid rgba(16,185,129,0.3);">
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
     <div>
@@ -300,7 +300,6 @@ if ('serviceWorker' in navigator) {
       <p class="text-xs text-gray-400">/ mes estimado</p>
     </div>
   </div>
-  <!-- frecuency boxes removed: rate is monthly, no split needed -->
   <div id="income-breakdown" class="space-y-2 max-h-52 overflow-y-auto"></div>
 </div>
 
@@ -344,7 +343,6 @@ if ('serviceWorker' in navigator) {
 <div id="loans-grid" class="space-y-3 md:space-y-4"></div>
 </div>
 
-<!-- PAYMENTS PAGE - OPTIMIZED FOR IPHONE -->
 <div id="page-payments" class="view hidden payments-form">
 <div class="glass-effect rounded-2xl p-4 md:p-6 mb-4">
 <h3 class="text-base md:text-lg font-bold mb-4 md:mb-6 flex items-center gap-2"><i class="fas fa-money-bill-wave text-accent"></i> Registrar Pago</h3>
@@ -507,6 +505,8 @@ if ('serviceWorker' in navigator) {
 <button onclick="toggleMoreMenu()" class="mobile-nav flex flex-col items-center gap-1 text-gray-400 px-2" data-page="more" id="btn-more"><i class="fas fa-ellipsis-h text-lg"></i><span class="text-[10px]">Más</span></button>
 </nav>
 </div>
+
+<!-- MODAL MÁS -->
 <div id="modal-more" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300" onclick="handleMoreBackdropClick(event)">
 <div class="glass-effect rounded-t-3xl p-6 w-full max-w-sm mx-auto slide-in safe-bottom transform transition-transform duration-300" id="more-menu-content">
 <div class="w-12 h-1 bg-gray-600 rounded-full mx-auto mb-6"></div>
@@ -519,6 +519,8 @@ if ('serviceWorker' in navigator) {
 <button onclick="toggleMoreMenu()" class="w-full mt-4 py-3 bg-surface rounded-xl text-gray-400 font-medium touch-feedback">Cerrar</button>
 </div>
 </div>
+
+<!-- MODAL NUEVO CLIENTE -->
 <div id="modal-new-client" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto" onclick="if(event.target === this) closeModal('modal-new-client')">
 <div class="glass-effect rounded-2xl p-6 w-full max-w-md mx-auto slide-in my-auto">
 <div class="flex justify-between items-center mb-6">
@@ -534,6 +536,8 @@ if ('serviceWorker' in navigator) {
 </div>
 </div>
 </div>
+
+<!-- MODAL EDITAR CLIENTE -->
 <div id="modal-edit-client" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto" onclick="if(event.target === this) closeModal('modal-edit-client')">
 <div class="glass-effect rounded-2xl p-6 w-full max-w-md mx-auto slide-in my-auto">
 <div class="flex justify-between items-center mb-6">
@@ -551,7 +555,7 @@ if ('serviceWorker' in navigator) {
 </div>
 </div>
 
-<!-- MODAL NUEVO PRÉSTAMO - CORREGIDO PARA SCROLL EN IPHONE -->
+<!-- MODAL NUEVO PRÉSTAMO -->
 <div id="modal-new-loan" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 modal-scrollable" onclick="if(event.target === this) closeModal('modal-new-loan')">
 <div class="glass-effect rounded-2xl p-6 w-full max-w-md mx-auto slide-in my-auto modal-content">
 <div class="flex justify-between items-center mb-6">
@@ -577,6 +581,7 @@ if ('serviceWorker' in navigator) {
 </div>
 </div>
 
+<!-- MODAL DETALLES PRÉSTAMO -->
 <div id="modal-loan-details" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4" onclick="if(event.target === this) closeModal('modal-loan-details')">
 <div class="glass-effect rounded-2xl p-6 w-full max-w-lg mx-auto slide-in max-h-[90vh] overflow-auto">
 <div class="flex justify-between items-center mb-6">
@@ -586,6 +591,8 @@ if ('serviceWorker' in navigator) {
 <div id="loan-details-content"></div>
 </div>
 </div>
+
+<!-- MODAL AUMENTAR CAPITAL -->
 <div id="modal-increase-capital" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto" onclick="if(event.target === this) closeModal('modal-increase-capital')">
 <div class="glass-effect rounded-2xl p-6 w-full max-w-md mx-auto slide-in my-auto">
 <div class="flex justify-between items-center mb-6">
@@ -605,6 +612,8 @@ if ('serviceWorker' in navigator) {
 </div>
 </div>
 </div>
+
+<!-- MODAL VOUCHER PREVIEW -->
 <div id="modal-voucher-preview" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 backdrop-blur-sm p-4" onclick="if(event.target === this) closeModal('modal-voucher-preview')">
 <div class="bg-white rounded-2xl p-4 w-full max-w-md mx-auto slide-in">
 <div class="flex justify-between items-center mb-4 border-b pb-4">
@@ -618,6 +627,104 @@ if ('serviceWorker' in navigator) {
 </div>
 </div>
 </div>
+
+<!-- ══════════════════════════════════════════════════════
+     MODAL EDITAR PRÉSTAMO — RENGANCHE ✏️
+     Cambia tasa, frecuencia y fecha sin tocar historial
+     ══════════════════════════════════════════════════════ -->
+<div id="modal-edit-loan" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto" onclick="if(event.target === this) closeModal('modal-edit-loan')">
+  <div class="glass-effect rounded-2xl p-6 w-full max-w-md mx-auto slide-in my-auto" style="border: 1px solid rgba(245,158,11,0.35);">
+    <div class="flex justify-between items-center mb-2">
+      <div>
+        <h3 class="text-lg md:text-xl font-bold text-warning flex items-center gap-2">
+          <i class="fas fa-pencil-alt"></i> Editar Condiciones
+        </h3>
+        <p class="text-xs text-gray-400 mt-1">Renganche — tasa y fecha sin afectar historial ni capital</p>
+      </div>
+      <button onclick="closeModal('modal-edit-loan')" class="text-gray-400 hover:text-white p-2"><i class="fas fa-times text-xl"></i></button>
+    </div>
+
+    <!-- Resumen del préstamo actual -->
+    <div class="bg-surface rounded-xl p-4 mb-5 mt-4 space-y-2">
+      <p class="text-xs text-gray-400 uppercase tracking-wider">Cliente</p>
+      <p class="font-bold text-lg" id="edit-loan-client-name">-</p>
+      <div class="grid grid-cols-3 gap-2 mt-2">
+        <div class="bg-black/30 rounded-lg p-2 text-center">
+          <p class="text-[10px] text-gray-500">Capital</p>
+          <p class="font-bold text-accent text-sm" id="edit-loan-capital">$0</p>
+        </div>
+        <div class="bg-black/30 rounded-lg p-2 text-center">
+          <p class="text-[10px] text-gray-500">Tasa actual</p>
+          <p class="font-bold text-white text-sm" id="edit-loan-current-rate">0%</p>
+        </div>
+        <div class="bg-black/30 rounded-lg p-2 text-center">
+          <p class="text-[10px] text-gray-500">Vence</p>
+          <p class="font-bold text-warning text-sm" id="edit-loan-current-date">-</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <!-- Nueva tasa -->
+      <div>
+        <label class="block text-sm text-gray-400 mb-2">
+          Nueva Tasa de Interés (%) <span class="text-warning text-xs">← cambia aquí</span>
+        </label>
+        <input type="number" id="edit-loan-rate" step="0.5" min="0" max="100"
+          class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base"
+          placeholder="Ej: 12" oninput="updateEditLoanInterestPreview()">
+        <div class="flex items-center justify-between mt-2 px-1">
+          <p class="text-xs text-gray-500">Interés que cobrará por período:</p>
+          <p class="text-sm font-bold text-success" id="edit-loan-interest-preview">$0</p>
+        </div>
+      </div>
+
+      <!-- Nueva frecuencia -->
+      <div>
+        <label class="block text-sm text-gray-400 mb-2">Frecuencia de Pago</label>
+        <select id="edit-loan-frequency"
+          class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base"
+          onchange="updateEditLoanNextDate()">
+          <option value="daily">Diario (Cada día)</option>
+          <option value="weekly">Semanal (Cada 7 días)</option>
+          <option value="biweekly">Quincenal (Cada 15 días)</option>
+          <option value="monthly">Mensual (Cada 30 días)</option>
+        </select>
+      </div>
+
+      <!-- Nueva fecha -->
+      <div>
+        <label class="block text-sm text-gray-400 mb-2">
+          Nueva Fecha de Próximo Pago * <span class="text-warning text-xs">← cambia aquí</span>
+        </label>
+        <input type="date" id="edit-loan-next-date"
+          class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base">
+      </div>
+
+      <!-- Nota opcional -->
+      <div>
+        <label class="block text-sm text-gray-400 mb-2">Nota del Renganche (Opcional)</label>
+        <textarea id="edit-loan-note" rows="2"
+          class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus resize-none text-base"
+          placeholder="Ej: Renganche acordado verbalmente el 2/4/2026"></textarea>
+      </div>
+
+      <!-- Aviso informativo -->
+      <div class="flex items-start gap-2 bg-warning/10 border border-warning/30 rounded-xl p-3">
+        <i class="fas fa-info-circle text-warning mt-0.5 flex-shrink-0"></i>
+        <p class="text-xs text-warning/90">
+          Solo se actualiza la tasa, frecuencia y fecha. El capital, historial de pagos y todos los demás datos quedan intactos.
+        </p>
+      </div>
+
+      <button onclick="saveEditLoan()" class="w-full py-3 rounded-xl font-bold text-black touch-feedback mt-2"
+        style="background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);">
+        <i class="fas fa-save mr-2"></i> Guardar Renganche
+      </button>
+    </div>
+  </div>
+</div>
+
 <div id="toast-container" class="fixed top-4 right-4 left-4 md:left-auto z-[60] space-y-2 pointer-events-none"></div>
 <div id="voucher-template" class="hidden fixed top-0 left-0 z-[-1]">
 <div class="voucher-container" id="voucher-element">
@@ -655,6 +762,7 @@ if ('serviceWorker' in navigator) {
 </div>
 </div>
 </div>
+
 <script>
 const firebaseConfig = {
 apiKey: "AIzaSyBXHcdK3FtNjXXYwSWhyXt35-eBZ1Rtk8U",
@@ -692,8 +800,8 @@ let currentVoucherBlob = null;
 let isMoreMenuOpen = false;
 let currentIncreaseLoanId = null;
 let currentEditClientId = null;
+let currentEditLoanId = null; // ← para renganche
 
-// Frequency days mapping
 const frequencyDays = {
   daily: 1,
   weekly: 7,
@@ -701,14 +809,12 @@ const frequencyDays = {
   monthly: 30
 };
 
-// ── PIN SECURITY HELPERS ──────────────────────────
 async function hashPin(pin) {
   const data = new TextEncoder().encode(pin + 'jn_salt_2026');
   const buf = await crypto.subtle.digest('SHA-256', data);
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 async function verifyPin(inputPin, storedHash) {
-  // Legacy: stored as plain 4-digit string
   if (storedHash && storedHash.length === 4) return inputPin === storedHash;
   const h = await hashPin(inputPin);
   return h === storedHash;
@@ -868,8 +974,6 @@ name: currentUser.name || 'Admin'
 }
 setTimeout(checkAutoBackup, 2000);
 }
-
-// ── AUTO-BACKUP ────────────────────────────────────
 function checkAutoBackup() {
 const lastBackup = localStorage.getItem('jn_last_auto_backup');
 const now = Date.now();
@@ -883,11 +987,9 @@ showToast('💾 Recuerda hacer un backup de tus datos', 'warning');
 }
 function runAutoBackup() {
 try {
-// Keep rolling backup in localStorage (last 2)
 const backupKey = 'jn_auto_backup_' + new Date().toISOString().split('T')[0];
 const backupData = JSON.stringify(appData);
 localStorage.setItem(backupKey, backupData);
-// Clean old backups keeping only last 2
 const keys = Object.keys(localStorage).filter(k => k.startsWith('jn_auto_backup_')).sort();
 while (keys.length > 2) { localStorage.removeItem(keys.shift()); }
 localStorage.setItem('jn_last_auto_backup', Date.now().toString());
@@ -1074,13 +1176,9 @@ document.getElementById('stat-clients').textContent = activeClients;
 document.getElementById('stat-overdue').textContent = overdue;
 updateMonthlyIncome(activeLoans);
 }
-
-// ── RÉDITO MENSUAL PROYECTADO ───────────────────────
-// La tasa guardada es siempre mensual: rédito = capital × tasa / 100
 function updateMonthlyIncome(activeLoans) {
 let totalMonthly = 0;
 const rows = [];
-
 activeLoans.forEach(loan => {
   const capital = parseFloat(loan.amount) || 0;
   const rate = parseFloat(loan.interestRate) || 10;
@@ -1088,16 +1186,8 @@ activeLoans.forEach(loan => {
   totalMonthly += monthly;
   rows.push({ name: loan.clientName || 'Cliente', capital, rate, monthly });
 });
-
 const el = document.getElementById('stat-monthly-income');
 if (el) el.textContent = formatCurrency(totalMonthly);
-
-// Hide sub-frequency boxes (not needed)
-['daily','weekly','biweekly','monthly'].forEach(f => {
-  const e = document.getElementById('income-' + f);
-  if (e) e.closest('.bg-black\/20')?.parentElement?.classList.add('hidden');
-});
-
 const breakdown = document.getElementById('income-breakdown');
 if (!breakdown) return;
 if (rows.length === 0) {
@@ -1277,20 +1367,12 @@ const name = document.getElementById('new-client-name').value.trim();
 const idCard = document.getElementById('new-client-id').value.trim();
 const phone = document.getElementById('new-client-phone').value.trim();
 const address = document.getElementById('new-client-address').value.trim();
-if (!name) {
-showToast('Ingrese el nombre del cliente', 'error');
-return;
-}
-if (!phone) {
-showToast('Ingrese el teléfono del cliente', 'error');
-return;
-}
+if (!name) { showToast('Ingrese el nombre del cliente', 'error'); return; }
+if (!phone) { showToast('Ingrese el teléfono del cliente', 'error'); return; }
 const newClient = {
 id: Date.now().toString(),
 name: name.toUpperCase(),
-idCard,
-phone,
-address,
+idCard, phone, address,
 createdAt: new Date().toISOString()
 };
 appData.clients.push(newClient);
@@ -1302,10 +1384,7 @@ renderClients();
 }
 function openEditClient(clientId) {
 const client = appData.clients.find(c => c.id === clientId);
-if (!client) {
-showToast('Cliente no encontrado', 'error');
-return;
-}
+if (!client) { showToast('Cliente no encontrado', 'error'); return; }
 currentEditClientId = clientId;
 document.getElementById('edit-client-id').value = clientId;
 document.getElementById('edit-client-name').value = client.name || '';
@@ -1319,34 +1398,17 @@ const name = document.getElementById('edit-client-name').value.trim();
 const idCard = document.getElementById('edit-client-idcard').value.trim();
 const phone = document.getElementById('edit-client-phone').value.trim();
 const address = document.getElementById('edit-client-address').value.trim();
-if (!name) {
-showToast('Ingrese el nombre del cliente', 'error');
-return;
-}
-if (!phone) {
-showToast('Ingrese el teléfono del cliente', 'error');
-return;
-}
+if (!name) { showToast('Ingrese el nombre del cliente', 'error'); return; }
+if (!phone) { showToast('Ingrese el teléfono del cliente', 'error'); return; }
 const clientIndex = appData.clients.findIndex(c => c.id === currentEditClientId);
-if (clientIndex === -1) {
-showToast('Cliente no encontrado', 'error');
-return;
-}
+if (clientIndex === -1) { showToast('Cliente no encontrado', 'error'); return; }
 appData.clients[clientIndex].name = name.toUpperCase();
 appData.clients[clientIndex].idCard = idCard;
 appData.clients[clientIndex].phone = phone;
 appData.clients[clientIndex].address = address;
 appData.clients[clientIndex].updatedAt = new Date().toISOString();
-appData.loans.forEach(loan => {
-if (loan.clientId === currentEditClientId) {
-loan.clientName = name.toUpperCase();
-}
-});
-appData.payments.forEach(payment => {
-if (payment.clientId === currentEditClientId) {
-payment.clientName = name.toUpperCase();
-}
-});
+appData.loans.forEach(loan => { if (loan.clientId === currentEditClientId) loan.clientName = name.toUpperCase(); });
+appData.payments.forEach(payment => { if (payment.clientId === currentEditClientId) payment.clientName = name.toUpperCase(); });
 saveData();
 closeModal('modal-edit-client');
 showToast('Cliente actualizado exitosamente', 'success');
@@ -1355,19 +1417,12 @@ updateSelects();
 }
 function deleteClient(clientId) {
 const client = appData.clients.find(c => c.id === clientId);
-if (!client) {
-showToast('Cliente no encontrado', 'error');
-return;
-}
+if (!client) { showToast('Cliente no encontrado', 'error'); return; }
 const activeLoans = appData.loans.filter(l => l.clientId === clientId && !l.paid);
 if (activeLoans.length > 0) {
-if (!confirm(`⚠️ ${client.name} tiene ${activeLoans.length} préstamo(s) activo(s).\n\n¿Está seguro de eliminar este cliente?\n\nLos préstamos activos también se eliminarán.`)) {
-return;
-}
+if (!confirm(`⚠️ ${client.name} tiene ${activeLoans.length} préstamo(s) activo(s).\n\n¿Está seguro de eliminar este cliente?\n\nLos préstamos activos también se eliminarán.`)) return;
 } else {
-if (!confirm(`¿Está seguro de eliminar a ${client.name}?\n\nEsta acción no se puede deshacer.`)) {
-return;
-}
+if (!confirm(`¿Está seguro de eliminar a ${client.name}?\n\nEsta acción no se puede deshacer.`)) return;
 }
 appData.loans = appData.loans.filter(l => l.clientId !== clientId);
 appData.payments = appData.payments.filter(p => p.clientId !== clientId);
@@ -1379,6 +1434,10 @@ renderClients();
 updateSelects();
 updateUI();
 }
+
+// ══════════════════════════════════════════════════════
+// RENDER LOANS — con botón ✏️ renganche
+// ══════════════════════════════════════════════════════
 function renderLoans() {
 const grid = document.getElementById('loans-grid');
 const filter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
@@ -1400,12 +1459,28 @@ const today = new Date();
 today.setHours(0,0,0,0);
 const isOverdue = loan.nextPaymentDate ? new Date(loan.nextPaymentDate) < today : false;
 const interest = Math.round((parseFloat(loan.amount) || 0) * (parseFloat(loan.interestRate) || 10) / 100);
+const renganches = loan.renganches || 0;
+const rengancheBadge = renganches > 0
+  ? `<span class="renganche-badge ml-2"><i class="fas fa-sync-alt" style="font-size:9px;"></i> ${renganches} renganche${renganches>1?'s':''}</span>`
+  : '';
 const orphanButtons = `<button onclick="deleteOrphanLoan('${loan.id}')" class="flex-1 px-3 py-2 bg-danger/20 text-danger border border-danger/40 rounded-lg text-xs md:text-sm font-bold hover:bg-danger/40 touch-feedback"><i class="fas fa-trash mr-1"></i> Eliminar Préstamo</button>`;
-const normalButtons = `<button onclick="viewLoanDetails('${loan.id}')" class="flex-1 px-3 py-2 bg-surface rounded-lg text-xs md:text-sm hover:bg-gray-700 touch-feedback"><i class="fas fa-eye mr-1"></i> Ver</button><button onclick="quickPay('${loan.id}')" class="flex-1 px-3 py-2 btn-gradient rounded-lg text-xs md:text-sm font-bold touch-feedback"><i class="fas fa-money-bill-wave mr-1"></i> Cobrar</button><button onclick="openIncreaseCapital('${loan.id}')" class="px-3 py-2 bg-accent/20 text-accent rounded-lg text-xs md:text-sm hover:bg-accent/30 touch-feedback" title="Aumentar Capital"><i class="fas fa-plus"></i></button><button onclick="addToBlacklist('${loan.id}')" class="px-3 py-2 bg-danger/20 text-danger rounded-lg text-xs md:text-sm hover:bg-danger/30 touch-feedback" title="Bloquear"><i class="fas fa-ban"></i></button>`;
+const normalButtons = `
+  <button onclick="viewLoanDetails('${loan.id}')" class="flex-1 px-3 py-2 bg-surface rounded-lg text-xs md:text-sm hover:bg-gray-700 touch-feedback"><i class="fas fa-eye mr-1"></i> Ver</button>
+  <button onclick="quickPay('${loan.id}')" class="flex-1 px-3 py-2 btn-gradient rounded-lg text-xs md:text-sm font-bold touch-feedback"><i class="fas fa-money-bill-wave mr-1"></i> Cobrar</button>
+  <button onclick="openEditLoan('${loan.id}')" class="px-3 py-2 rounded-lg text-xs md:text-sm hover:opacity-80 touch-feedback" style="background:rgba(245,158,11,0.2);color:#f59e0b;" title="Renganche — Editar tasa / fecha"><i class="fas fa-pencil-alt"></i></button>
+  <button onclick="openIncreaseCapital('${loan.id}')" class="px-3 py-2 bg-accent/20 text-accent rounded-lg text-xs md:text-sm hover:bg-accent/30 touch-feedback" title="Aumentar Capital"><i class="fas fa-plus"></i></button>
+  <button onclick="addToBlacklist('${loan.id}')" class="px-3 py-2 bg-danger/20 text-danger rounded-lg text-xs md:text-sm hover:bg-danger/30 touch-feedback" title="Bloquear"><i class="fas fa-ban"></i></button>`;
 return `
 <div class="glass-effect rounded-2xl p-4 md:p-6 card-hover ${isOrphan ? 'border border-warning/40' : (isOverdue ? 'border border-danger/50' : '')}">
 <div class="flex items-start justify-between mb-3 md:mb-4">
-<div class="min-w-0 flex-1"><h4 class="font-bold text-base md:text-lg truncate ${isOrphan ? 'text-warning' : ''}">${isOrphan ? '⚠️ Cliente eliminado' : client.name}</h4><p class="text-xs md:text-sm text-gray-400">#${loan.id.slice(-6)}</p>${isOrphan ? '<p class="text-xs text-yellow-400/80 mt-1">Préstamo sin cliente — puede eliminarse</p>' : ''}</div>
+<div class="min-w-0 flex-1">
+  <div class="flex items-center flex-wrap gap-1">
+    <h4 class="font-bold text-base md:text-lg truncate ${isOrphan ? 'text-warning' : ''}">${isOrphan ? '⚠️ Cliente eliminado' : client.name}</h4>
+    ${rengancheBadge}
+  </div>
+  <p class="text-xs md:text-sm text-gray-400">#${loan.id.slice(-6)} · Tasa: <span class="text-warning font-bold">${loan.interestRate || 10}%</span></p>
+  ${isOrphan ? '<p class="text-xs text-yellow-400/80 mt-1">Préstamo sin cliente — puede eliminarse</p>' : ''}
+</div>
 <span class="status-badge ${isOrphan ? 'bg-yellow-500/20 text-yellow-400' : (isOverdue ? 'status-overdue' : 'status-active')} text-xs ml-2">${isOrphan ? 'Sin cliente' : (isOverdue ? 'Vencido' : 'Activo')}</span>
 </div>
 <div class="grid grid-cols-3 gap-2 md:gap-4 mb-3 md:mb-4 text-sm">
@@ -1413,10 +1488,11 @@ return `
 <div><p class="text-[10px] md:text-xs text-gray-500">Interés</p><p class="font-bold text-success text-sm md:text-base truncate-number">${formatCurrency(interest)}</p></div>
 <div><p class="text-[10px] md:text-xs text-gray-500">Próximo</p><p class="font-bold text-xs md:text-sm ${isOverdue ? 'text-danger' : ''}">${formatDate(loan.nextPaymentDate)}</p></div>
 </div>
-<div class="flex gap-2">${isOrphan ? orphanButtons : normalButtons}</div>
+<div class="flex gap-2 flex-wrap">${isOrphan ? orphanButtons : normalButtons}</div>
 </div>`;
 }).join('') || '<p class="text-gray-500 text-center py-8">No hay préstamos activos</p>';
 }
+
 function filterLoans(type) {
 document.querySelectorAll('.filter-btn').forEach(btn => {
 btn.classList.remove('active', 'bg-accent/20', 'text-accent');
@@ -1443,23 +1519,11 @@ const rate = parseFloat(document.getElementById('new-loan-rate').value) || 10;
 const frequency = document.getElementById('new-loan-frequency').value;
 const date = document.getElementById('new-loan-date').value;
 const notes = document.getElementById('new-loan-notes').value;
-if (!clientId) {
-showToast('Seleccione un cliente', 'error');
-return;
-}
-if (!amount || amount <= 0) {
-showToast('Ingrese un monto válido', 'error');
-return;
-}
-if (!date) {
-showToast('Seleccione una fecha de pago', 'error');
-return;
-}
+if (!clientId) { showToast('Seleccione un cliente', 'error'); return; }
+if (!amount || amount <= 0) { showToast('Ingrese un monto válido', 'error'); return; }
+if (!date) { showToast('Seleccione una fecha de pago', 'error'); return; }
 const client = appData.clients.find(c => c.id === clientId);
-if (!client) {
-showToast('Cliente no encontrado', 'error');
-return;
-}
+if (!client) { showToast('Cliente no encontrado', 'error'); return; }
 const newLoan = {
 id: Date.now().toString(),
 clientId,
@@ -1472,6 +1536,7 @@ nextPaymentDate: date,
 notes,
 date: new Date().toISOString().split('T')[0],
 paid: false,
+renganches: 0,
 createdAt: new Date().toISOString()
 };
 appData.loans.push(newLoan);
@@ -1495,10 +1560,11 @@ content.innerHTML = `
 <div class="grid grid-cols-2 gap-3">
 <div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Monto Original</p><p class="font-bold truncate-number">${formatCurrency(loan.originalAmount || loan.amount)}</p></div>
 <div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Saldo Actual</p><p class="font-bold ${loan.amount > 0 ? 'text-danger' : 'text-success'} truncate-number">${formatCurrency(loan.amount)}</p></div>
-<div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Tasa</p><p class="font-bold">${loan.interestRate || 10}%</p></div>
+<div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Tasa</p><p class="font-bold text-warning">${loan.interestRate || 10}%</p></div>
 <div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Próximo Pago</p><p class="font-bold">${formatDate(loan.nextPaymentDate)}</p></div>
+${loan.renganches > 0 ? `<div class="bg-surface rounded-xl p-3 col-span-2"><p class="text-xs text-gray-400">Renganches realizados</p><p class="font-bold text-warning">${loan.renganches}</p></div>` : ''}
 </div>
-${loan.notes ? `<div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Notas</p><p class="text-sm">${loan.notes}</p></div>` : ''}
+${loan.notes ? `<div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Notas</p><p class="text-sm whitespace-pre-line">${loan.notes}</p></div>` : ''}
 <div class="bg-surface rounded-xl p-4">
 <p class="text-xs text-gray-400 mb-3">Historial de Pagos (${payments.length})</p>
 ${payments.length > 0 ? `<div class="space-y-2 max-h-60 overflow-y-auto">${payments.map(p => `
@@ -1508,7 +1574,7 @@ ${payments.length > 0 ? `<div class="space-y-2 max-h-60 overflow-y-auto">${payme
 </div>`).join('')}</div>` : '<p class="text-gray-500 text-sm">Sin pagos registrados</p>'}
 </div>
 <div class="flex gap-2">
-<button onclick="openIncreaseCapital('${loan.id}'); closeModal('modal-loan-details');" class="flex-1 btn-gradient py-3 rounded-xl font-bold text-white touch-feedback"><i class="fas fa-plus-circle mr-2"></i> Aumentar Capital</button>
+<button onclick="openEditLoan('${loan.id}'); closeModal('modal-loan-details');" class="flex-1 py-3 rounded-xl font-bold text-black touch-feedback" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)"><i class="fas fa-pencil-alt mr-2"></i> Renganche</button>
 <button onclick="quickPay('${loan.id}'); closeModal('modal-loan-details');" class="flex-1 bg-success py-3 rounded-xl font-bold text-white touch-feedback"><i class="fas fa-money-bill-wave mr-2"></i> Registrar Pago</button>
 </div>
 </div>`;
@@ -1542,14 +1608,8 @@ if (!loan) return;
 const increaseAmount = parseFloat(document.getElementById('increase-amount').value);
 const newDate = document.getElementById('increase-new-date').value;
 const notes = document.getElementById('increase-notes').value.trim();
-if (!increaseAmount || increaseAmount <= 0) {
-showToast('Ingrese un monto válido para aumentar', 'error');
-return;
-}
-if (!newDate) {
-showToast('Seleccione una nueva fecha de pago', 'error');
-return;
-}
+if (!increaseAmount || increaseAmount <= 0) { showToast('Ingrese un monto válido para aumentar', 'error'); return; }
+if (!newDate) { showToast('Seleccione una nueva fecha de pago', 'error'); return; }
 const client = appData.clients.find(c => c.id === loan.clientId);
 const oldAmount = loan.amount;
 loan.amount = oldAmount + increaseAmount;
@@ -1566,6 +1626,79 @@ generateVoucher('AUMENTO DE CAPITAL', client?.name || loan.clientName, increaseA
 }, 500);
 updateUI();
 }
+
+// ══════════════════════════════════════════════════════
+// RENGANCHE — Editar tasa, frecuencia y fecha
+// ══════════════════════════════════════════════════════
+function openEditLoan(loanId) {
+  const loan = appData.loans.find(l => l.id === loanId);
+  if (!loan) return;
+  const client = appData.clients.find(c => c.id === loan.clientId);
+  currentEditLoanId = loanId;
+
+  document.getElementById('edit-loan-client-name').textContent = client?.name || loan.clientName || 'Cliente';
+  document.getElementById('edit-loan-capital').textContent = formatCurrency(loan.amount);
+  document.getElementById('edit-loan-current-rate').textContent = (loan.interestRate || 10) + '%';
+  document.getElementById('edit-loan-current-date').textContent = formatDate(loan.nextPaymentDate);
+  document.getElementById('edit-loan-rate').value = loan.interestRate || 10;
+  document.getElementById('edit-loan-frequency').value = loan.paymentFrequency || 'biweekly';
+  document.getElementById('edit-loan-next-date').value = loan.nextPaymentDate || '';
+  document.getElementById('edit-loan-note').value = '';
+
+  updateEditLoanInterestPreview();
+  openModal('modal-edit-loan');
+}
+
+function updateEditLoanInterestPreview() {
+  const loan = appData.loans.find(l => l.id === currentEditLoanId);
+  if (!loan) return;
+  const rate = parseFloat(document.getElementById('edit-loan-rate').value) || 0;
+  const interest = Math.round((parseFloat(loan.amount) || 0) * rate / 100);
+  const el = document.getElementById('edit-loan-interest-preview');
+  if (el) el.textContent = formatCurrency(interest);
+}
+
+function updateEditLoanNextDate() {
+  const frequency = document.getElementById('edit-loan-frequency').value;
+  const days = frequencyDays[frequency] || 15;
+  const next = new Date();
+  next.setDate(next.getDate() + days);
+  document.getElementById('edit-loan-next-date').value = next.toISOString().split('T')[0];
+}
+
+function saveEditLoan() {
+  const loan = appData.loans.find(l => l.id === currentEditLoanId);
+  if (!loan) { showToast('Préstamo no encontrado', 'error'); return; }
+
+  const newRate      = parseFloat(document.getElementById('edit-loan-rate').value);
+  const newFrequency = document.getElementById('edit-loan-frequency').value;
+  const newDate      = document.getElementById('edit-loan-next-date').value;
+  const note         = document.getElementById('edit-loan-note').value.trim();
+
+  if (!newDate) { showToast('Seleccione una nueva fecha', 'error'); return; }
+  if (isNaN(newRate) || newRate < 0 || newRate > 100) { showToast('Tasa inválida (0–100)', 'error'); return; }
+
+  const oldRate      = loan.interestRate;
+  const oldFrequency = loan.paymentFrequency;
+  const oldDate      = loan.nextPaymentDate;
+
+  // Solo cambia lo indicado — nada más
+  loan.interestRate     = newRate;
+  loan.paymentFrequency = newFrequency;
+  loan.nextPaymentDate  = newDate;
+  loan.updatedAt        = new Date().toISOString();
+  loan.renganches       = (loan.renganches || 0) + 1;
+
+  // Guardar historial del renganche en notas
+  const logLine = `[${new Date().toLocaleDateString('es-ES')}] RENGANCHE #${loan.renganches}: Tasa ${oldRate}%→${newRate}% | Fecha ${formatDate(oldDate)}→${formatDate(newDate)}${note ? ' | ' + note : ''}`;
+  loan.notes = (loan.notes ? loan.notes + '\n' : '') + logLine;
+
+  saveData();
+  closeModal('modal-edit-loan');
+  showToast(`Renganche aplicado ✓ Nueva tasa: ${newRate}%`, 'success');
+  updateUI();
+}
+
 function updateSelects() {
 const clientSelect = document.getElementById('payment-client');
 const loanClientSelect = document.getElementById('new-loan-client');
@@ -1592,7 +1725,6 @@ const loans = appData.loans.filter(l => l.clientId === clientId && !l.paid);
 loanSelect.innerHTML = '<option value="">Seleccionar préstamo...</option>' + loans.map(l => `<option value="${l.id}">${formatCurrency(l.amount)} - Vence ${formatDate(l.nextPaymentDate)}</option>`).join('');
 document.getElementById('payment-interest').value = '';
 document.getElementById('payment-capital').value = '';
-// Reset frequency to default
 document.getElementById('payment-frequency').value = 'weekly';
 updateNextPaymentDate();
 }
@@ -1604,14 +1736,11 @@ if (!loan) return;
 const rate = parseFloat(loan.interestRate) || 10;
 const interest = Math.round((parseFloat(loan.amount) || 0) * rate / 100);
 document.getElementById('payment-interest').value = interest;
-// Update label with the real rate
 const lbl = document.getElementById('payment-interest-label');
 if (lbl) lbl.textContent = 'Interés (' + rate + '%)';
-// Set frequency from loan if exists
 if (loan.paymentFrequency) {
 document.getElementById('payment-frequency').value = loan.paymentFrequency;
 }
-// Calculate next date based on frequency
 updateNextPaymentDate();
 }
 function updateNextPaymentDate() {
@@ -1627,26 +1756,14 @@ const interest = parseFloat(document.getElementById('payment-interest').value) |
 const capital = parseFloat(document.getElementById('payment-capital').value) || 0;
 const nextDate = document.getElementById('payment-next-date').value;
 const frequency = document.getElementById('payment-frequency').value;
-if (!loanId) {
-showToast('Seleccione un préstamo', 'error');
-return;
-}
+if (!loanId) { showToast('Seleccione un préstamo', 'error'); return; }
 const loan = appData.loans.find(l => l.id === loanId);
-if (!loan) {
-showToast('Préstamo no encontrado', 'error');
-return;
-}
+if (!loan) { showToast('Préstamo no encontrado', 'error'); return; }
 const client = appData.clients.find(c => c.id === loan.clientId);
-if (capital > loan.amount) {
-showToast('El abono no puede exceder el saldo', 'error');
-return;
-}
+if (capital > loan.amount) { showToast('El abono no puede exceder el saldo', 'error'); return; }
 const newAmount = loan.amount - capital;
 loan.amount = newAmount;
-if (nextDate) {
-loan.nextPaymentDate = nextDate;
-}
-// Save frequency preference
+if (nextDate) loan.nextPaymentDate = nextDate;
 loan.paymentFrequency = frequency;
 if (loan.amount <= 0) {
 loan.paid = true;
@@ -1658,11 +1775,10 @@ id: Date.now().toString(),
 loanId,
 clientId: loan.clientId,
 clientName: client?.name || loan.clientName || 'Cliente',
-interest,
-capital,
+interest, capital,
 balance: newAmount,
 date: new Date().toISOString().split('T')[0],
-frequency: frequency,
+frequency,
 createdAt: new Date().toISOString()
 };
 appData.payments.push(payment);
@@ -1670,7 +1786,6 @@ saveData();
 showToast(loan.paid ? 'Préstamo liquidado' : 'Pago registrado', 'success');
 const type = loan.paid ? 'LIQUIDACIÓN' : 'RECIBO DE PAGO';
 generateVoucher(type, client?.name || loan.clientName, capital, interest, newAmount, nextDate, loan.interestRate);
-// Reset form
 document.getElementById('payment-client').value = '';
 document.getElementById('payment-loan').innerHTML = '<option value="">Seleccionar...</option>';
 document.getElementById('payment-interest').value = '';
@@ -1690,7 +1805,6 @@ loadClientLoans();
 setTimeout(() => {
 document.getElementById('payment-loan').value = loanId;
 calculatePayment();
-// Scroll to bottom to show the button on mobile
 if (window.innerWidth < 768) {
 const form = document.getElementById('payment-form');
 form.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -1719,22 +1833,13 @@ tbody.innerHTML = recentPayments.map(p => `
 function deletePayment(paymentId) {
 if (!confirm('¿Eliminar este pago?\n\nEl saldo del préstamo se actualizará revertiendo este pago.')) return;
 const paymentIndex = appData.payments.findIndex(p => p.id === paymentId);
-if (paymentIndex === -1) {
-showToast('Pago no encontrado', 'error');
-return;
-}
+if (paymentIndex === -1) { showToast('Pago no encontrado', 'error'); return; }
 const payment = appData.payments[paymentIndex];
 const loan = appData.loans.find(l => l.id === payment.loanId);
 if (loan) {
-// Revertir el abono a capital
 loan.amount = parseFloat(loan.amount) + parseFloat(payment.capital || 0);
-// Si el préstamo estaba pagado, reactivarlo
-if (loan.paid) {
-loan.paid = false;
-loan.paidAt = null;
+if (loan.paid) { loan.paid = false; loan.paidAt = null; }
 }
-}
-// Eliminar el pago
 appData.payments.splice(paymentIndex, 1);
 saveData();
 showToast('Pago eliminado correctamente', 'success');
@@ -1743,10 +1848,7 @@ updateUI();
 function deleteOrphanLoan(loanId) {
 if (!confirm('¿Eliminar este préstamo huérfano?\n\nEl cliente ya no existe. Esta acción eliminará el préstamo y sus pagos asociados permanentemente.')) return;
 const loanIndex = appData.loans.findIndex(l => l.id === loanId);
-if (loanIndex === -1) {
-showToast('Préstamo no encontrado', 'error');
-return;
-}
+if (loanIndex === -1) { showToast('Préstamo no encontrado', 'error'); return; }
 appData.payments = appData.payments.filter(p => p.loanId !== loanId);
 appData.loans.splice(loanIndex, 1);
 saveData();
@@ -1759,11 +1861,7 @@ const loanIndex = appData.loans.findIndex(l => l.id === loanId);
 if (loanIndex === -1) return;
 const loan = appData.loans[loanIndex];
 appData.loans.splice(loanIndex, 1);
-appData.blacklist.push({
-...loan,
-blacklistedAt: new Date().toISOString(),
-reason: 'Morosidad'
-});
+appData.blacklist.push({ ...loan, blacklistedAt: new Date().toISOString(), reason: 'Morosidad' });
 saveData();
 showToast('Cliente bloqueado', 'warning');
 updateUI();
@@ -1774,9 +1872,7 @@ const index = appData.blacklist.findIndex(b => b.id === blacklistId);
 if (index === -1) return;
 const item = appData.blacklist[index];
 appData.blacklist.splice(index, 1);
-if (!item.paid) {
-appData.loans.push(item);
-}
+if (!item.paid) { appData.loans.push(item); }
 saveData();
 showToast('Cliente restaurado', 'success');
 updateUI();
@@ -1834,33 +1930,19 @@ voucherTemplate.style.left = '0';
 voucherTemplate.style.zIndex = '-1';
 await new Promise(resolve => setTimeout(resolve, 100));
 const canvas = await html2canvas(voucherEl, {
-scale: 2,
-backgroundColor: '#ffffff',
-useCORS: true,
-allowTaint: true,
-logging: false,
-width: 350,
-height: voucherEl.offsetHeight
+scale: 2, backgroundColor: '#ffffff', useCORS: true,
+allowTaint: true, logging: false, width: 350, height: voucherEl.offsetHeight
 });
 voucherTemplate.classList.add('hidden');
 voucherTemplate.style.opacity = '0';
 canvas.toBlob(async (blob) => {
-if (!blob) {
-showToast('Error generando voucher', 'error');
-return;
-}
+if (!blob) { showToast('Error generando voucher', 'error'); return; }
 currentVoucherBlob = blob;
 const fileName = `VOUCHER_${(client || 'CLIENTE').replace(/\s+/g, '_')}_${Date.now()}.png`;
 const voucherData = {
-id: Date.now().toString(),
-type,
-client: client || 'N/A',
-amount,
-interest,
-balance,
-nextDate,
-date: new Date().toISOString(),
-fileName
+id: Date.now().toString(), type,
+client: client || 'N/A', amount, interest, balance, nextDate,
+date: new Date().toISOString(), fileName
 };
 appData.vouchers.unshift(voucherData);
 saveData();
@@ -1875,11 +1957,7 @@ container.appendChild(img);
 openModal('modal-voucher-preview');
 if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: 'image/png' })] })) {
 try {
-await navigator.share({
-files: [new File([blob], fileName, { type: 'image/png' })],
-title: 'Comprobante J&N Soluciones',
-text: `${type} - ${client}`
-});
+await navigator.share({ files: [new File([blob], fileName, { type: 'image/png' })], title: 'Comprobante J&N Soluciones', text: `${type} - ${client}` });
 showToast('Voucher compartido', 'success');
 } catch (err) {}
 }
@@ -1892,8 +1970,7 @@ showToast('Error al generar voucher', 'error');
 }
 function downloadCurrentVoucher() {
 if (!currentVoucherBlob) return;
-const fileName = `VOUCHER_${Date.now()}.png`;
-downloadBlob(currentVoucherBlob, fileName);
+downloadBlob(currentVoucherBlob, `VOUCHER_${Date.now()}.png`);
 showToast('Voucher descargado', 'success');
 }
 async function shareCurrentVoucher() {
@@ -1901,18 +1978,10 @@ if (!currentVoucherBlob) return;
 const fileName = `VOUCHER_${Date.now()}.png`;
 if (navigator.share) {
 try {
-await navigator.share({
-files: [new File([currentVoucherBlob], fileName, { type: 'image/png' })],
-title: 'Comprobante J&N Soluciones',
-text: 'Voucher de transacción'
-});
+await navigator.share({ files: [new File([currentVoucherBlob], fileName, { type: 'image/png' })], title: 'Comprobante J&N Soluciones', text: 'Voucher de transacción' });
 showToast('Voucher compartido', 'success');
-} catch (err) {
-showToast('Error al compartir', 'error');
-}
-} else {
-showToast('Compartir no disponible en este dispositivo', 'warning');
-}
+} catch (err) { showToast('Error al compartir', 'error'); }
+} else { showToast('Compartir no disponible en este dispositivo', 'warning'); }
 }
 function renderVouchersList() {
 const list = document.getElementById('vouchers-list');
@@ -1965,17 +2034,9 @@ content.classList.remove('hidden');
 let startDate = new Date();
 let endDate = new Date();
 switch(type) {
-case 'daily':
-title.textContent = 'Reporte Diario - ' + formatDate(new Date());
-break;
-case 'weekly':
-startDate.setDate(startDate.getDate() - 7);
-title.textContent = 'Reporte Semanal';
-break;
-case 'monthly':
-startDate.setDate(1);
-title.textContent = 'Reporte Mensual - ' + new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-break;
+case 'daily': title.textContent = 'Reporte Diario - ' + formatDate(new Date()); break;
+case 'weekly': startDate.setDate(startDate.getDate() - 7); title.textContent = 'Reporte Semanal'; break;
+case 'monthly': startDate.setDate(1); title.textContent = 'Reporte Mensual - ' + new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }); break;
 }
 startDate.setHours(0,0,0,0);
 endDate.setHours(23,59,59,999);
@@ -2018,20 +2079,15 @@ showToast('PDF descargado', 'success');
 async function shareReport() {
 const reportText = document.getElementById('report-title').textContent + '\n\n' + document.getElementById('report-data').innerText;
 if (navigator.share) {
-try {
-await navigator.share({ title: 'Reporte J&N Soluciones', text: reportText });
-} catch (err) {}
+try { await navigator.share({ title: 'Reporte J&N Soluciones', text: reportText }); } catch (err) {}
 } else {
-navigator.clipboard.writeText(reportText).then(() => {
-showToast('Reporte copiado al portapapeles', 'success');
-});
+navigator.clipboard.writeText(reportText).then(() => { showToast('Reporte copiado al portapapeles', 'success'); });
 }
 }
 function exportData() {
 const dataStr = JSON.stringify(appData, null, 2);
 const blob = new Blob([dataStr], { type: 'application/json' });
-const fileName = `JN_BACKUP_${new Date().toISOString().split('T')[0]}.json`;
-downloadBlob(blob, fileName);
+downloadBlob(blob, `JN_BACKUP_${new Date().toISOString().split('T')[0]}.json`);
 showToast('Backup descargado', 'success');
 }
 function importData() {
@@ -2041,9 +2097,7 @@ const reader = new FileReader();
 reader.onload = (e) => {
 try {
 const data = JSON.parse(e.target.result);
-if (!confirm(`¿Importar ${data.clients?.length || 0} clientes y ${data.loans?.length || 0} préstamos? Esto fusionará con los datos existentes.`)) {
-return;
-}
+if (!confirm(`¿Importar ${data.clients?.length || 0} clientes y ${data.loans?.length || 0} préstamos? Esto fusionará con los datos existentes.`)) return;
 appData.clients = mergeArrays(appData.clients, data.clients || []);
 appData.loans = mergeArrays(appData.loans, data.loans || []);
 appData.payments = mergeArrays(appData.payments, data.payments || []);
@@ -2051,18 +2105,13 @@ appData.blacklist = mergeArrays(appData.blacklist, data.blacklist || []);
 saveData();
 showToast('Datos importados exitosamente', 'success');
 updateUI();
-} catch (err) {
-showToast('Error al importar: archivo inválido', 'error');
-}
+} catch (err) { showToast('Error al importar: archivo inválido', 'error'); }
 };
 reader.readAsText(file);
 }
 function saveSettings() {
 const rate = parseFloat(document.getElementById('settings-rate').value);
-if (rate < 0 || rate > 100) {
-showToast('Tasa inválida', 'error');
-return;
-}
+if (rate < 0 || rate > 100) { showToast('Tasa inválida', 'error'); return; }
 appData.settings.interestRate = rate;
 saveData();
 showToast('Configuración guardada', 'success');
@@ -2076,102 +2125,46 @@ showToast('Todos los datos han sido eliminados', 'warning');
 updateUI();
 }
 function showPage(page) {
-if (page === 'more') {
-toggleMoreMenu();
-return;
-}
-if (isMoreMenuOpen) {
-toggleMoreMenu();
-}
+if (page === 'more') { toggleMoreMenu(); return; }
+if (isMoreMenuOpen) toggleMoreMenu();
 document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
 const pageEl = document.getElementById(`page-${page}`);
-if (pageEl) {
-pageEl.classList.remove('hidden');
-pageEl.classList.add('fade-in');
-}
-const titles = {
-dashboard: 'Dashboard',
-clients: 'Clientes',
-loans: 'Préstamos',
-payments: 'Cobros',
-vouchers: 'Comprobantes',
-blacklist: 'Lista Negra',
-reports: 'Reportes',
-settings: 'Configuración'
-};
+if (pageEl) { pageEl.classList.remove('hidden'); pageEl.classList.add('fade-in'); }
+const titles = { dashboard:'Dashboard', clients:'Clientes', loans:'Préstamos', payments:'Cobros', vouchers:'Comprobantes', blacklist:'Lista Negra', reports:'Reportes', settings:'Configuración' };
 document.getElementById('page-title').textContent = titles[page] || 'J&N PRO';
-document.querySelectorAll('.menu-item').forEach(btn => {
-btn.classList.remove('active');
-btn.classList.add('text-gray-400');
-});
+document.querySelectorAll('.menu-item').forEach(btn => { btn.classList.remove('active'); btn.classList.add('text-gray-400'); });
 const navBtn = document.getElementById(`nav-${page}`);
-if (navBtn) {
-navBtn.classList.add('active');
-navBtn.classList.remove('text-gray-400');
-}
-document.querySelectorAll('.mobile-nav').forEach(btn => {
-btn.classList.remove('text-accent');
-btn.classList.add('text-gray-400');
-});
+if (navBtn) { navBtn.classList.add('active'); navBtn.classList.remove('text-gray-400'); }
+document.querySelectorAll('.mobile-nav').forEach(btn => { btn.classList.remove('text-accent'); btn.classList.add('text-gray-400'); });
 const mobileNav = document.querySelector(`.mobile-nav[data-page="${page}"]`);
-if (mobileNav) {
-mobileNav.classList.add('text-accent');
-mobileNav.classList.remove('text-gray-400');
-}
-if (page === 'dashboard') {
-setTimeout(updateCharts, 50);
-}
-if (page === 'settings') {
-updateBackupStatus();
-}
+if (mobileNav) { mobileNav.classList.add('text-accent'); mobileNav.classList.remove('text-gray-400'); }
+if (page === 'dashboard') setTimeout(updateCharts, 50);
+if (page === 'settings') updateBackupStatus();
 window.scrollTo(0, 0);
 }
 function toggleMobileMenu() {}
 function openModal(modalId) {
 const modal = document.getElementById(modalId);
-if (modal) {
-modal.classList.remove('hidden');
-modal.classList.add('flex');
-document.body.style.overflow = 'hidden';
-}
+if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); document.body.style.overflow = 'hidden'; }
 }
 function closeModal(modalId) {
 const modal = document.getElementById(modalId);
-if (modal) {
-modal.classList.add('hidden');
-modal.classList.remove('flex');
-document.body.style.overflow = '';
-}
+if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); document.body.style.overflow = ''; }
 }
 function clearModalInputs(modalId) {
 document.querySelectorAll(`#${modalId} input, #${modalId} textarea, #${modalId} select`).forEach(input => {
-if (input.type !== 'button' && input.type !== 'submit') {
-input.value = '';
-}
+if (input.type !== 'button' && input.type !== 'submit') input.value = '';
 });
 }
 function showToast(message, type = 'info') {
 const container = document.getElementById('toast-container');
 const toast = document.createElement('div');
-const colors = {
-success: 'bg-success/90 border-success text-white',
-error: 'bg-danger/90 border-danger text-white',
-warning: 'bg-warning/90 border-warning text-black',
-info: 'bg-accent/90 border-accent text-white'
-};
-const icons = {
-success: 'fa-check-circle',
-error: 'fa-times-circle',
-warning: 'fa-exclamation-triangle',
-info: 'fa-info-circle'
-};
+const colors = { success: 'bg-success/90 border-success text-white', error: 'bg-danger/90 border-danger text-white', warning: 'bg-warning/90 border-warning text-black', info: 'bg-accent/90 border-accent text-white' };
+const icons = { success: 'fa-check-circle', error: 'fa-times-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
 toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border ${colors[type]} shadow-lg slide-in`;
 toast.innerHTML = `<i class="fas ${icons[type]}"></i><span class="font-medium text-sm">${message}</span>`;
 container.appendChild(toast);
-setTimeout(() => {
-toast.classList.add('slide-out');
-setTimeout(() => toast.remove(), 300);
-}, 3000);
+setTimeout(() => { toast.classList.add('slide-out'); setTimeout(() => toast.remove(), 300); }, 3000);
 }
 function formatCurrency(amount) {
 const num = parseFloat(amount) || 0;
@@ -2183,9 +2176,8 @@ const date = new Date(dateStr);
 if (isNaN(date.getTime())) return dateStr;
 return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
-function showNotifications() {
-showToast('No hay notificaciones nuevas', 'info');
-}
+function showNotifications() { showToast('No hay notificaciones nuevas', 'info'); }
+
 const savedUser = localStorage.getItem('jn_pro_current_user');
 if (savedUser) {
 try {
@@ -2196,18 +2188,13 @@ document.getElementById('login-screen').classList.add('hidden');
 document.getElementById('app-content').classList.remove('hidden');
 document.getElementById('app-content').classList.add('flex');
 initApp();
-} catch (e) {
-console.error('Error restoring session:', e);
-}
+} catch (e) { console.error('Error restoring session:', e); }
 }
 
-// iPhone keyboard handling
 if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
   document.addEventListener('focusin', (e) => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
-      setTimeout(() => {
-        e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 300);
+      setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300);
     }
   });
 }
