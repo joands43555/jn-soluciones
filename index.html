@@ -497,13 +497,7 @@ if ('serviceWorker' in navigator) {
 <button onclick="changePin()" class="w-full btn-gradient py-3 rounded-xl font-bold text-white touch-feedback"><i class="fas fa-save mr-2"></i> Cambiar PIN</button>
 </div>
 </div>
-<div class="glass-effect rounded-2xl p-4 md:p-6">
-<h3 class="text-base md:text-lg font-bold mb-4 md:mb-6 flex items-center gap-2"><i class="fas fa-database text-accent"></i> Backup y Restauración</h3>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-<button onclick="exportData()" class="p-4 md:p-6 bg-surface rounded-xl border border-gray-700 hover:border-accent/50 transition-all text-left touch-feedback"><i class="fas fa-download text-accent text-xl md:text-2xl mb-3"></i><h4 class="font-bold text-sm md:text-base">Exportar Datos</h4><p class="text-xs md:text-sm text-gray-400">Descargar backup JSON</p></button>
-<label class="p-4 md:p-6 bg-surface rounded-xl border border-gray-700 hover:border-accent/50 transition-all text-left cursor-pointer touch-feedback"><i class="fas fa-upload text-accent text-xl md:text-2xl mb-3"></i><h4 class="font-bold text-sm md:text-base">Importar Datos</h4><p class="text-xs md:text-sm text-gray-400">Restaurar desde archivo</p><input type="file" id="import-file" class="hidden" accept=".json" onchange="importData()"></label>
-</div>
-</div>
+
 <div class="glass-effect rounded-2xl p-4 md:p-6">
 <h3 class="text-base md:text-lg font-bold mb-4 md:mb-6 flex items-center gap-2"><i class="fas fa-percentage text-accent"></i> Configuración de Tasas</h3>
 <div class="max-w-md"><label class="block text-sm text-gray-400 mb-2">Tasa de Interés Predeterminada (%)</label><div class="flex gap-2"><input type="number" id="settings-rate" value="10" class="flex-1 px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base"><button onclick="saveSettings()" class="btn-gradient px-4 md:px-6 py-3 rounded-xl font-bold text-white touch-feedback">Guardar</button></div></div>
