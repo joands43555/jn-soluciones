@@ -2004,7 +2004,53 @@ list.innerHTML = appData.vouchers.slice(0, 20).map(v => `
 function regenerateVoucher(voucherId) {
 const voucher = appData.vouchers.find(v => v.id === voucherId);
 if (!voucher) return;
-generateVoucher(voucher.type, voucher.client, voucher.amount, voucher.interest, voucher.balance, voucher.nextDate);
+previewVoucherOnly(voucher);
+}
+
+async function previewVoucherOnly(voucher) {
+  document.getElementById('voucher-type').textContent = voucher.type;
+  document.getElementById('voucher-client').textContent = (voucher.client || 'N/A').toUpperCase();
+  document.getElementById('voucher-amount').textContent = formatCurrency(voucher.amount);
+  document.getElementById('voucher-interest').textContent = formatCurrency(voucher.interest);
+  document.getElementById('voucher-balance').textContent = formatCurrency(voucher.balance);
+  document.getElementById('voucher-date').textContent = new Date(voucher.date).toLocaleString('es-ES');
+  const completedMsg = document.getElementById('voucher-completed-message');
+  const nextPaymentDiv = document.getElementById('voucher-next-payment');
+  if (voucher.balance <= 0) {
+    completedMsg.style.display = 'block';
+    nextPaymentDiv.style.display = 'none';
+  } else {
+    completedMsg.style.display = 'none';
+    nextPaymentDiv.style.display = 'block';
+    document.getElementById('voucher-next-date').textContent = voucher.nextDate ? formatDate(voucher.nextDate) : 'N/A';
+    const rate = parseFloat(appData.settings?.interestRate) || 10;
+    document.getElementById('voucher-next-amount').textContent = 'Cuota: ' + formatCurrency(Math.round(voucher.balance * rate / 100));
+  }
+  const voucherTemplate = document.getElementById('voucher-template');
+  const voucherEl = document.getElementById('voucher-element');
+  voucherTemplate.classList.remove('hidden');
+  voucherTemplate.style.opacity = '1';
+  voucherTemplate.style.position = 'fixed';
+  voucherTemplate.style.top = '0';
+  voucherTemplate.style.left = '0';
+  voucherTemplate.style.zIndex = '-1';
+  await new Promise(resolve => setTimeout(resolve, 100));
+  const canvas = await html2canvas(voucherEl, {
+    scale: 2, backgroundColor: '#ffffff', useCORS: true,
+    allowTaint: true, logging: false, width: 350, height: voucherEl.offsetHeight
+  });
+  voucherTemplate.classList.add('hidden');
+  voucherTemplate.style.opacity = '0';
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  currentVoucherBlob = blob;
+  const img = document.createElement('img');
+  img.src = URL.createObjectURL(blob);
+  img.className = 'max-w-full h-auto rounded-lg';
+  img.style.maxHeight = '60vh';
+  const container = document.getElementById('voucher-preview-container');
+  container.innerHTML = '';
+  container.appendChild(img);
+  openModal('modal-voucher-preview');
 }
 function deleteVoucher(voucherId) {
 if (!confirm('¿Eliminar este comprobante?')) return;
