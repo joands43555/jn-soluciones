@@ -131,7 +131,7 @@ body {font-family: 'Inter', sans-serif; background: #0b0f19; overscroll-behavior
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
-/* Renganche badge */
+/* Edit badge */
 .renganche-badge {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700;
@@ -714,7 +714,7 @@ if ('serviceWorker' in navigator) {
 </div>
 
 <!-- ══════════════════════════════════════════════════════
-     MODAL EDITAR PRÉSTAMO — RENGANCHE ✏️
+     MODAL EDITAR CONDICIONES DEL PRÉSTAMO ✏️
      Cambia tasa, frecuencia y fecha sin tocar historial
      ══════════════════════════════════════════════════════ -->
 <div id="modal-edit-loan" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto" onclick="if(event.target === this) closeModal('modal-edit-loan')">
@@ -724,7 +724,7 @@ if ('serviceWorker' in navigator) {
         <h3 class="text-lg md:text-xl font-bold text-warning flex items-center gap-2">
           <i class="fas fa-pencil-alt"></i> Editar Condiciones
         </h3>
-        <p class="text-xs text-gray-400 mt-1">Renganche — tasa y fecha sin afectar historial ni capital</p>
+        <p class="text-xs text-gray-400 mt-1">Modifica tasa, frecuencia y fecha sin afectar historial ni capital</p>
       </div>
       <button onclick="closeModal('modal-edit-loan')" class="text-gray-400 hover:text-white p-2"><i class="fas fa-times text-xl"></i></button>
     </div>
@@ -788,10 +788,10 @@ if ('serviceWorker' in navigator) {
 
       <!-- Nota opcional -->
       <div>
-        <label class="block text-sm text-gray-400 mb-2">Nota del Renganche (Opcional)</label>
+        <label class="block text-sm text-gray-400 mb-2">Nota (Opcional)</label>
         <textarea id="edit-loan-note" rows="2"
           class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus resize-none text-base"
-          placeholder="Ej: Renganche acordado verbalmente el 2/4/2026"></textarea>
+          placeholder="Ej: Se acordó cambio de fecha el 16/5/2026"></textarea>
       </div>
 
       <!-- Aviso informativo -->
@@ -804,7 +804,7 @@ if ('serviceWorker' in navigator) {
 
       <button onclick="saveEditLoan()" class="w-full py-3 rounded-xl font-bold text-black touch-feedback mt-2"
         style="background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);">
-        <i class="fas fa-save mr-2"></i> Guardar Renganche
+        <i class="fas fa-save mr-2"></i> Guardar Cambios
       </button>
     </div>
   </div>
@@ -885,7 +885,7 @@ let currentVoucherBlob = null;
 let isMoreMenuOpen = false;
 let currentIncreaseLoanId = null;
 let currentEditClientId = null;
-let currentEditLoanId = null; // ← para renganche
+let currentEditLoanId = null; 
 
 const frequencyDays = {
   daily: 1,
@@ -1581,7 +1581,7 @@ updateUI();
 }
 
 // ══════════════════════════════════════════════════════
-// RENDER LOANS — con botón ✏️ renganche
+// RENDER LOANS — con botón ✏️ editar
 // ══════════════════════════════════════════════════════
 function renderLoans() {
 const grid = document.getElementById('loans-grid');
@@ -1606,7 +1606,7 @@ const isOverdue = loan.nextPaymentDate ? new Date(loan.nextPaymentDate) < today 
 const interest = Math.round((parseFloat(loan.amount) || 0) * (parseFloat(loan.interestRate) || 10) / 100);
 const renganches = loan.renganches || 0;
 const rengancheBadge = renganches > 0
-  ? `<span class="renganche-badge ml-2"><i class="fas fa-sync-alt" style="font-size:9px;"></i> ${renganches} renganche${renganches>1?'s':''}</span>`
+  ? `<span class="renganche-badge ml-2"><i class="fas fa-pencil-alt" style="font-size:9px;"></i> ${renganches} edición${renganches>1?'es':''}</span>`
   : '';
 const orphanButtons = `<button onclick="deleteOrphanLoan('${loan.id}')" class="flex-1 px-3 py-2 bg-danger/20 text-danger border border-danger/40 rounded-lg text-xs md:text-sm font-bold hover:bg-danger/40 touch-feedback"><i class="fas fa-trash mr-1"></i> Eliminar Préstamo</button>`;
 const normalButtons = `
@@ -1707,7 +1707,7 @@ content.innerHTML = `
 <div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Saldo Actual</p><p class="font-bold ${loan.amount > 0 ? 'text-danger' : 'text-success'} truncate-number">${formatCurrency(loan.amount)}</p></div>
 <div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Tasa</p><p class="font-bold text-warning">${loan.interestRate || 10}%</p></div>
 <div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Próximo Pago</p><p class="font-bold">${formatDate(loan.nextPaymentDate)}</p></div>
-${loan.renganches > 0 ? `<div class="bg-surface rounded-xl p-3 col-span-2"><p class="text-xs text-gray-400">Renganches realizados</p><p class="font-bold text-warning">${loan.renganches}</p></div>` : ''}
+${loan.renganches > 0 ? `<div class="bg-surface rounded-xl p-3 col-span-2"><p class="text-xs text-gray-400">Ediciones realizadas</p><p class="font-bold text-warning">${loan.renganches}</p></div>` : ''}
 </div>
 ${loan.notes ? `<div class="bg-surface rounded-xl p-3"><p class="text-xs text-gray-400">Notas</p><p class="text-sm whitespace-pre-line">${loan.notes}</p></div>` : ''}
 <div class="bg-surface rounded-xl p-4">
@@ -1719,7 +1719,7 @@ ${payments.length > 0 ? `<div class="space-y-2 max-h-60 overflow-y-auto">${payme
 </div>`).join('')}</div>` : '<p class="text-gray-500 text-sm">Sin pagos registrados</p>'}
 </div>
 <div class="flex gap-2">
-<button onclick="openEditLoan('${loan.id}'); closeModal('modal-loan-details');" class="flex-1 py-3 rounded-xl font-bold text-black touch-feedback" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)"><i class="fas fa-pencil-alt mr-2"></i> Renganche</button>
+<button onclick="openEditLoan('${loan.id}'); closeModal('modal-loan-details');" class="flex-1 py-3 rounded-xl font-bold text-black touch-feedback" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)"><i class="fas fa-pencil-alt mr-2"></i> Editar</button>
 <button onclick="quickPay('${loan.id}'); closeModal('modal-loan-details');" class="flex-1 bg-success py-3 rounded-xl font-bold text-white touch-feedback"><i class="fas fa-money-bill-wave mr-2"></i> Registrar Pago</button>
 </div>
 </div>`;
@@ -1773,7 +1773,7 @@ updateUI();
 }
 
 // ══════════════════════════════════════════════════════
-// RENGANCHE — Editar tasa, frecuencia y fecha
+// EDITAR CONDICIONES — tasa, frecuencia y fecha
 // ══════════════════════════════════════════════════════
 function openEditLoan(loanId) {
   const loan = appData.loans.find(l => l.id === loanId);
@@ -1834,13 +1834,13 @@ function saveEditLoan() {
   loan.updatedAt        = new Date().toISOString();
   loan.renganches       = (loan.renganches || 0) + 1;
 
-  // Guardar historial del renganche en notas
-  const logLine = `[${new Date().toLocaleDateString('es-ES')}] RENGANCHE #${loan.renganches}: Tasa ${oldRate}%→${newRate}% | Fecha ${formatDate(oldDate)}→${formatDate(newDate)}${note ? ' | ' + note : ''}`;
+  // Guardar historial de la edición en notas
+  const logLine = `[${new Date().toLocaleDateString('es-ES')}] EDICIÓN #${loan.renganches}: Tasa ${oldRate}%→${newRate}% | Fecha ${formatDate(oldDate)}→${formatDate(newDate)}${note ? ' | ' + note : ''}`;
   loan.notes = (loan.notes ? loan.notes + '\n' : '') + logLine;
 
   saveData();
   closeModal('modal-edit-loan');
-  showToast(`Renganche aplicado ✓ Nueva tasa: ${newRate}%`, 'success');
+  showToast(`Condiciones actualizadas ✓ Nueva tasa: ${newRate}%`, 'success');
   updateUI();
 }
 
