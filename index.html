@@ -1609,12 +1609,27 @@ const rengancheBadge = renganches > 0
   ? `<span class="renganche-badge ml-2"><i class="fas fa-pencil-alt" style="font-size:9px;"></i> ${renganches} edición${renganches>1?'es':''}</span>`
   : '';
 const orphanButtons = `<button onclick="deleteOrphanLoan('${loan.id}')" class="flex-1 px-3 py-2 bg-danger/20 text-danger border border-danger/40 rounded-lg text-xs md:text-sm font-bold hover:bg-danger/40 touch-feedback"><i class="fas fa-trash mr-1"></i> Eliminar Préstamo</button>`;
+
+// ── BOTÓN WHATSAPP: aparece si faltan ≤3 días o está vencido ──
+const daysUntilPayment = loan.nextPaymentDate ? Math.ceil((new Date(loan.nextPaymentDate) - today) / (1000*60*60*24)) : 999;
+const showWA = !isOrphan && (daysUntilPayment <= 3);
+const clientPhone = client?.phone?.replace(/[^0-9]/g, '') || '';
+const waPhone = clientPhone.startsWith('1') ? clientPhone : '1' + clientPhone;
+const waMsg = daysUntilPayment < 0
+  ? `Hola ${client?.name || ''}, le informamos que tiene un pago VENCIDO de ${formatCurrency(interest)} desde el ${formatDate(loan.nextPaymentDate)}. Por favor regularice su situación. J&N Soluciones`
+  : `Hola ${client?.name || ''}, le recordamos que su pago de ${formatCurrency(interest)} vence el ${formatDate(loan.nextPaymentDate)}. J&N Soluciones`;
+const waLink = `https://wa.me/${waPhone}?text=${encodeURIComponent(waMsg)}`;
+const waBtnHtml = showWA ? `<a href="${waLink}" target="_blank" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs md:text-sm font-bold touch-feedback mt-1" style="background:rgba(37,211,102,0.2);color:#25d366;border:1px solid rgba(37,211,102,0.3);">
+  <i class="fab fa-whatsapp text-base"></i> ${daysUntilPayment < 0 ? 'Pago Vencido — Recordar' : daysUntilPayment === 0 ? 'Vence Hoy — Recordar' : 'Vence en ' + daysUntilPayment + ' día' + (daysUntilPayment > 1 ? 's' : '') + ' — Recordar'}
+</a>` : '';
+
 const normalButtons = `
   <button onclick="viewLoanDetails('${loan.id}')" class="flex-1 px-3 py-2 bg-surface rounded-lg text-xs md:text-sm hover:bg-gray-700 touch-feedback"><i class="fas fa-eye mr-1"></i> Ver</button>
   <button onclick="quickPay('${loan.id}')" class="flex-1 px-3 py-2 btn-gradient rounded-lg text-xs md:text-sm font-bold touch-feedback"><i class="fas fa-money-bill-wave mr-1"></i> Cobrar</button>
   <button onclick="openEditLoan('${loan.id}')" class="px-3 py-2 rounded-lg text-xs md:text-sm hover:opacity-80 touch-feedback" style="background:rgba(245,158,11,0.2);color:#f59e0b;" title="Editar condiciones del préstamo"><i class="fas fa-pencil-alt"></i></button>
   <button onclick="openIncreaseCapital('${loan.id}')" class="px-3 py-2 bg-accent/20 text-accent rounded-lg text-xs md:text-sm hover:bg-accent/30 touch-feedback" title="Aumentar Capital"><i class="fas fa-plus"></i></button>
-  <button onclick="addToBlacklist('${loan.id}')" class="px-3 py-2 bg-danger/20 text-danger rounded-lg text-xs md:text-sm hover:bg-danger/30 touch-feedback" title="Bloquear"><i class="fas fa-ban"></i></button>`;
+  <button onclick="addToBlacklist('${loan.id}')" class="px-3 py-2 bg-danger/20 text-danger rounded-lg text-xs md:text-sm hover:bg-danger/30 touch-feedback" title="Bloquear"><i class="fas fa-ban"></i></button>
+  ${waBtnHtml}`;
 return `
 <div class="glass-effect rounded-2xl p-4 md:p-6 card-hover ${isOrphan ? 'border border-warning/40' : (isOverdue ? 'border border-danger/50' : '')}">
 <div class="flex items-start justify-between mb-3 md:mb-4">
