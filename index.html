@@ -2367,12 +2367,47 @@ saveData();
 showToast('Configuración guardada', 'success');
 }
 function resetAllData() {
-if (!confirm('¿ELIMINAR TODOS LOS DATOS? Esta acción no se puede deshacer.')) return;
-if (!prompt('Escriba BORRAR para confirmar:') === 'BORRAR') return;
-appData = { clients: [], loans: [], payments: [], blacklist: [], vouchers: [], settings: { interestRate: 10, pin: appData.settings.pin } };
-saveData();
-showToast('Todos los datos han sido eliminados', 'warning');
-updateUI();
+  // Paso 1 — confirmación inicial
+  if (!confirm('⚠️ ¿ELIMINAR TODOS LOS DATOS?\n\nAntes de continuar se hará un backup automático de seguridad.')) return;
+
+  // Paso 2 — confirmar escribiendo BORRAR
+  const typed = prompt('Escriba exactamente BORRAR para confirmar:');
+  if (typed !== 'BORRAR') {
+    if (typed !== null) showToast('Confirmación incorrecta — operación cancelada', 'error');
+    return;
+  }
+
+  // Paso 3 — backup automático ANTES de borrar
+  try {
+    const backupKey = 'jn_pre_reset_backup_' + new Date().toISOString().replace(/[:.]/g, '-');
+    localStorage.setItem(backupKey, JSON.stringify(appData));
+    localStorage.setItem('jn_last_auto_backup', Date.now().toString());
+
+    // También descargar el backup automáticamente
+    const dataStr = JSON.stringify(appData, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const fileName = 'JN_BACKUP_ANTES_RESET_' + new Date().toISOString().split('T')[0] + '.json';
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    showToast('✅ Backup guardado — eliminando datos...', 'success');
+  } catch(e) {
+    console.error('Backup error antes de reset:', e);
+  }
+
+  // Paso 4 — borrar después del backup
+  setTimeout(() => {
+    appData = { clients: [], loans: [], payments: [], blacklist: [], vouchers: [], settings: { interestRate: 10, pin: appData.settings.pin } };
+    saveData();
+    showToast('Todos los datos han sido eliminados', 'warning');
+    updateUI();
+  }, 1500);
 }
 function showPage(page) {
 if (page === 'more') { toggleMoreMenu(); return; }
