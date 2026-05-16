@@ -252,7 +252,7 @@ if ('serviceWorker' in navigator) {
 </header>
 <div class="flex-1 p-4 md:p-6 overflow-auto ios-scroll">
 <div id="page-dashboard" class="view space-y-4 md:space-y-6">
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
 <div class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback">
 <div class="flex items-center justify-between mb-2 md:mb-4">
 <div class="w-8 h-8 md:w-12 md:h-12 bg-danger/20 rounded-xl flex items-center justify-center"><i class="fas fa-wallet text-danger text-sm md:text-xl"></i></div>
@@ -268,6 +268,14 @@ if ('serviceWorker' in navigator) {
 </div>
 <p class="stat-value font-black text-success truncate-number" id="stat-profits">$0</p>
 <p class="text-[10px] md:text-xs text-gray-500 mt-1">Intereses</p>
+</div>
+<div class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback" style="border-color:rgba(16,185,129,0.4);">
+<div class="flex items-center justify-between mb-2 md:mb-4">
+<div class="w-8 h-8 md:w-12 md:h-12 bg-success/20 rounded-xl flex items-center justify-center"><i class="fas fa-hand-holding-usd text-success text-sm md:text-xl"></i></div>
+<span class="text-[10px] md:text-xs text-gray-500">Recuperado</span>
+</div>
+<p class="stat-value font-black text-success truncate-number" id="stat-recovered">$0</p>
+<p class="text-[10px] md:text-xs text-gray-500 mt-1">Capital cobrado</p>
 </div>
 <div class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback">
 <div class="flex items-center justify-between mb-2 md:mb-4">
@@ -301,6 +309,27 @@ if ('serviceWorker' in navigator) {
     </div>
   </div>
   <div id="income-breakdown" class="space-y-2 max-h-52 overflow-y-auto"></div>
+</div>
+
+<!-- PANEL ANÁLISIS DE RECUPERACIÓN DE CAPITAL -->
+<div class="glass-effect rounded-2xl p-4 md:p-6" style="background:linear-gradient(135deg,rgba(0,168,232,0.08) 0%,rgba(0,45,94,0.25) 100%);border:1px solid rgba(0,168,232,0.25);">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
+    <div>
+      <h3 class="text-base md:text-lg font-bold flex items-center gap-2"><i class="fas fa-chart-bar text-accent"></i> Análisis de Recuperación de Capital</h3>
+      <p class="text-xs text-gray-400 mt-1">Cuánto has prestado, cuánto has cobrado y cuánto falta</p>
+    </div>
+    <div id="recovery-pct-badge" class="px-4 py-2 rounded-xl text-sm font-bold self-start sm:self-auto" style="background:rgba(0,168,232,0.15);color:#00a8e8;">0% recuperado</div>
+  </div>
+  <div class="mb-5">
+    <div class="flex justify-between text-xs text-gray-400 mb-1"><span>Capital recuperado vs total prestado</span><span id="recovery-bar-label">$0 / $0</span></div>
+    <div class="w-full bg-gray-800 rounded-full h-3 overflow-hidden"><div id="recovery-bar" class="h-3 rounded-full transition-all duration-700" style="width:0%;background:linear-gradient(90deg,#10b981,#00a8e8);"></div></div>
+  </div>
+  <div class="grid grid-cols-3 gap-2 md:gap-3 mb-5">
+    <div class="bg-black/20 rounded-xl p-2 md:p-3 text-center"><p class="text-[10px] md:text-xs text-gray-500 mb-1">Total Prestado</p><p class="font-black text-white text-xs md:text-base truncate-number" id="recovery-total-lent">$0</p><p class="text-[10px] text-gray-600">histórico</p></div>
+    <div class="bg-black/20 rounded-xl p-2 md:p-3 text-center"><p class="text-[10px] md:text-xs text-gray-500 mb-1">Ya Cobrado</p><p class="font-black text-success text-xs md:text-base truncate-number" id="recovery-total-recovered">$0</p><p class="text-[10px] text-gray-600">en capital</p></div>
+    <div class="bg-black/20 rounded-xl p-2 md:p-3 text-center"><p class="text-[10px] md:text-xs text-gray-500 mb-1">Por Cobrar</p><p class="font-black text-warning text-xs md:text-base truncate-number" id="recovery-pending">$0</p><p class="text-[10px] text-gray-600">en calle</p></div>
+  </div>
+  <div><p class="text-xs text-gray-400 font-semibold mb-2 uppercase tracking-wider">Desglose por cliente</p><div id="recovery-breakdown" class="space-y-2 max-h-64 overflow-y-auto"></div></div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
@@ -402,6 +431,7 @@ if ('serviceWorker' in navigator) {
 <div class="glass-effect rounded-2xl p-4 md:p-6">
 <div class="flex items-center justify-between mb-4 md:mb-6">
 <div><h3 class="text-base md:text-lg font-bold flex items-center gap-2"><i class="fas fa-receipt text-accent"></i> Comprobantes Generados</h3><p class="text-xs md:text-sm text-gray-400 mt-1">Los vouchers se guardan localmente en tu dispositivo</p></div>
+<button onclick="openModal('modal-new-voucher')" class="btn-gradient px-4 py-2 rounded-xl font-bold text-white flex items-center gap-2 touch-feedback text-sm"><i class="fas fa-plus"></i> Nuevo</button>
 </div>
 <div id="vouchers-list" class="voucher-gallery"></div>
 <div id="no-vouchers" class="text-center py-12">
@@ -614,6 +644,67 @@ if ('serviceWorker' in navigator) {
 </div>
 
 <!-- MODAL VOUCHER PREVIEW -->
+
+<!-- MODAL NUEVO COMPROBANTE MANUAL -->
+<div id="modal-new-voucher" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto" onclick="if(event.target === this) closeModal('modal-new-voucher')">
+  <div class="glass-effect rounded-2xl p-6 w-full max-w-md mx-auto slide-in my-auto">
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <h3 class="text-lg md:text-xl font-bold flex items-center gap-2"><i class="fas fa-file-invoice text-accent"></i> Nuevo Comprobante</h3>
+        <p class="text-xs text-gray-400 mt-1">Crea un comprobante manualmente para cualquier cliente</p>
+      </div>
+      <button onclick="closeModal('modal-new-voucher')" class="text-gray-400 hover:text-white p-2"><i class="fas fa-times text-xl"></i></button>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm text-gray-400 mb-2">Tipo de Comprobante *</label>
+        <select id="nv-type" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base">
+          <option value="RECIBO DE PAGO">Recibo de Pago</option>
+          <option value="APERTURA DE CRÉDITO">Apertura de Crédito</option>
+          <option value="AUMENTO DE CAPITAL">Aumento de Capital</option>
+          <option value="LIQUIDACIÓN">Liquidación</option>
+          <option value="ESTADO DE CUENTA">Estado de Cuenta</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-400 mb-2">Cliente *</label>
+        <select id="nv-client-select" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" onchange="loadNvLoans()">
+          <option value="">Seleccionar cliente...</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-400 mb-2">Préstamo (opcional)</label>
+        <select id="nv-loan-select" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" onchange="fillNvFromLoan()">
+          <option value="">Llenar manual...</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Monto / Capital</label>
+          <input type="number" id="nv-amount" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="0">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Interés</label>
+          <input type="number" id="nv-interest" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="0">
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Saldo Pendiente</label>
+          <input type="number" id="nv-balance" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" placeholder="0">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Próxima Fecha</label>
+          <input type="date" id="nv-next-date" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base">
+        </div>
+      </div>
+      <button onclick="createManualVoucher()" class="w-full btn-gradient py-3 rounded-xl font-bold text-white touch-feedback">
+        <i class="fas fa-file-invoice mr-2"></i> Generar Comprobante
+      </button>
+    </div>
+  </div>
+</div>
+
 <div id="modal-voucher-preview" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 backdrop-blur-sm p-4" onclick="if(event.target === this) closeModal('modal-voucher-preview')">
 <div class="bg-white rounded-2xl p-4 w-full max-w-md mx-auto slide-in">
 <div class="flex justify-between items-center mb-4 border-b pb-4">
@@ -1156,11 +1247,13 @@ renderPayments();
 renderBlacklist();
 updateSelects();
 renderRecentActivity();
+updateRecoveryPanel();
 }
 function updateStats() {
 const activeLoans = appData.loans.filter(l => !l.paid);
 const capital = activeLoans.reduce((sum, l) => sum + (parseFloat(l.amount) || 0), 0);
 const profits = appData.payments.reduce((sum, p) => sum + (parseFloat(p.interest) || 0), 0);
+const recovered = appData.payments.reduce((sum, p) => sum + (parseFloat(p.capital) || 0), 0);
 const activeClients = new Set(activeLoans.map(l => l.clientId)).size;
 const today = new Date();
 today.setHours(0,0,0,0);
@@ -1172,10 +1265,68 @@ return nextDate < today;
 }).length;
 document.getElementById('stat-capital').textContent = formatCurrency(capital);
 document.getElementById('stat-profits').textContent = formatCurrency(profits);
+document.getElementById('stat-recovered').textContent = formatCurrency(recovered);
 document.getElementById('stat-clients').textContent = activeClients;
 document.getElementById('stat-overdue').textContent = overdue;
 updateMonthlyIncome(activeLoans);
 }
+
+function updateRecoveryPanel() {
+  const totalLent = appData.loans.reduce((sum, l) => sum + (parseFloat(l.originalAmount) || parseFloat(l.amount) || 0), 0);
+  const totalRecovered = appData.payments.reduce((sum, p) => sum + (parseFloat(p.capital) || 0), 0);
+  const totalPending = appData.loans.filter(l => !l.paid).reduce((sum, l) => sum + (parseFloat(l.amount) || 0), 0);
+  const pct = totalLent > 0 ? Math.round((totalRecovered / totalLent) * 100) : 0;
+
+  const set = (id, val) => { const e = document.getElementById(id); if(e) e.textContent = val; };
+  const setStyle = (id, prop, val) => { const e = document.getElementById(id); if(e) e.style[prop] = val; };
+
+  set('recovery-total-lent', formatCurrency(totalLent));
+  set('recovery-total-recovered', formatCurrency(totalRecovered));
+  set('recovery-pending', formatCurrency(totalPending));
+  set('recovery-bar-label', formatCurrency(totalRecovered) + ' / ' + formatCurrency(totalLent));
+  setStyle('recovery-bar', 'width', Math.min(pct, 100) + '%');
+
+  const badge = document.getElementById('recovery-pct-badge');
+  if (badge) {
+    badge.textContent = pct + '% recuperado';
+    const color = pct >= 75 ? '#10b981' : pct >= 40 ? '#00a8e8' : '#f59e0b';
+    const bg = pct >= 75 ? 'rgba(16,185,129,0.15)' : pct >= 40 ? 'rgba(0,168,232,0.15)' : 'rgba(245,158,11,0.15)';
+    badge.style.color = color;
+    badge.style.background = bg;
+  }
+
+  // Desglose por cliente
+  const bd = document.getElementById('recovery-breakdown');
+  if (!bd) return;
+  const map = {};
+  appData.loans.forEach(l => {
+    if (!map[l.clientId]) map[l.clientId] = { name: l.clientName || 'Sin nombre', lent: 0, recovered: 0, pending: 0 };
+    map[l.clientId].lent += parseFloat(l.originalAmount) || parseFloat(l.amount) || 0;
+    if (!l.paid) map[l.clientId].pending += parseFloat(l.amount) || 0;
+  });
+  appData.payments.forEach(p => {
+    if (map[p.clientId]) map[p.clientId].recovered += parseFloat(p.capital) || 0;
+  });
+  const rows = Object.values(map).filter(c => c.lent > 0).sort((a, b) => b.lent - a.lent);
+  if (rows.length === 0) { bd.innerHTML = '<p class="text-xs text-gray-500 text-center py-2">Sin datos</p>'; return; }
+  bd.innerHTML = rows.map(c => {
+    const cp = c.lent > 0 ? Math.round((c.recovered / c.lent) * 100) : 0;
+    const color = cp >= 75 ? '#10b981' : cp >= 40 ? '#00a8e8' : '#f59e0b';
+    return `<div class="bg-black/20 rounded-xl p-3">
+      <div class="flex items-center justify-between mb-1">
+        <span class="font-medium text-white text-xs truncate">${c.name}</span>
+        <span class="text-xs font-bold ml-2" style="color:${color}">${cp}%</span>
+      </div>
+      <div class="w-full bg-gray-700 rounded-full h-1.5 mb-2"><div class="h-1.5 rounded-full" style="width:${Math.min(cp,100)}%;background:${color};"></div></div>
+      <div class="flex justify-between text-[10px] text-gray-500 flex-wrap gap-1">
+        <span>Prestado: <span class="text-white">${formatCurrency(c.lent)}</span></span>
+        <span>Cobrado: <span style="color:#10b981">${formatCurrency(c.recovered)}</span></span>
+        <span>Falta: <span style="color:#f59e0b">${formatCurrency(c.pending)}</span></span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 function updateMonthlyIncome(activeLoans) {
 let totalMonthly = 0;
 const rows = [];
@@ -1467,7 +1618,7 @@ const orphanButtons = `<button onclick="deleteOrphanLoan('${loan.id}')" class="f
 const normalButtons = `
   <button onclick="viewLoanDetails('${loan.id}')" class="flex-1 px-3 py-2 bg-surface rounded-lg text-xs md:text-sm hover:bg-gray-700 touch-feedback"><i class="fas fa-eye mr-1"></i> Ver</button>
   <button onclick="quickPay('${loan.id}')" class="flex-1 px-3 py-2 btn-gradient rounded-lg text-xs md:text-sm font-bold touch-feedback"><i class="fas fa-money-bill-wave mr-1"></i> Cobrar</button>
-  <button onclick="openEditLoan('${loan.id}')" class="px-3 py-2 rounded-lg text-xs md:text-sm hover:opacity-80 touch-feedback" style="background:rgba(245,158,11,0.2);color:#f59e0b;" title="Renganche — Editar tasa / fecha"><i class="fas fa-pencil-alt"></i></button>
+  <button onclick="openEditLoan('${loan.id}')" class="px-3 py-2 rounded-lg text-xs md:text-sm hover:opacity-80 touch-feedback" style="background:rgba(245,158,11,0.2);color:#f59e0b;" title="Editar condiciones del préstamo"><i class="fas fa-pencil-alt"></i></button>
   <button onclick="openIncreaseCapital('${loan.id}')" class="px-3 py-2 bg-accent/20 text-accent rounded-lg text-xs md:text-sm hover:bg-accent/30 touch-feedback" title="Aumentar Capital"><i class="fas fa-plus"></i></button>
   <button onclick="addToBlacklist('${loan.id}')" class="px-3 py-2 bg-danger/20 text-danger rounded-lg text-xs md:text-sm hover:bg-danger/30 touch-feedback" title="Bloquear"><i class="fas fa-ban"></i></button>`;
 return `
@@ -1700,6 +1851,7 @@ function saveEditLoan() {
 }
 
 function updateSelects() {
+populateNvClients();
 const clientSelect = document.getElementById('payment-client');
 const loanClientSelect = document.getElementById('new-loan-client');
 const activeClients = appData.clients.filter(c => {
@@ -1983,6 +2135,64 @@ showToast('Voucher compartido', 'success');
 } catch (err) { showToast('Error al compartir', 'error'); }
 } else { showToast('Compartir no disponible en este dispositivo', 'warning'); }
 }
+
+// ── NUEVO COMPROBANTE MANUAL ─────────────────────────
+function loadNvLoans() {
+  const clientId = document.getElementById('nv-client-select').value;
+  const sel = document.getElementById('nv-loan-select');
+  sel.innerHTML = '<option value="">Llenar manual...</option>';
+  if (!clientId) return;
+  const loans = appData.loans.filter(l => l.clientId === clientId);
+  loans.forEach(l => {
+    const opt = document.createElement('option');
+    opt.value = l.id;
+    opt.textContent = formatCurrency(l.amount) + (l.paid ? ' (Pagado)' : ' — Vence ' + formatDate(l.nextPaymentDate));
+    sel.appendChild(opt);
+  });
+}
+
+function fillNvFromLoan() {
+  const loanId = document.getElementById('nv-loan-select').value;
+  if (!loanId) return;
+  const loan = appData.loans.find(l => l.id === loanId);
+  if (!loan) return;
+  const rate = parseFloat(loan.interestRate) || 10;
+  document.getElementById('nv-amount').value = loan.amount;
+  document.getElementById('nv-interest').value = Math.round(loan.amount * rate / 100);
+  document.getElementById('nv-balance').value = loan.amount;
+  document.getElementById('nv-next-date').value = loan.nextPaymentDate || '';
+}
+
+function populateNvClients() {
+  const sel = document.getElementById('nv-client-select');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Seleccionar cliente...</option>';
+  appData.clients.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.name;
+    sel.appendChild(opt);
+  });
+}
+
+function createManualVoucher() {
+  const type    = document.getElementById('nv-type').value;
+  const clientId = document.getElementById('nv-client-select').value;
+  const amount  = parseFloat(document.getElementById('nv-amount').value) || 0;
+  const interest = parseFloat(document.getElementById('nv-interest').value) || 0;
+  const balance = parseFloat(document.getElementById('nv-balance').value) || 0;
+  const nextDate = document.getElementById('nv-next-date').value;
+
+  if (!clientId) { showToast('Selecciona un cliente', 'error'); return; }
+  const client = appData.clients.find(c => c.id === clientId);
+  const clientName = client ? client.name : 'Cliente';
+
+  closeModal('modal-new-voucher');
+  setTimeout(() => {
+    generateVoucher(type, clientName, amount, interest, balance, nextDate);
+  }, 300);
+}
+
 function renderVouchersList() {
 const list = document.getElementById('vouchers-list');
 const noVouchers = document.getElementById('no-vouchers');
