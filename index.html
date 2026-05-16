@@ -252,7 +252,7 @@ if ('serviceWorker' in navigator) {
 </header>
 <div class="flex-1 p-4 md:p-6 overflow-auto ios-scroll">
 <div id="page-dashboard" class="view space-y-4 md:space-y-6">
-<div class="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
 <div class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback">
 <div class="flex items-center justify-between mb-2 md:mb-4">
 <div class="w-8 h-8 md:w-12 md:h-12 bg-danger/20 rounded-xl flex items-center justify-center"><i class="fas fa-wallet text-danger text-sm md:text-xl"></i></div>
@@ -268,14 +268,6 @@ if ('serviceWorker' in navigator) {
 </div>
 <p class="stat-value font-black text-success truncate-number" id="stat-profits">$0</p>
 <p class="text-[10px] md:text-xs text-gray-500 mt-1">Intereses</p>
-</div>
-<div class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback" style="border-color: rgba(16,185,129,0.4);">
-<div class="flex items-center justify-between mb-2 md:mb-4">
-<div class="w-8 h-8 md:w-12 md:h-12 bg-success/20 rounded-xl flex items-center justify-center"><i class="fas fa-hand-holding-usd text-success text-sm md:text-xl"></i></div>
-<span class="text-[10px] md:text-xs text-gray-500">Recuperado</span>
-</div>
-<p class="stat-value font-black text-success truncate-number" id="stat-recovered">$0</p>
-<p class="text-[10px] md:text-xs text-gray-500 mt-1">Capital cobrado</p>
 </div>
 <div class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback">
 <div class="flex items-center justify-between mb-2 md:mb-4">
@@ -309,27 +301,6 @@ if ('serviceWorker' in navigator) {
     </div>
   </div>
   <div id="income-breakdown" class="space-y-2 max-h-52 overflow-y-auto"></div>
-</div>
-
-<!-- PANEL ANÁLISIS DE RECUPERACIÓN DE CAPITAL -->
-<div class="glass-effect rounded-2xl p-4 md:p-6" style="background: linear-gradient(135deg, rgba(0,168,232,0.08) 0%, rgba(0,45,94,0.25) 100%); border: 1px solid rgba(0,168,232,0.25);">
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
-    <div>
-      <h3 class="text-base md:text-lg font-bold flex items-center gap-2"><i class="fas fa-chart-bar text-accent"></i> Análisis de Recuperación de Capital</h3>
-      <p class="text-xs text-gray-400 mt-1">Cuánto has prestado, cuánto has cobrado y cuánto falta</p>
-    </div>
-    <div id="recovery-pct-badge" class="px-4 py-2 rounded-xl text-sm font-bold self-start sm:self-auto" style="background:rgba(0,168,232,0.15);color:#00a8e8;">0% recuperado</div>
-  </div>
-  <div class="mb-5">
-    <div class="flex justify-between text-xs text-gray-400 mb-1"><span>Capital recuperado vs total prestado</span><span id="recovery-bar-label">$0 / $0</span></div>
-    <div class="w-full bg-gray-800 rounded-full h-3 overflow-hidden"><div id="recovery-bar" class="h-3 rounded-full transition-all duration-700" style="width:0%;background:linear-gradient(90deg,#10b981,#00a8e8);"></div></div>
-  </div>
-  <div class="grid grid-cols-3 gap-2 md:gap-3 mb-5">
-    <div class="bg-black/20 rounded-xl p-2 md:p-3 text-center"><p class="text-[10px] md:text-xs text-gray-500 mb-1">Total Prestado</p><p class="font-black text-white text-xs md:text-base truncate-number" id="recovery-total-lent">$0</p><p class="text-[10px] text-gray-600">histórico</p></div>
-    <div class="bg-black/20 rounded-xl p-2 md:p-3 text-center"><p class="text-[10px] md:text-xs text-gray-500 mb-1">Ya Cobrado</p><p class="font-black text-success text-xs md:text-base truncate-number" id="recovery-total-recovered">$0</p><p class="text-[10px] text-gray-600">en capital</p></div>
-    <div class="bg-black/20 rounded-xl p-2 md:p-3 text-center"><p class="text-[10px] md:text-xs text-gray-500 mb-1">Por Cobrar</p><p class="font-black text-warning text-xs md:text-base truncate-number" id="recovery-pending">$0</p><p class="text-[10px] text-gray-600">en calle</p></div>
-  </div>
-  <div><p class="text-xs text-gray-400 font-semibold mb-2 uppercase tracking-wider">Desglose por cliente</p><div id="recovery-breakdown" class="space-y-2 max-h-64 overflow-y-auto"></div></div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
@@ -1185,13 +1156,11 @@ renderPayments();
 renderBlacklist();
 updateSelects();
 renderRecentActivity();
-updateRecoveryPanel();
 }
 function updateStats() {
 const activeLoans = appData.loans.filter(l => !l.paid);
 const capital = activeLoans.reduce((sum, l) => sum + (parseFloat(l.amount) || 0), 0);
 const profits = appData.payments.reduce((sum, p) => sum + (parseFloat(p.interest) || 0), 0);
-const recovered = appData.payments.reduce((sum, p) => sum + (parseFloat(p.capital) || 0), 0);
 const activeClients = new Set(activeLoans.map(l => l.clientId)).size;
 const today = new Date();
 today.setHours(0,0,0,0);
@@ -1203,7 +1172,6 @@ return nextDate < today;
 }).length;
 document.getElementById('stat-capital').textContent = formatCurrency(capital);
 document.getElementById('stat-profits').textContent = formatCurrency(profits);
-document.getElementById('stat-recovered').textContent = formatCurrency(recovered);
 document.getElementById('stat-clients').textContent = activeClients;
 document.getElementById('stat-overdue').textContent = overdue;
 updateMonthlyIncome(activeLoans);
@@ -1234,46 +1202,6 @@ breakdown.innerHTML = rows.sort((a,b) => b.monthly - a.monthly).map(r => `
     </div>
     <span class="font-bold text-success ml-3">${formatCurrency(r.monthly)}<span class="text-gray-500 font-normal">/mes</span></span>
   </div>`).join('');
-}
-function updateRecoveryPanel() {
-  // Total prestado historico = originalAmount de todos los prestamos
-  const allLoans = appData.loans;
-  const totalLent = allLoans.reduce((sum, l) => sum + (parseFloat(l.originalAmount) || parseFloat(l.amount) || 0), 0);
-  const totalRecovered = appData.payments.reduce((sum, p) => sum + (parseFloat(p.capital) || 0), 0);
-  const totalPending = allLoans.filter(l => !l.paid).reduce((sum, l) => sum + (parseFloat(l.amount) || 0), 0);
-  const pct = totalLent > 0 ? Math.round((totalRecovered / totalLent) * 100) : 0;
-  const elLent = document.getElementById("recovery-total-lent");
-  const elRec = document.getElementById("recovery-total-recovered");
-  const elPend = document.getElementById("recovery-pending");
-  const elBar = document.getElementById("recovery-bar");
-  const elBarLabel = document.getElementById("recovery-bar-label");
-  const elBadge = document.getElementById("recovery-pct-badge");
-  if (elLent) elLent.textContent = formatCurrency(totalLent);
-  if (elRec) elRec.textContent = formatCurrency(totalRecovered);
-  if (elPend) elPend.textContent = formatCurrency(totalPending);
-  if (elBar) elBar.style.width = Math.min(pct, 100) + "%";
-  if (elBarLabel) elBarLabel.textContent = formatCurrency(totalRecovered) + " / " + formatCurrency(totalLent);
-  if (elBadge) { elBadge.textContent = pct + "% recuperado"; elBadge.style.color = pct >= 75 ? "#10b981" : pct >= 40 ? "#00a8e8" : "#f59e0b"; elBadge.style.background = pct >= 75 ? "rgba(16,185,129,0.15)" : pct >= 40 ? "rgba(0,168,232,0.15)" : "rgba(245,158,11,0.15)"; }
-  // Desglose por cliente
-  const elBreakdown = document.getElementById("recovery-breakdown");
-  if (!elBreakdown) return;
-  const clientMap = {};
-  appData.loans.forEach(l => {
-    const id = l.clientId;
-    if (!clientMap[id]) clientMap[id] = { name: l.clientName || "Sin nombre", lent: 0, recovered: 0, pending: 0 };
-    clientMap[id].lent += parseFloat(l.originalAmount) || parseFloat(l.amount) || 0;
-    clientMap[id].pending += l.paid ? 0 : (parseFloat(l.amount) || 0);
-  });
-  appData.payments.forEach(p => {
-    if (clientMap[p.clientId]) clientMap[p.clientId].recovered += parseFloat(p.capital) || 0;
-  });
-  const rows = Object.values(clientMap).filter(c => c.lent > 0).sort((a,b) => b.lent - a.lent);
-  if (rows.length === 0) { elBreakdown.innerHTML = "<p class="text-xs text-gray-500 text-center py-2">Sin préstamos registrados</p>"; return; }
-  elBreakdown.innerHTML = rows.map(c => {
-    const cp = c.lent > 0 ? Math.round((c.recovered / c.lent) * 100) : 0;
-    const color = cp >= 75 ? "#10b981" : cp >= 40 ? "#00a8e8" : "#f59e0b";
-    return `<div class="bg-black/20 rounded-xl p-3"><div class="flex items-center justify-between mb-2"><span class="font-medium text-white text-xs truncate">${c.name}</span><span class="text-xs font-bold ml-2" style="color:${color}">${cp}%</span></div><div class="w-full bg-gray-700 rounded-full h-1.5 mb-1"><div class="h-1.5 rounded-full" style="width:${Math.min(cp,100)}%;background:${color};"></div></div><div class="flex justify-between text-[10px] text-gray-500"><span>Prestado: ${formatCurrency(c.lent)}</span><span>Cobrado: <span style="color:#10b981">${formatCurrency(c.recovered)}</span></span><span>Falta: <span style="color:#f59e0b">${formatCurrency(c.pending)}</span></span></div></div>`;
-  }).join("");
 }
 function updateCharts() {
 if (window.innerWidth < 768) {
