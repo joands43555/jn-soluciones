@@ -251,8 +251,27 @@ if ('serviceWorker' in navigator) {
 </div>
 </header>
 <div class="flex-1 p-4 md:p-6 overflow-auto ios-scroll">
+<!-- BANNER PAGOS PRÓXIMOS — visible siempre en dashboard -->
+<div id="upcoming-banner" class="hidden rounded-2xl p-4 touch-feedback cursor-pointer" onclick="openModal('modal-upcoming-payments')" style="background:linear-gradient(135deg,rgba(245,158,11,0.25) 0%,rgba(239,68,68,0.15) 100%);border:1px solid rgba(245,158,11,0.5);">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center animate-pulse" style="background:rgba(245,158,11,0.3);">
+        <i class="fas fa-clock text-warning text-lg"></i>
+      </div>
+      <div>
+        <p class="font-bold text-warning text-sm md:text-base" id="upcoming-banner-title">Pagos próximos</p>
+        <p class="text-xs text-gray-300" id="upcoming-banner-sub">Toca para ver los detalles</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <span id="upcoming-banner-count" class="w-8 h-8 rounded-full flex items-center justify-center font-black text-black text-sm" style="background:#f59e0b;">0</span>
+      <i class="fas fa-chevron-right text-warning"></i>
+    </div>
+  </div>
+</div>
+
 <div id="page-dashboard" class="view space-y-4 md:space-y-6">
-<div class="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
+<div class="grid grid-cols-2 lg:grid-cols-6 gap-3 md:gap-4">
 <div class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback">
 <div class="flex items-center justify-between mb-2 md:mb-4">
 <div class="w-8 h-8 md:w-12 md:h-12 bg-danger/20 rounded-xl flex items-center justify-center"><i class="fas fa-wallet text-danger text-sm md:text-xl"></i></div>
@@ -292,6 +311,14 @@ if ('serviceWorker' in navigator) {
 </div>
 <p class="text-lg md:text-2xl font-black text-warning" id="stat-overdue">0</p>
 <p class="text-[10px] md:text-xs text-gray-500 mt-1">Préstamos</p>
+</div>
+<div onclick="upcoming.length > 0 && openModal('modal-upcoming-payments')" id="stat-upcoming-card" class="stat-card rounded-2xl p-3 md:p-6 card-hover touch-feedback cursor-pointer" style="border-color:rgba(245,158,11,0.15);">
+<div class="flex items-center justify-between mb-2 md:mb-4">
+<div class="w-8 h-8 md:w-12 md:h-12 rounded-xl flex items-center justify-center" id="upcoming-card-icon" style="background:rgba(245,158,11,0.1);"><i class="fas fa-clock text-warning text-sm md:text-xl"></i></div>
+<span class="text-[10px] md:text-xs text-gray-500">Próximos</span>
+</div>
+<p class="text-lg md:text-2xl font-black" id="stat-upcoming" style="color:#f59e0b;">0</p>
+<p class="text-[10px] md:text-xs text-gray-500 mt-1" id="stat-upcoming-label">Sin pagos</p>
 </div>
 </div>
 
@@ -531,6 +558,20 @@ if ('serviceWorker' in navigator) {
 </div>
 
 <!-- MODAL MÁS -->
+<!-- MODAL PAGOS PRÓXIMOS -->
+<div id="modal-upcoming-payments" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto" onclick="if(event.target === this) closeModal('modal-upcoming-payments')">
+  <div class="glass-effect rounded-2xl p-6 w-full max-w-lg mx-auto slide-in my-auto" style="border:1px solid rgba(245,158,11,0.4);">
+    <div class="flex justify-between items-center mb-5">
+      <div>
+        <h3 class="text-lg font-bold text-warning flex items-center gap-2"><i class="fas fa-clock"></i> Pagos Próximos</h3>
+        <p class="text-xs text-gray-400 mt-1">Clientes con pago en los próximos 3 días</p>
+      </div>
+      <button onclick="closeModal('modal-upcoming-payments')" class="text-gray-400 hover:text-white p-2"><i class="fas fa-times text-xl"></i></button>
+    </div>
+    <div id="upcoming-list" class="space-y-3 max-h-[60vh] overflow-y-auto"></div>
+  </div>
+</div>
+
 <div id="modal-more" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300" onclick="handleMoreBackdropClick(event)">
 <div class="glass-effect rounded-t-3xl p-6 w-full max-w-sm mx-auto slide-in safe-bottom transform transition-transform duration-300" id="more-menu-content">
 <div class="w-12 h-1 bg-gray-600 rounded-full mx-auto mb-6"></div>
@@ -1242,6 +1283,7 @@ renderBlacklist();
 updateSelects();
 renderRecentActivity();
 updateRecoveryPanel();
+updateUpcomingPayments();
 }
 function updateStats() {
 const activeLoans = appData.loans.filter(l => !l.paid);
@@ -2478,6 +2520,140 @@ return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year
 }
 function showNotifications() { showToast('No hay notificaciones nuevas', 'info'); }
 
+function updateUpcomingPayments() {
+  var upcoming = [];  // make accessible in card onclick
+  var today = new Date();
+  today.setHours(0,0,0,0);
+
+  var upcoming = appData.loans
+    .filter(function(l) { return !l.paid && l.nextPaymentDate; })
+    .map(function(l) {
+      var client = appData.clients.find(function(c) { return c.id === l.clientId; });
+      var nextDate = new Date(l.nextPaymentDate);
+      nextDate.setHours(0,0,0,0);
+      var daysLeft = Math.ceil((nextDate - today) / (1000*60*60*24));
+      return { loan: l, client: client, daysLeft: daysLeft };
+    })
+    .filter(function(item) { return item.daysLeft <= 3; })
+    .sort(function(a, b) { return a.daysLeft - b.daysLeft; });
+
+  // Mostrar/ocultar banner
+  var banner = document.getElementById('upcoming-banner');
+  var bannerTitle = document.getElementById('upcoming-banner-title');
+  var bannerSub = document.getElementById('upcoming-banner-sub');
+  var bannerCount = document.getElementById('upcoming-banner-count');
+
+  if (!banner) return;
+
+  // Update stat card
+  var statUpcoming = document.getElementById('stat-upcoming');
+  var statUpcomingLabel = document.getElementById('stat-upcoming-label');
+  var statUpcomingCard = document.getElementById('stat-upcoming-card');
+  var statUpcomingIcon = document.getElementById('upcoming-card-icon');
+
+  if (upcoming.length === 0) {
+    if (statUpcoming) statUpcoming.textContent = '0';
+    if (statUpcomingLabel) statUpcomingLabel.textContent = 'Sin pagos';
+    if (statUpcomingCard) { statUpcomingCard.style.borderColor = 'rgba(245,158,11,0.15)'; statUpcomingCard.style.cursor = 'default'; }
+    if (statUpcomingIcon) statUpcomingIcon.style.background = 'rgba(245,158,11,0.1)';
+    banner.classList.add('hidden');
+    banner.classList.remove('flex', 'block');
+  } else {
+    var vencidosCount = upcoming.filter(function(i) { return i.daysLeft < 0; }).length;
+    var cardColor = vencidosCount > 0 ? '#ef4444' : '#f59e0b';
+    var cardBg = vencidosCount > 0 ? 'rgba(239,68,68,0.2)' : 'rgba(245,158,11,0.2)';
+    if (statUpcoming) { statUpcoming.textContent = upcoming.length; statUpcoming.style.color = cardColor; }
+    if (statUpcomingLabel) statUpcomingLabel.textContent = vencidosCount > 0 ? (vencidosCount + ' vencido' + (vencidosCount>1?'s':'')) : 'Pago próximo';
+    if (statUpcomingCard) { statUpcomingCard.style.borderColor = cardColor + '60'; statUpcomingCard.style.cursor = 'pointer'; statUpcomingCard.onclick = function() { openModal('modal-upcoming-payments'); }; }
+    if (statUpcomingIcon) statUpcomingIcon.style.background = cardBg;
+    banner.classList.remove('hidden');
+    if (bannerCount) bannerCount.textContent = upcoming.length;
+    if (bannerTitle) {
+      var vencidos = upcoming.filter(function(i) { return i.daysLeft < 0; }).length;
+      var hoy = upcoming.filter(function(i) { return i.daysLeft === 0; }).length;
+      if (vencidos > 0) {
+        bannerTitle.textContent = vencidos === 1 ? '1 pago VENCIDO' : vencidos + ' pagos VENCIDOS';
+        bannerTitle.style.color = '#ef4444';
+        banner.style.background = 'linear-gradient(135deg,rgba(239,68,68,0.25) 0%,rgba(245,158,11,0.15) 100%)';
+        banner.style.borderColor = 'rgba(239,68,68,0.5)';
+        bannerCount.style.background = '#ef4444';
+      } else if (hoy > 0) {
+        bannerTitle.textContent = hoy === 1 ? '1 pago vence HOY' : hoy + ' pagos vencen HOY';
+        bannerTitle.style.color = '#f59e0b';
+      } else {
+        bannerTitle.textContent = upcoming.length === 1 ? '1 pago próximo (≤3 días)' : upcoming.length + ' pagos próximos (≤3 días)';
+        bannerTitle.style.color = '#f59e0b';
+      }
+    }
+    if (bannerSub) {
+      var names = upcoming.slice(0,3).map(function(i) {
+        return (i.client && i.client.name) ? i.client.name.split(' ')[0] : 'Cliente';
+      }).join(', ');
+      bannerSub.textContent = names + (upcoming.length > 3 ? ' y más...' : '') + ' — Toca para ver';
+    }
+  }
+
+  // Llenar modal
+  var list = document.getElementById('upcoming-list');
+  if (!list) return;
+
+  var html = '';
+  upcoming.forEach(function(item) {
+    var loan = item.loan;
+    var client = item.client;
+    var daysLeft = item.daysLeft;
+    var interest = Math.round((parseFloat(loan.amount) || 0) * (parseFloat(loan.interestRate) || 10) / 100);
+    var phone = (client && client.phone) ? client.phone.replace(/[^0-9]/g,'') : '';
+    var waPhone = phone.startsWith('1') ? phone : '1' + phone;
+    var clientName = (client && client.name) ? client.name : (loan.clientName || 'Cliente');
+    var waMsg = daysLeft < 0
+      ? 'Hola ' + clientName + ', tiene un pago VENCIDO de ' + formatCurrency(interest) + ' desde el ' + formatDate(loan.nextPaymentDate) + '. Por favor regularice. J&N Soluciones'
+      : 'Hola ' + clientName + ', su pago de ' + formatCurrency(interest) + ' vence el ' + formatDate(loan.nextPaymentDate) + '. J&N Soluciones';
+    var waLink = 'https://wa.me/' + waPhone + '?text=' + encodeURIComponent(waMsg);
+
+    var dayLabel, dayColor, dayBg;
+    if (daysLeft < 0) {
+      dayLabel = 'Vencido hace ' + Math.abs(daysLeft) + (Math.abs(daysLeft) === 1 ? ' dia' : ' dias');
+      dayColor = '#ef4444'; dayBg = 'rgba(239,68,68,0.15)';
+    } else if (daysLeft === 0) {
+      dayLabel = 'Vence HOY';
+      dayColor = '#f59e0b'; dayBg = 'rgba(245,158,11,0.2)';
+    } else if (daysLeft === 1) {
+      dayLabel = 'Vence manana';
+      dayColor = '#f59e0b'; dayBg = 'rgba(245,158,11,0.15)';
+    } else {
+      dayLabel = 'Vence en ' + daysLeft + ' dias';
+      dayColor = '#00a8e8'; dayBg = 'rgba(0,168,232,0.15)';
+    }
+
+    var waBtn = phone
+      ? '<a href="' + waLink + '" target="_blank" class="flex-1 flex items-center justify-center gap-1 py-2 rounded-lg text-xs font-bold" style="background:rgba(37,211,102,0.2);color:#25d366;border:1px solid rgba(37,211,102,0.3);"><i class=\"fab fa-whatsapp\"></i> Recordar</a>'
+      : '<span class="flex-1 py-2 rounded-lg text-xs text-gray-600 text-center bg-black/20">Sin telefono</span>';
+
+    var loanIdSafe = loan.id;
+    html += '<div class="rounded-xl p-4 mb-2" style="background:rgba(26,34,51,0.9);border:1px solid ' + dayColor + '40;">'
+      + '<div class="flex items-start justify-between mb-3">'
+      +   '<div class="min-w-0 flex-1">'
+      +     '<p class="font-bold text-white truncate">' + clientName + '</p>'
+      +     '<p class="text-xs text-gray-400">' + ((client && client.phone) ? client.phone : 'Sin telefono') + '</p>'
+      +   '</div>'
+      +   '<span class="px-2 py-1 rounded-lg text-xs font-bold ml-2 flex-shrink-0" style="color:' + dayColor + ';background:' + dayBg + ';">' + dayLabel + '</span>'
+      + '</div>'
+      + '<div class="grid grid-cols-3 gap-2 mb-3 text-center">'
+      +   '<div class="bg-black/20 rounded-lg p-2"><p class="text-[10px] text-gray-500">Capital</p><p class="font-bold text-white text-xs">' + formatCurrency(loan.amount) + '</p></div>'
+      +   '<div class="bg-black/20 rounded-lg p-2"><p class="text-[10px] text-gray-500">A pagar</p><p class="font-bold text-xs" style="color:#10b981">' + formatCurrency(interest) + '</p></div>'
+      +   '<div class="bg-black/20 rounded-lg p-2"><p class="text-[10px] text-gray-500">Fecha</p><p class="font-bold text-xs" style="color:' + dayColor + '">' + formatDate(loan.nextPaymentDate) + '</p></div>'
+      + '</div>'
+      + '<div class="flex gap-2">'
+      +   '<button data-loanid="' + loanIdSafe + '" data-action="pay-upcoming" class="flex-1 py-2 rounded-lg text-xs font-bold text-white" style="background:linear-gradient(135deg,#002d5e,#00a8e8)"><i class="fas fa-money-bill-wave mr-1"></i> Cobrar</button>'
+      +   waBtn
+      + '</div>'
+      + '</div>';
+  });
+
+  list.innerHTML = html;
+}
+
 const savedUser = localStorage.getItem('jn_pro_current_user');
 if (savedUser) {
 try {
@@ -2498,6 +2674,17 @@ if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
     }
   });
 }
+
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('[data-action="pay-upcoming"]');
+  if (btn) {
+    var loanId = btn.getAttribute('data-loanid');
+    if (loanId) {
+      closeModal('modal-upcoming-payments');
+      setTimeout(function() { quickPay(loanId); }, 300);
+    }
+  }
+});
 </script>
 </body>
 </html>
