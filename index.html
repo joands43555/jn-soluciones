@@ -416,6 +416,48 @@ if ('serviceWorker' in navigator) {
 <option value="">Seleccionar...</option>
 </select>
 </div>
+</div>
+
+<!-- CALCULADORA AUTOMÁTICA -->
+<div id="payment-calculator" class="hidden rounded-2xl p-4 mb-4 mt-2" style="background:linear-gradient(135deg,rgba(0,168,232,0.1) 0%,rgba(0,45,94,0.2) 100%);border:1px solid rgba(0,168,232,0.3);">
+  <p class="text-sm font-bold text-accent mb-3 flex items-center gap-2"><i class="fas fa-calculator"></i> Calculadora de Pago</p>
+  <div class="grid grid-cols-2 gap-3 mb-4">
+    <div class="bg-black/20 rounded-xl p-3 text-center">
+      <p class="text-[10px] text-gray-500 mb-1">Capital actual</p>
+      <p class="font-black text-white text-sm" id="calc-capital-display">$0</p>
+    </div>
+    <div class="bg-black/20 rounded-xl p-3 text-center">
+      <p class="text-[10px] text-gray-500 mb-1">Interés a pagar</p>
+      <p class="font-black text-success text-sm" id="calc-interest-display">$0</p>
+    </div>
+  </div>
+  <div class="form-group mb-3">
+    <label class="form-label text-accent font-bold">💵 Total que te dio el cliente</label>
+    <input type="number" id="payment-total-received" class="form-input" placeholder="Ej: 10000" oninput="splitPayment()" min="0">
+    <p class="text-xs text-gray-500 mt-1">Escribe el total y se divide automáticamente</p>
+  </div>
+  <!-- Resultado de la división -->
+  <div id="split-result" class="hidden rounded-xl p-3 mb-3" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);">
+    <p class="text-xs font-bold text-success mb-2">División automática:</p>
+    <div class="grid grid-cols-2 gap-2 text-center">
+      <div class="bg-black/20 rounded-lg p-2">
+        <p class="text-[10px] text-gray-500">Va a interés</p>
+        <p class="font-black text-success text-sm" id="split-interest-show">$0</p>
+      </div>
+      <div class="bg-black/20 rounded-lg p-2">
+        <p class="text-[10px] text-gray-500">Abona a capital</p>
+        <p class="font-black text-accent text-sm" id="split-capital-show">$0</p>
+      </div>
+    </div>
+    <p class="text-[10px] text-gray-500 mt-2 text-center">Nuevo saldo: <span class="font-bold text-white" id="split-new-balance">$0</span></p>
+  </div>
+  <!-- Falta dinero -->
+  <div id="split-short" class="hidden rounded-xl p-3 mb-3" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);">
+    <p class="text-xs text-danger"><i class="fas fa-exclamation-triangle mr-1"></i> El monto no alcanza para cubrir el interés. Faltan <span id="split-short-amount" class="font-bold">$0</span></p>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 <div class="form-group">
 <label class="form-label" id="payment-interest-label">Interés</label>
 <input type="number" id="payment-interest" class="form-input" readonly placeholder="0">
@@ -1933,7 +1975,10 @@ updateNextPaymentDate();
 }
 function calculatePayment() {
 const loanId = document.getElementById('payment-loan').value;
-if (!loanId) return;
+if (!loanId) {
+  document.getElementById('payment-calculator').classList.add('hidden');
+  return;
+}
 const loan = appData.loans.find(l => l.id === loanId);
 if (!loan) return;
 const rate = parseFloat(loan.interestRate) || 10;
@@ -1942,9 +1987,52 @@ document.getElementById('payment-interest').value = interest;
 const lbl = document.getElementById('payment-interest-label');
 if (lbl) lbl.textContent = 'Interés (' + rate + '%)';
 if (loan.paymentFrequency) {
-document.getElementById('payment-frequency').value = loan.paymentFrequency;
+  document.getElementById('payment-frequency').value = loan.paymentFrequency;
 }
 updateNextPaymentDate();
+// Mostrar calculadora
+document.getElementById('payment-calculator').classList.remove('hidden');
+document.getElementById('calc-capital-display').textContent = formatCurrency(loan.amount);
+document.getElementById('calc-interest-display').textContent = formatCurrency(interest);
+document.getElementById('payment-total-received').value = '';
+document.getElementById('split-result').classList.add('hidden');
+document.getElementById('split-short').classList.add('hidden');
+}
+
+function splitPayment() {
+const loanId = document.getElementById('payment-loan').value;
+if (!loanId) return;
+const loan = appData.loans.find(l => l.id === loanId);
+if (!loan) return;
+const total = parseFloat(document.getElementById('payment-total-received').value) || 0;
+const interest = parseFloat(document.getElementById('payment-interest').value) || 0;
+const splitResult = document.getElementById('split-result');
+const splitShort = document.getElementById('split-short');
+if (total <= 0) {
+  splitResult.classList.add('hidden');
+  splitShort.classList.add('hidden');
+  document.getElementById('payment-capital').value = '';
+  return;
+}
+if (total < interest) {
+  // No alcanza para el interés
+  splitResult.classList.add('hidden');
+  splitShort.classList.remove('hidden');
+  document.getElementById('split-short-amount').textContent = formatCurrency(interest - total);
+  document.getElementById('payment-interest').value = total;
+  document.getElementById('payment-capital').value = 0;
+  return;
+}
+// Divide: interés primero, resto a capital
+const capitalAbono = total - interest;
+const newBalance = Math.max(0, loan.amount - capitalAbono);
+splitShort.classList.add('hidden');
+splitResult.classList.remove('hidden');
+document.getElementById('split-interest-show').textContent = formatCurrency(interest);
+document.getElementById('split-capital-show').textContent = formatCurrency(capitalAbono);
+document.getElementById('split-new-balance').textContent = formatCurrency(newBalance);
+// Auto-llenar los campos
+document.getElementById('payment-capital').value = capitalAbono;
 }
 function updateNextPaymentDate() {
 const frequency = document.getElementById('payment-frequency').value;
@@ -1953,6 +2041,9 @@ const nextDate = new Date();
 nextDate.setDate(nextDate.getDate() + days);
 document.getElementById('payment-next-date').value = nextDate.toISOString().split('T')[0];
 }
+// Guarda el estado antes de cada pago para poder deshacer
+let lastPaymentSnapshot = null;
+
 function processPayment() {
 const loanId = document.getElementById('payment-loan').value;
 const interest = parseFloat(document.getElementById('payment-interest').value) || 0;
@@ -1964,6 +2055,17 @@ const loan = appData.loans.find(l => l.id === loanId);
 if (!loan) { showToast('Préstamo no encontrado', 'error'); return; }
 const client = appData.clients.find(c => c.id === loan.clientId);
 if (capital > loan.amount) { showToast('El abono no puede exceder el saldo', 'error'); return; }
+
+// Guardar snapshot para deshacer
+lastPaymentSnapshot = {
+  loanId: loanId,
+  prevAmount: loan.amount,
+  prevNextPaymentDate: loan.nextPaymentDate,
+  prevPaymentFrequency: loan.paymentFrequency,
+  prevPaid: loan.paid,
+  prevPaidAt: loan.paidAt
+};
+
 const newAmount = loan.amount - capital;
 loan.amount = newAmount;
 if (nextDate) loan.nextPaymentDate = nextDate;
@@ -1984,18 +2086,61 @@ date: new Date().toISOString().split('T')[0],
 frequency,
 createdAt: new Date().toISOString()
 };
+lastPaymentSnapshot.paymentId = payment.id;
 appData.payments.push(payment);
 saveData();
-showToast(loan.paid ? 'Préstamo liquidado' : 'Pago registrado', 'success');
+
+// Mostrar toast con opción de deshacer
+showUndoToast(loan.paid ? 'Préstamo liquidado' : 'Pago registrado ✓', client?.name || loan.clientName);
+
 const type = loan.paid ? 'LIQUIDACIÓN' : 'RECIBO DE PAGO';
 generateVoucher(type, client?.name || loan.clientName, capital, interest, newAmount, nextDate, loan.interestRate);
 document.getElementById('payment-client').value = '';
 document.getElementById('payment-loan').innerHTML = '<option value="">Seleccionar...</option>';
 document.getElementById('payment-interest').value = '';
 document.getElementById('payment-capital').value = '';
+document.getElementById('payment-total-received').value = '';
 document.getElementById('payment-frequency').value = 'weekly';
+document.getElementById('payment-calculator').classList.add('hidden');
+document.getElementById('split-result').classList.add('hidden');
 updateNextPaymentDate();
 updateUI();
+}
+
+function showUndoToast(message, clientName) {
+const container = document.getElementById('toast-container');
+const toast = document.createElement('div');
+toast.className = 'pointer-events-auto flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-success shadow-lg slide-in bg-success/90 text-white';
+toast.style.minWidth = '280px';
+toast.innerHTML = '<div><i class="fas fa-check-circle mr-2"></i><span class="font-medium text-sm">' + message + '</span><p class="text-xs opacity-80">' + (clientName || '') + '</p></div>'
+  + '<button data-action="undo-payment" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-bold flex-shrink-0"><i class="fas fa-undo mr-1"></i> Deshacer</button>';
+container.appendChild(toast);
+setTimeout(() => {
+  if (toast.parentNode) {
+    toast.classList.add('slide-out');
+    setTimeout(() => toast.remove(), 300);
+  }
+}, 8000);
+}
+
+function undoLastPayment() {
+if (!lastPaymentSnapshot) { showToast('No hay pago para deshacer', 'error'); return; }
+const snap = lastPaymentSnapshot;
+// Restaurar el préstamo
+const loan = appData.loans.find(l => l.id === snap.loanId);
+if (loan) {
+  loan.amount = snap.prevAmount;
+  loan.nextPaymentDate = snap.prevNextPaymentDate;
+  loan.paymentFrequency = snap.prevPaymentFrequency;
+  loan.paid = snap.prevPaid;
+  loan.paidAt = snap.prevPaidAt;
+}
+// Eliminar el pago
+appData.payments = appData.payments.filter(p => p.id !== snap.paymentId);
+lastPaymentSnapshot = null;
+saveData();
+updateUI();
+showToast('Pago deshecho correctamente ✓', 'warning');
 }
 function quickPay(loanId) {
 showPage('payments');
@@ -2683,6 +2828,16 @@ document.addEventListener('click', function(e) {
       closeModal('modal-upcoming-payments');
       setTimeout(function() { quickPay(loanId); }, 300);
     }
+  }
+});
+
+// Event delegation for undo payment button
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('[data-action="undo-payment"]');
+  if (btn) {
+    undoLastPayment();
+    var toast = btn.closest('.pointer-events-auto');
+    if (toast) toast.remove();
   }
 });
 </script>
