@@ -2005,7 +2005,9 @@ if (!loanId) return;
 const loan = appData.loans.find(l => l.id === loanId);
 if (!loan) return;
 const total = parseFloat(document.getElementById('payment-total-received').value) || 0;
-const interest = parseFloat(document.getElementById('payment-interest').value) || 0;
+// El interés SIEMPRE viene del préstamo — nunca se modifica por lo que escriba el usuario
+const rate = parseFloat(loan.interestRate) || 10;
+const fixedInterest = Math.round((parseFloat(loan.amount) || 0) * rate / 100);
 const splitResult = document.getElementById('split-result');
 const splitShort = document.getElementById('split-short');
 if (total <= 0) {
@@ -2014,24 +2016,26 @@ if (total <= 0) {
   document.getElementById('payment-capital').value = '';
   return;
 }
-if (total < interest) {
-  // No alcanza para el interés
+if (total < fixedInterest) {
+  // No alcanza para el interés completo — solo mostrar aviso, NO tocar el campo interés
   splitResult.classList.add('hidden');
   splitShort.classList.remove('hidden');
-  document.getElementById('split-short-amount').textContent = formatCurrency(interest - total);
-  document.getElementById('payment-interest').value = total;
+  document.getElementById('split-short-amount').textContent = formatCurrency(fixedInterest - total);
+  // El campo interés queda con el valor fijo del préstamo, no con lo que escribió
+  document.getElementById('payment-interest').value = fixedInterest;
   document.getElementById('payment-capital').value = 0;
   return;
 }
-// Divide: interés primero, resto a capital
-const capitalAbono = total - interest;
+// Divide: interés fijo primero, el resto abona a capital
+const capitalAbono = total - fixedInterest;
 const newBalance = Math.max(0, loan.amount - capitalAbono);
 splitShort.classList.add('hidden');
 splitResult.classList.remove('hidden');
-document.getElementById('split-interest-show').textContent = formatCurrency(interest);
+document.getElementById('split-interest-show').textContent = formatCurrency(fixedInterest);
 document.getElementById('split-capital-show').textContent = formatCurrency(capitalAbono);
 document.getElementById('split-new-balance').textContent = formatCurrency(newBalance);
-// Auto-llenar los campos
+// Auto-llenar campos — interés fijo, capital calculado
+document.getElementById('payment-interest').value = fixedInterest;
 document.getElementById('payment-capital').value = capitalAbono;
 }
 function updateNextPaymentDate() {
