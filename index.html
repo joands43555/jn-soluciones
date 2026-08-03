@@ -754,6 +754,7 @@ if ('serviceWorker' in navigator) {
         <select id="nv-loan-select" class="w-full px-4 py-3 bg-surface border border-gray-700 rounded-xl text-white input-focus text-base" onchange="fillNvFromLoan()">
           <option value="">Llenar manual...</option>
         </select>
+        <p id="nv-rate-info" class="text-xs text-accent mt-1 font-medium"></p>
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
@@ -2373,6 +2374,8 @@ function fillNvFromLoan() {
   document.getElementById('nv-interest').value = Math.round(loan.amount * rate / 100);
   document.getElementById('nv-balance').value = loan.amount;
   document.getElementById('nv-next-date').value = loan.nextPaymentDate || '';
+  const rateInfo = document.getElementById('nv-rate-info');
+  if (rateInfo) rateInfo.textContent = 'Tasa: ' + rate + '% — Cuota: ' + formatCurrency(Math.round(loan.amount * rate / 100));
 }
 
 function populateNvClients() {
@@ -2388,20 +2391,24 @@ function populateNvClients() {
 }
 
 function createManualVoucher() {
-  const type    = document.getElementById('nv-type').value;
+  const type     = document.getElementById('nv-type').value;
   const clientId = document.getElementById('nv-client-select').value;
-  const amount  = parseFloat(document.getElementById('nv-amount').value) || 0;
+  const loanId   = document.getElementById('nv-loan-select').value;
+  const amount   = parseFloat(document.getElementById('nv-amount').value) || 0;
   const interest = parseFloat(document.getElementById('nv-interest').value) || 0;
-  const balance = parseFloat(document.getElementById('nv-balance').value) || 0;
+  const balance  = parseFloat(document.getElementById('nv-balance').value) || 0;
   const nextDate = document.getElementById('nv-next-date').value;
 
   if (!clientId) { showToast('Selecciona un cliente', 'error'); return; }
   const client = appData.clients.find(c => c.id === clientId);
   const clientName = client ? client.name : 'Cliente';
+  // Tasa real del préstamo seleccionado
+  const loan = loanId ? appData.loans.find(l => l.id === loanId) : null;
+  const interestRate = loan ? loan.interestRate : (appData.settings.interestRate || 10);
 
   closeModal('modal-new-voucher');
   setTimeout(() => {
-    generateVoucher(type, clientName, amount, interest, balance, nextDate);
+    generateVoucher(type, clientName, amount, interest, balance, nextDate, interestRate);
   }, 300);
 }
 
