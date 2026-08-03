@@ -906,7 +906,7 @@ if ('serviceWorker' in navigator) {
 <div style="line-height: 1.6; font-size: 13px;">
 <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span style="color: #666;">Tipo:</span><span id="voucher-type" style="font-weight: bold; color: #002d5e;"></span></div>
 <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span style="color: #666;">Cliente:</span><span id="voucher-client" style="font-weight: bold; text-align: right; max-width: 60%;"></span></div>
-<div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span style="color: #666;">Monto:</span><span id="voucher-amount" style="font-weight: bold; color: #002d5e;"></span></div>
+<div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span id="voucher-amount-label" style="color: #666;">Monto:</span><span id="voucher-amount" style="font-weight: bold; color: #002d5e;"></span></div>
 <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span style="color: #666;">Interés:</span><span id="voucher-interest" style="font-weight: bold; color: #10b981;"></span></div>
 <div style="border-top: 2px solid #eee; padding-top: 8px; margin-top: 8px;">
 <div style="display: flex; justify-content: space-between; font-size: 14px;"><span style="color: #666;">Saldo Pendiente:</span><span id="voucher-balance" style="font-weight: 900; color: #ef4444;"></span></div>
@@ -1866,7 +1866,10 @@ saveData();
 closeModal('modal-increase-capital');
 showToast(`Capital aumentado: ${formatCurrency(increaseAmount)}`, 'success');
 setTimeout(() => {
-generateVoucher('AUMENTO DE CAPITAL', client?.name || loan.clientName, increaseAmount, 0, loan.amount, newDate);
+  const rate = parseFloat(loan.interestRate) || 10;
+  const newInterest = Math.round(loan.amount * rate / 100);
+  // Monto = solo el aumento, interés y saldo sobre el nuevo total
+  generateVoucher('AUMENTO DE CAPITAL', client?.name || loan.clientName, increaseAmount, newInterest, loan.amount, newDate, loan.interestRate);
 }, 500);
 updateUI();
 }
@@ -2260,6 +2263,15 @@ document.getElementById('voucher-amount').textContent = formatCurrency(amount);
 document.getElementById('voucher-interest').textContent = formatCurrency(interest);
 document.getElementById('voucher-balance').textContent = formatCurrency(balance);
 document.getElementById('voucher-date').textContent = new Date().toLocaleString('es-ES');
+// Label dinámico según tipo
+const amtLabel = document.getElementById('voucher-amount-label');
+if (amtLabel) {
+  if (type === 'AUMENTO DE CAPITAL') amtLabel.textContent = 'Nuevo Capital:';
+  else if (type === 'APERTURA DE CRÉDITO') amtLabel.textContent = 'Monto Prestado:';
+  else if (type === 'RECIBO DE PAGO') amtLabel.textContent = 'Abono Capital:';
+  else if (type === 'LIQUIDACIÓN') amtLabel.textContent = 'Último Abono:';
+  else amtLabel.textContent = 'Monto:';
+}
 const completedMsg = document.getElementById('voucher-completed-message');
 const nextPaymentDiv = document.getElementById('voucher-next-payment');
 if (balance <= 0) {
